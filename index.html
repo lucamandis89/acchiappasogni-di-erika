@@ -186,6 +186,19 @@
           <label>Colore scritta <input id="colText" type="color" value="#b50000" /></label>
         </div>
 
+        <!-- ✅ MULTI COLOR CERCHI -->
+        <div class="checks" style="margin-top:10px;">
+          <label class="check">
+            <input id="optMultiRingColors" type="checkbox" />
+            Colori diversi per ogni cerchio
+          </label>
+
+          <div id="ringColorsWrap" style="display:none; margin-top:10px;">
+            <div class="sectionTitle" style="margin-top:0;">Colori cerchi (uno per cerchio)</div>
+            <div id="ringColorsList" style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px;"></div>
+          </div>
+        </div>
+
         <div class="checks">
           <label class="check"><input id="optBeadsOn" type="checkbox" checked /> Perline</label>
           <label>Quantità perline <input id="optBeadsQty" type="range" min="0" max="40" value="10" /></label>
