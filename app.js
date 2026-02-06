@@ -1,13 +1,11 @@
 // =========================
-//  APP - Acchiappasogni
-//  Fix definitivo immagini per la tua struttura reale:
-//  assets/assets/images/assets/images/acchiappasogni_hd/*.jpg
-//  Dati:
-//  data/products.json
-//  data/config.json
+//  APP - Acchiappasogni di Erika
+//  Repo structure (from your screenshots):
+//   - data/products.json
+//   - data/config.json
+//   - images in duplicated folders (various)
+//  Fix: robust JSON load + image fallback across multiple base paths
 // =========================
-
-const IMAGES_BASE = "assets/assets/images/assets/images/acchiappasogni_hd/";
 
 const state = {
   config: {
@@ -24,6 +22,20 @@ const state = {
 };
 
 const $ = (s) => document.querySelector(s);
+
+// ✅ Percorsi possibili immagini (in base alle tue cartelle duplicate)
+const IMAGE_BASES = [
+  "assets/assets/images/assets/images/acchiappasogni_hd/",
+  "assets/assets/images/acchiappasogni_hd/",
+  "assets/assets/images/assets/images/",
+  "assets/assets/images/",
+  "assets/images/assets/images/acchiappasogni_hd/",
+  "assets/images/acchiappasogni_hd/",
+  "assets/images/assets/images/",
+  "assets/images/",
+  "images/",
+  ""
+];
 
 function escapeHtml(s) {
   return String(s ?? "").replace(/[&<>"]/g, (c) => ({
@@ -51,26 +63,54 @@ function productPriceCents(p) {
   return (Number(p.price_from) || 0) * 100;
 }
 
-/**
- * ✅ FIX IMMAGINI
- * Qualunque cosa ci sia in p.image, noi estraiamo SOLO il nome file (FB_IMG_....jpg/png)
- * e lo ricostruiamo sul tuo percorso reale IMAGES_BASE.
- */
-function normalizeImagePath(anyPath) {
+// ---- Image helpers ----
+function getFileName(anyPath) {
   const p = String(anyPath || "").trim();
-
-  // Se è già un URL assoluto, lo lasciamo
-  if (/^https?:\/\//i.test(p)) return p;
-
-  // Estrae il nome file finale (quello dopo l'ultimo /)
-  const file = p.split("/").pop() || "";
-
-  // Se non c'è un file valido, ritorna vuoto (così non rompe la pagina)
-  if (!file || !/\.(png|jpg|jpeg|webp)$/i.test(file)) return "";
-
-  return IMAGES_BASE + file;
+  if (!p) return "";
+  if (/^https?:\/\//i.test(p)) return p; // absolute URL
+  return p.split("/").pop() || "";
 }
 
+function buildImageCandidates(anyPath) {
+  const file = getFileName(anyPath);
+  if (!file) return [];
+
+  // absolute URL
+  if (/^https?:\/\//i.test(file)) return [file];
+
+  // basic file sanity (allow even if extension missing, but better if present)
+  const candidates = [];
+
+  IMAGE_BASES.forEach(base => candidates.push(base + file));
+
+  // extension fallback jpg/jpeg
+  const lower = file.toLowerCase();
+  if (lower.endsWith(".jpg")) {
+    const alt = file.slice(0, -4) + ".jpeg";
+    IMAGE_BASES.forEach(base => candidates.push(base + alt));
+  } else if (lower.endsWith(".jpeg")) {
+    const alt = file.slice(0, -5) + ".jpg";
+    IMAGE_BASES.forEach(base => candidates.push(base + alt));
+  }
+
+  // remove duplicates
+  return [...new Set(candidates)];
+}
+
+// Called from inline onerror
+window.imgFallback = function (imgEl) {
+  const list = (imgEl.getAttribute("data-fallback") || "").split("||").filter(Boolean);
+  if (!list.length) {
+    // no more candidates -> hide image
+    imgEl.style.display = "none";
+    return;
+  }
+  const next = list.shift();
+  imgEl.setAttribute("data-fallback", list.join("||"));
+  imgEl.src = next;
+};
+
+// ---- Categories / filters ----
 function buildCategories() {
   const set = new Set(["Tutti"]);
   state.products.forEach((p) => set.add(p.category || "Da classificare"));
@@ -103,6 +143,7 @@ function renderTabs() {
   });
 }
 
+// ---- Cart ----
 function addToCart(id, qty) {
   state.cart[id] = (state.cart[id] || 0) + qty;
   if (state.cart[id] <= 0) delete state.cart[id];
@@ -119,6 +160,7 @@ function setQty(id, qty) {
   renderTotals();
 }
 
+// ---- UI render ----
 function renderGrid() {
   const grid = $("#grid");
   if (!grid) return;
@@ -135,11 +177,18 @@ function renderGrid() {
     const card = document.createElement("article");
     card.className = "card";
 
-    const imgPath = normalizeImagePath(p.image);
+    const cands = buildImageCandidates(p.image);
+
+    const imgHtml = cands.length
+      ? `<img loading="lazy"
+              src="${cands[0]}"
+              data-fallback="${escapeHtml(cands.slice(1).join("||"))}"
+              alt="${escapeHtml(p.title)}"
+              onerror="imgFallback(this);" />`
+      : ``;
 
     card.innerHTML = `
-      ${imgPath ? `<img loading="lazy" src="${imgPath}" alt="${escapeHtml(p.title)}"
-           onerror="this.style.display='none';" />` : ``}
+      ${imgHtml}
       <div class="content">
         <div class="title">${escapeHtml(p.title)}</div>
         <div class="meta">${escapeHtml(p.category || "")}</div>
@@ -191,12 +240,19 @@ function renderCart() {
     if (!p) return;
 
     const qty = state.cart[id] || 0;
-    const imgPath = normalizeImagePath(p.image);
+
+    const cands = buildImageCandidates(p.image);
+    const imgHtml = cands.length
+      ? `<img src="${cands[0]}"
+              data-fallback="${escapeHtml(cands.slice(1).join("||"))}"
+              alt="${escapeHtml(p.title)}"
+              onerror="imgFallback(this);" />`
+      : ``;
 
     const div = document.createElement("div");
     div.className = "cart-item";
     div.innerHTML = `
-      ${imgPath ? `<img src="${imgPath}" alt="${escapeHtml(p.title)}" onerror="this.style.display='none';"/>` : ``}
+      ${imgHtml}
       <div>
         <div class="ci-title">${escapeHtml(p.title)}</div>
         <div class="ci-meta">${escapeHtml(p.category || "")}</div>
@@ -271,6 +327,7 @@ function closeCart() {
   $("#drawerBackdrop").classList.add("hidden");
 }
 
+// ---- WhatsApp order ----
 function buildOrderId() {
   const s = Date.now().toString();
   return "AE-" + s.slice(-6);
@@ -330,6 +387,13 @@ function openWhatsApp(text) {
   window.open(`https://wa.me/${num}?text=${encoded}`, "_blank");
 }
 
+// ---- Load JSON ----
+async function safeFetchJson(path) {
+  const r = await fetch(path, { cache: "no-store" });
+  if (!r.ok) throw new Error(`${path} -> HTTP ${r.status}`);
+  return await r.json();
+}
+
 function showFatal(msg) {
   const grid = $("#grid");
   if (!grid) return;
@@ -343,73 +407,88 @@ function showFatal(msg) {
   `;
 }
 
-async function safeFetchJson(path) {
-  const r = await fetch(path, { cache: "no-store" });
-  if (!r.ok) throw new Error(`${path} -> HTTP ${r.status}`);
-  return await r.json();
-}
-
 async function init() {
+  // UI listeners
   state.cart = parseCart();
   updateCartBadge();
 
-  $("#search").addEventListener("input", (e) => {
-    state.query = (e.target.value || "").trim().toLowerCase();
-    renderGrid();
-  });
+  const search = $("#search");
+  if (search) {
+    search.addEventListener("input", (e) => {
+      state.query = (e.target.value || "").trim().toLowerCase();
+      renderGrid();
+    });
+  }
 
-  $("#btnCart").onclick = openCart;
-  $("#btnCloseCart").onclick = closeCart;
-  $("#drawerBackdrop").onclick = closeCart;
+  const btnCart = $("#btnCart");
+  if (btnCart) btnCart.onclick = openCart;
+
+  const btnCloseCart = $("#btnCloseCart");
+  if (btnCloseCart) btnCloseCart.onclick = closeCart;
+
+  const drawerBackdrop = $("#drawerBackdrop");
+  if (drawerBackdrop) drawerBackdrop.onclick = closeCart;
 
   document.querySelectorAll('input[name="delivery"]').forEach((r) =>
     r.addEventListener("change", () => renderTotals())
   );
 
-  $("#btnClear").onclick = () => {
-    if (!confirm("Vuoi svuotare il carrello?")) return;
-    state.cart = {};
-    saveCart();
-    updateCartBadge();
-    renderCart();
-    renderTotals();
-  };
+  const btnClear = $("#btnClear");
+  if (btnClear) {
+    btnClear.onclick = () => {
+      if (!confirm("Vuoi svuotare il carrello?")) return;
+      state.cart = {};
+      saveCart();
+      updateCartBadge();
+      renderCart();
+      renderTotals();
+    };
+  }
 
-  $("#btnSend").onclick = () => {
-    if (!Object.keys(state.cart).length) {
-      alert("Carrello vuoto.");
-      return;
-    }
-    const o = buildOrderMessage();
-    if (!o) return;
-    localStorage.setItem("lastOrderId", o.orderId);
-    openWhatsApp(o.text);
-  };
+  const btnSend = $("#btnSend");
+  if (btnSend) {
+    btnSend.onclick = () => {
+      if (!Object.keys(state.cart).length) {
+        alert("Carrello vuoto.");
+        return;
+      }
+      const o = buildOrderMessage();
+      if (!o) return;
+      localStorage.setItem("lastOrderId", o.orderId);
+      openWhatsApp(o.text);
+    };
+  }
 
-  $("#btnCustom").onclick = () => {
-    const msg =
-      "Ciao Erika! Vorrei un ACCHIAPPASOGNI PERSONALIZZATO ✨\n\n" +
-      "1) Evento/occasione (es. regalo, battesimo, matrimonio):\n" +
-      "2) Colori preferiti:\n" +
-      "3) Nome o scritta (se vuoi):\n" +
-      "4) Misura (piccolo/medio/grande):\n" +
-      "5) Budget indicativo:\n" +
-      "6) Data entro cui ti serve:\n\n" +
-      "Grazie! 😊";
-    openWhatsApp(msg);
-  };
+  const btnCustom = $("#btnCustom");
+  if (btnCustom) {
+    btnCustom.onclick = () => {
+      const msg =
+        "Ciao Erika! Vorrei un ACCHIAPPASOGNI PERSONALIZZATO ✨\n\n" +
+        "1) Evento/occasione (es. regalo, battesimo, matrimonio):\n" +
+        "2) Colori preferiti:\n" +
+        "3) Nome o scritta (se vuoi):\n" +
+        "4) Misura (piccolo/medio/grande):\n" +
+        "5) Budget indicativo:\n" +
+        "6) Data entro cui ti serve:\n\n" +
+        "Grazie! 😊";
+      openWhatsApp(msg);
+    };
+  }
 
+  // Load data
   try {
     const products = await safeFetchJson("data/products.json");
     if (!Array.isArray(products)) throw new Error("products.json non è un array");
     state.products = products;
 
+    // config optional (if fails, app still works)
     try {
       const cfg = await safeFetchJson("data/config.json");
       state.config = { ...state.config, ...(cfg || {}) };
     } catch {}
 
-    $("#brandName").textContent = state.config.brandName || "Acchiappasogni di Erika";
+    const brand = $("#brandName");
+    if (brand) brand.textContent = state.config.brandName || "Acchiappasogni di Erika";
 
     buildCategories();
     renderTabs();
