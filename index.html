@@ -39,15 +39,9 @@
       display:flex; align-items:center; gap:10px; justify-content:space-between;
       margin:0;
     }
-    .brand{
-      display:flex; flex-direction:column; gap:2px;
-    }
-    .brand h1{
-      font-size:18px; margin:0; letter-spacing:.2px;
-    }
-    .brand p{
-      margin:0; font-size:12px; color:var(--muted);
-    }
+    .brand{display:flex; flex-direction:column; gap:2px}
+    .brand h1{font-size:18px; margin:0; letter-spacing:.2px}
+    .brand p{margin:0; font-size:12px; color:var(--muted)}
     .pill{
       display:inline-flex; align-items:center; gap:8px;
       padding:8px 10px;
@@ -127,17 +121,8 @@
       gap:8px;
       flex:1;
     }
-    .name{
-      font-weight:700;
-      font-size:14px;
-      margin:0;
-      line-height:1.2;
-    }
-    .meta{
-      display:flex; flex-wrap:wrap; gap:8px;
-      font-size:12px;
-      color: var(--muted);
-    }
+    .name{font-weight:700; font-size:14px; margin:0; line-height:1.2}
+    .meta{display:flex; flex-wrap:wrap; gap:8px; font-size:12px; color: var(--muted)}
     .desc{
       margin:0;
       font-size:12px;
@@ -145,10 +130,7 @@
       line-height:1.35;
       flex:1;
     }
-    .row{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin-top:2px;
-    }
+    .row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:2px}
     .price{
       font-weight:800;
       font-size:14px;
@@ -258,13 +240,11 @@
   // =========================
   // CONFIG
   // =========================
-  // Se vuoi cambiare numero WhatsApp, mettilo qui:
-  const WHATSAPP_NUMBER = ""; // es: "393440260906"
+  const WHATSAPP_NUMBER = ""; // es: "393440260906" (senza +)
 
-  // File prodotti
-  const PRODUCTS_JSON = "products_CORRETTO.json";
+  // >>> IL TUO FILE È QUESTO:
+  const PRODUCTS_JSON = "products.json";
 
-  // Placeholder immagine (SVG inline, zero dipendenze)
   const PLACEHOLDER_SVG =
     "data:image/svg+xml;charset=utf-8," +
     encodeURIComponent(`
@@ -311,32 +291,24 @@
     }[c]));
   }
 
-  // In WebView file://, per essere super robusti, prefissiamo file:///android_asset/
+  // Per Android WebView (file://) prefixiamo file:///android_asset/
   function resolveAssetPath(p){
     if (!p) return "";
     const str = String(p);
     if (/^(https?:|file:|data:)/i.test(str)) return str;
-
-    // rimuove eventuali slash iniziali
     const clean = str.replace(/^\/+/, "");
-
-    // Se stiamo girando in Android asset (file://), prefixiamo
-    if (location.protocol === "file:") {
-      return "file:///android_asset/" + clean;
-    }
-
-    // In caso web normale
+    if (location.protocol === "file:") return "file:///android_asset/" + clean;
     return clean;
   }
 
   async function fetchJsonSmart(path){
-    // Prova prima relativo
+    // Prova relativo (GitHub Pages)
     try {
       const r = await fetch(path, { cache: "no-store" });
       if (!r.ok) throw new Error("HTTP " + r.status);
       return await r.json();
     } catch (e1) {
-      // Fallback per file:// (alcuni WebView sono più schizzinosi)
+      // Fallback (Android asset)
       const alt = resolveAssetPath(path);
       const r2 = await fetch(alt, { cache: "no-store" });
       if (!r2.ok) throw new Error("HTTP " + r2.status);
@@ -363,16 +335,11 @@
       `Prezzo da: €${product.price_from}.`;
     const encoded = encodeURIComponent(text);
 
-    // Se hai il numero impostato, usa wa.me/NUMERO
     if (WHATSAPP_NUMBER && WHATSAPP_NUMBER.trim().length > 6) {
-      const url = `https://wa.me/${WHATSAPP_NUMBER.trim()}?text=${encoded}`;
-      window.open(url, "_blank");
+      window.open(`https://wa.me/${WHATSAPP_NUMBER.trim()}?text=${encoded}`, "_blank");
       return;
     }
-
-    // Altrimenti apre WhatsApp senza numero (su alcuni device ti fa scegliere contatto)
-    const url = `https://wa.me/?text=${encoded}`;
-    window.open(url, "_blank");
+    window.open(`https://wa.me/?text=${encoded}`, "_blank");
   }
 
   // =========================
@@ -381,7 +348,6 @@
   let io = null;
   function setupIntersectionObserver(){
     if (!("IntersectionObserver" in window)) return;
-
     io = new IntersectionObserver((entries) => {
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
@@ -393,27 +359,21 @@
         }
         io.unobserve(img);
       }
-    }, { rootMargin: "600px 0px" }); // carica prima che arrivi a schermo
+    }, { rootMargin: "700px 0px" });
   }
 
   function makeImgLazy(imgEl, realSrc){
-    // Placeholder subito
     imgEl.src = PLACEHOLDER_SVG;
-
-    // attributi per performance
     imgEl.loading = "lazy";
     imgEl.decoding = "async";
 
-    // Se c'è IntersectionObserver, usa data-src
     if (io) {
       imgEl.setAttribute("data-src", realSrc);
       io.observe(imgEl);
     } else {
-      // fallback: setta subito
       imgEl.src = realSrc;
     }
 
-    // fallback se non trova l'immagine
     imgEl.onerror = () => {
       imgEl.onerror = null;
       imgEl.src = PLACEHOLDER_SVG;
@@ -430,26 +390,18 @@
     const set = new Set(list.map(p => p.category).filter(Boolean));
     const cats = Array.from(set).sort((a,b) => a.localeCompare(b, "it"));
     const sel = $("category");
-    // reset
-    sel.innerHTML = `<option value="">Tutte le categorie</option>` +
+    sel.innerHTML =
+      `<option value="">Tutte le categorie</option>` +
       cats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
   }
 
   function sortProducts(list, mode){
     const a = [...list];
     switch(mode){
-      case "name_asc":
-        a.sort((x,y) => x.title.localeCompare(y.title, "it"));
-        break;
-      case "name_desc":
-        a.sort((x,y) => y.title.localeCompare(x.title, "it"));
-        break;
-      case "price_asc":
-        a.sort((x,y) => (x.price_from||0) - (y.price_from||0));
-        break;
-      case "price_desc":
-        a.sort((x,y) => (y.price_from||0) - (x.price_from||0));
-        break;
+      case "name_asc":  a.sort((x,y) => x.title.localeCompare(y.title, "it")); break;
+      case "name_desc": a.sort((x,y) => y.title.localeCompare(x.title, "it")); break;
+      case "price_asc": a.sort((x,y) => (x.price_from||0) - (y.price_from||0)); break;
+      case "price_desc": a.sort((x,y) => (y.price_from||0) - (x.price_from||0)); break;
       case "featured":
       default:
         a.sort((x,y) => {
@@ -468,7 +420,6 @@
     const mode = $("sort").value;
 
     let list = ALL;
-
     if (cat) list = list.filter(p => p.category === cat);
     if (q) {
       list = list.filter(p => {
@@ -487,15 +438,12 @@
     grid.innerHTML = "";
 
     if (!list.length) {
-      grid.innerHTML = `
-        <div class="empty">
-          Nessun prodotto trovato. Prova a cambiare ricerca o categoria.
-        </div>`;
+      grid.innerHTML = `<div class="empty">Nessun prodotto trovato. Prova a cambiare ricerca o categoria.</div>`;
       $("footerInfo").textContent = "";
       return;
     }
 
-    // Render "a blocchi" per non impallare la WebView (importantissimo)
+    // Render a blocchi (anti-lag WebView)
     const CHUNK = 18;
     let i = 0;
 
@@ -513,7 +461,7 @@
         imgbox.className = "imgbox";
 
         const img = document.createElement("img");
-        const realSrc = resolveAssetPath(p.image); // <-- qui usa il tuo percorso
+        const realSrc = resolveAssetPath(p.image);
         makeImgLazy(img, realSrc);
 
         imgbox.appendChild(img);
@@ -570,7 +518,6 @@
       grid.appendChild(frag);
 
       if (i < list.length) {
-        // usa requestIdleCallback se disponibile (super fluido), altrimenti setTimeout
         if ("requestIdleCallback" in window) {
           requestIdleCallback(renderChunk, { timeout: 500 });
         } else {
@@ -597,10 +544,9 @@
 
       buildCategories(ALL);
 
-      // listeners
-      $("search").addEventListener("input", () => applyFilters());
-      $("category").addEventListener("change", () => applyFilters());
-      $("sort").addEventListener("change", () => applyFilters());
+      $("search").addEventListener("input", applyFilters);
+      $("category").addEventListener("change", applyFilters);
+      $("sort").addEventListener("change", applyFilters);
 
       applyFilters();
 
@@ -608,11 +554,13 @@
       toast("Catalogo pronto ✅");
     } catch (err) {
       console.error(err);
-      setStatus("Errore caricamento (controlla products_CORRETTO.json)", false);
+      setStatus("Errore caricamento (controlla products.json)", false);
       $("grid").innerHTML = `
         <div class="empty">
           <b>Errore:</b> non riesco a leggere <code>${escapeHtml(PRODUCTS_JSON)}</code>.<br><br>
-          Controlla che il file sia in <code>app/src/main/assets/</code> e che sia un JSON valido.
+          <b>GitHub Pages:</b> il file deve stare nella stessa cartella di <code>index.html</code>.<br>
+          <b>Android:</b> il file deve stare in <code>app/src/main/assets/</code>.<br><br>
+          Controlla anche maiuscole/minuscole nel nome.
         </div>`;
       $("footerInfo").textContent = "";
       toast("Errore caricamento JSON ❌");
