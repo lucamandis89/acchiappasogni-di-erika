@@ -4,8 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Acchiappasogni di Erika</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7c5cff">
+
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <header class="topbar">
     <div class="brand">
@@ -34,8 +40,8 @@
     <section id="grid" class="grid" aria-live="polite"></section>
   </main>
 
-  <!-- Cart Drawer -->
   <div id="drawerBackdrop" class="backdrop hidden"></div>
+
   <aside id="drawer" class="drawer hidden" aria-hidden="true">
     <div class="drawer-header">
       <div class="drawer-title">Carrello</div>
@@ -69,11 +75,13 @@
           <span>Via / indirizzo</span>
           <input id="street" type="text" placeholder="Via..." />
         </label>
+
         <div class="two">
           <label class="field">
             <span>CAP</span>
             <input id="cap" type="text" inputmode="numeric" placeholder="090..." />
           </label>
+
           <label class="field">
             <span>Città</span>
             <input id="city" type="text" placeholder="Città..." />
@@ -96,5 +104,12 @@
   </aside>
 
   <script src="app.js"></script>
+
+  <!-- Service Worker -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./service-worker.js");
+    }
+  </script>
 </body>
 </html>
