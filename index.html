@@ -4,112 +4,621 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Acchiappasogni di Erika</title>
-
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#7c5cff">
-
-  <link rel="stylesheet" href="styles.css" />
-</head>
-
-<body>
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo">✨</div>
-      <div>
-        <div id="brandName" class="brand-title">Acchiappasogni di Erika</div>
-        <div class="brand-sub">Catalogo • Ordina su WhatsApp</div>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button id="btnCustom" class="btn ghost">Personalizzato</button>
-      <button id="btnCart" class="btn">Carrello <span id="cartCount" class="badge">0</span></button>
-    </div>
-  </header>
-
-  <main class="container">
-    <section class="search">
-      <input id="search" type="search" placeholder="Cerca (nome o descrizione)..." autocomplete="off" />
-    </section>
-
-    <section class="tabs-wrap">
-      <div id="tabs" class="tabs"></div>
-    </section>
-
-    <section id="grid" class="grid" aria-live="polite"></section>
-  </main>
-
-  <div id="drawerBackdrop" class="backdrop hidden"></div>
-
-  <aside id="drawer" class="drawer hidden" aria-hidden="true">
-    <div class="drawer-header">
-      <div class="drawer-title">Carrello</div>
-      <button id="btnCloseCart" class="btn ghost">Chiudi</button>
-    </div>
-
-    <div id="cartItems" class="cart-items"></div>
-
-    <div class="totals">
-      <div class="row"><span>Subtotale</span><span id="subtotal">€ 0,00</span></div>
-      <div class="row"><span>Spedizione</span><span id="shipping">€ 0,00</span></div>
-      <div class="row total"><span>Totale</span><span id="total">€ 0,00</span></div>
-      <div class="hint" id="shippingHint"></div>
-    </div>
-
-    <div class="checkout">
-      <div class="section-title">Dati ordine</div>
-
-      <label class="field">
-        <span>Nome e cognome</span>
-        <input id="name" type="text" placeholder="Es. Mario Rossi" />
-      </label>
-
-      <div class="radios">
-        <label><input type="radio" name="delivery" value="shipping" checked /> Spedizione</label>
-        <label><input type="radio" name="delivery" value="pickup" /> Ritiro / consegna a mano</label>
-      </div>
-
-      <div id="shippingFields">
-        <label class="field">
-          <span>Via / indirizzo</span>
-          <input id="street" type="text" placeholder="Via..." />
-        </label>
-
-        <div class="two">
-          <label class="field">
-            <span>CAP</span>
-            <input id="cap" type="text" inputmode="numeric" placeholder="090..." />
-          </label>
-
-          <label class="field">
-            <span>Città</span>
-            <input id="city" type="text" placeholder="Città..." />
-          </label>
-        </div>
-      </div>
-
-      <label class="field">
-        <span>Note (colore, personalizzazione, ecc.)</span>
-        <textarea id="notes" rows="3" placeholder="Scrivi qui..."></textarea>
-      </label>
-
-      <button id="btnSend" class="btn primary">Invia ordine su WhatsApp</button>
-      <button id="btnClear" class="btn danger">Annulla ordine (svuota carrello)</button>
-
-      <p class="small">
-        Pagamento e spedizione vengono gestiti fuori dal sito. Riceverai conferma su WhatsApp.
-      </p>
-    </div>
-  </aside>
-
-  <script src="app.js"></script>
-
-  <!-- Service Worker -->
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./service-worker.js");
+  <meta name="theme-color" content="#0b0f19" />
+  <style>
+    :root{
+      --bg:#0b0f19;
+      --card:#11182a;
+      --card2:#0f1626;
+      --text:#e8eefc;
+      --muted:#a9b6d3;
+      --line:rgba(255,255,255,.08);
+      --accent:#66a6ff;
+      --accent2:#89f7fe;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
     }
-  </script>
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(102,166,255,.12), transparent 55%),
+                  radial-gradient(1200px 600px at 80% 0%, rgba(137,247,254,.10), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(10px);
+      background: rgba(11,15,25,.72);
+      border-bottom: 1px solid var(--line);
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:14px 14px}
+    .title{
+      display:flex; align-items:center; gap:10px; justify-content:space-between;
+      margin:0;
+    }
+    .brand{
+      display:flex; flex-direction:column; gap:2px;
+    }
+    .brand h1{
+      font-size:18px; margin:0; letter-spacing:.2px;
+    }
+    .brand p{
+      margin:0; font-size:12px; color:var(--muted);
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background: rgba(17,24,42,.65);
+      box-shadow: 0 8px 18px rgba(0,0,0,.18);
+      font-size:12px; color:var(--muted);
+      white-space:nowrap;
+    }
+    .controls{
+      display:grid;
+      grid-template-columns: 1fr 160px 160px;
+      gap:10px;
+      margin-top:12px;
+    }
+    .input, select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(17,24,42,.55);
+      color: var(--text);
+      outline:none;
+    }
+    .input::placeholder{color: rgba(233,238,252,.55)}
+    select{appearance:none}
+    main .wrap{padding-top:18px; padding-bottom:28px}
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:12px;
+    }
+    @media (min-width: 860px){
+      .grid{grid-template-columns: repeat(3, minmax(0, 1fr))}
+      .controls{grid-template-columns: 1fr 220px 220px}
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(17,24,42,.75), rgba(15,22,38,.75));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height: 330px;
+    }
+    .imgbox{
+      position:relative;
+      width:100%;
+      aspect-ratio: 4 / 3;
+      background: rgba(255,255,255,.03);
+      overflow:hidden;
+    }
+    .imgbox img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+      transform: scale(1.01);
+    }
+    .badge{
+      position:absolute;
+      top:10px; left:10px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      background: rgba(102,166,255,.18);
+      border: 1px solid rgba(102,166,255,.35);
+      color: var(--text);
+      backdrop-filter: blur(8px);
+    }
+    .content{
+      padding:12px 12px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      flex:1;
+    }
+    .name{
+      font-weight:700;
+      font-size:14px;
+      margin:0;
+      line-height:1.2;
+    }
+    .meta{
+      display:flex; flex-wrap:wrap; gap:8px;
+      font-size:12px;
+      color: var(--muted);
+    }
+    .desc{
+      margin:0;
+      font-size:12px;
+      color: rgba(233,238,252,.78);
+      line-height:1.35;
+      flex:1;
+    }
+    .row{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-top:2px;
+    }
+    .price{
+      font-weight:800;
+      font-size:14px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      background-clip:text;
+      color: transparent;
+      letter-spacing:.2px;
+    }
+    .btn{
+      border:1px solid rgba(102,166,255,.35);
+      background: rgba(102,166,255,.14);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:700;
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .btn:active{transform: scale(.99)}
+    .empty{
+      border:1px dashed var(--line);
+      border-radius: var(--radius);
+      padding:18px;
+      color: var(--muted);
+      background: rgba(17,24,42,.35);
+    }
+    .footer{
+      margin-top:18px;
+      color: var(--muted);
+      font-size:12px;
+      text-align:center;
+      opacity:.9;
+    }
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      padding:10px 12px;
+      border-radius:12px;
+      background: rgba(17,24,42,.9);
+      border:1px solid var(--line);
+      color: var(--text);
+      font-size:12px;
+      box-shadow: var(--shadow);
+      display:none;
+      z-index: 999;
+      max-width: min(92vw, 520px);
+      text-align:center;
+    }
+    .spinner{
+      display:inline-block;
+      width:14px; height:14px;
+      border-radius:50%;
+      border:2px solid rgba(255,255,255,.25);
+      border-top-color: rgba(255,255,255,.9);
+      animation: spin .8s linear infinite;
+      vertical-align: -2px;
+      margin-right:8px;
+    }
+    @keyframes spin{to{transform: rotate(360deg)}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="title">
+      <div class="brand">
+        <h1>Acchiappasogni di Erika</h1>
+        <p>Catalogo prodotti • immagini in lazy-load (niente buchi)</p>
+      </div>
+      <div class="pill" id="statusPill">
+        <span class="spinner" aria-hidden="true"></span>
+        Caricamento prodotti…
+      </div>
+    </div>
+
+    <div class="controls">
+      <input class="input" id="search" type="search" placeholder="Cerca (es. Modello 12, classici…)" />
+      <select id="category">
+        <option value="">Tutte le categorie</option>
+      </select>
+      <select id="sort">
+        <option value="featured">In evidenza</option>
+        <option value="name_asc">Nome A→Z</option>
+        <option value="name_desc">Nome Z→A</option>
+        <option value="price_asc">Prezzo crescente</option>
+        <option value="price_desc">Prezzo decrescente</option>
+      </select>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div id="grid" class="grid"></div>
+    <div class="footer" id="footerInfo"></div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // =========================
+  // CONFIG
+  // =========================
+  // Se vuoi cambiare numero WhatsApp, mettilo qui:
+  const WHATSAPP_NUMBER = ""; // es: "393440260906"
+
+  // File prodotti
+  const PRODUCTS_JSON = "products_CORRETTO.json";
+
+  // Placeholder immagine (SVG inline, zero dipendenze)
+  const PLACEHOLDER_SVG =
+    "data:image/svg+xml;charset=utf-8," +
+    encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
+        <defs>
+          <linearGradient id="g" x1="0" x2="1">
+            <stop offset="0" stop-color="#1a2742"/>
+            <stop offset="1" stop-color="#0f1626"/>
+          </linearGradient>
+        </defs>
+        <rect width="800" height="600" fill="url(#g)"/>
+        <circle cx="190" cy="180" r="90" fill="rgba(102,166,255,0.20)"/>
+        <circle cx="620" cy="210" r="120" fill="rgba(137,247,254,0.14)"/>
+        <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle"
+              font-family="Arial" font-size="28" fill="rgba(233,238,252,0.75)">
+          Immagine non disponibile
+        </text>
+      </svg>
+    `);
+
+  // =========================
+  // UTILS
+  // =========================
+  const $ = (id) => document.getElementById(id);
+
+  function toast(msg){
+    const el = $("toast");
+    el.textContent = msg;
+    el.style.display = "block";
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => el.style.display = "none", 2200);
+  }
+
+  function setStatus(text, loading){
+    const pill = $("statusPill");
+    pill.innerHTML = loading
+      ? `<span class="spinner" aria-hidden="true"></span>${escapeHtml(text)}`
+      : escapeHtml(text);
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, (c) => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[c]));
+  }
+
+  // In WebView file://, per essere super robusti, prefissiamo file:///android_asset/
+  function resolveAssetPath(p){
+    if (!p) return "";
+    const str = String(p);
+    if (/^(https?:|file:|data:)/i.test(str)) return str;
+
+    // rimuove eventuali slash iniziali
+    const clean = str.replace(/^\/+/, "");
+
+    // Se stiamo girando in Android asset (file://), prefixiamo
+    if (location.protocol === "file:") {
+      return "file:///android_asset/" + clean;
+    }
+
+    // In caso web normale
+    return clean;
+  }
+
+  async function fetchJsonSmart(path){
+    // Prova prima relativo
+    try {
+      const r = await fetch(path, { cache: "no-store" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return await r.json();
+    } catch (e1) {
+      // Fallback per file:// (alcuni WebView sono più schizzinosi)
+      const alt = resolveAssetPath(path);
+      const r2 = await fetch(alt, { cache: "no-store" });
+      if (!r2.ok) throw new Error("HTTP " + r2.status);
+      return await r2.json();
+    }
+  }
+
+  function normalizeProducts(arr){
+    if (!Array.isArray(arr)) return [];
+    return arr.map(p => ({
+      id: p.id ?? "",
+      title: p.title ?? "",
+      category: p.category ?? "Altro",
+      price_from: Number(p.price_from ?? 0),
+      description: p.description ?? "",
+      image: p.image ?? "",
+      featured: Boolean(p.featured)
+    }));
+  }
+
+  function openWhatsApp(product){
+    const text =
+      `Ciao! Vorrei info su: ${product.title} (${product.id}). ` +
+      `Prezzo da: €${product.price_from}.`;
+    const encoded = encodeURIComponent(text);
+
+    // Se hai il numero impostato, usa wa.me/NUMERO
+    if (WHATSAPP_NUMBER && WHATSAPP_NUMBER.trim().length > 6) {
+      const url = `https://wa.me/${WHATSAPP_NUMBER.trim()}?text=${encoded}`;
+      window.open(url, "_blank");
+      return;
+    }
+
+    // Altrimenti apre WhatsApp senza numero (su alcuni device ti fa scegliere contatto)
+    const url = `https://wa.me/?text=${encoded}`;
+    window.open(url, "_blank");
+  }
+
+  // =========================
+  // LAZY IMAGE LOADER (vero)
+  // =========================
+  let io = null;
+  function setupIntersectionObserver(){
+    if (!("IntersectionObserver" in window)) return;
+
+    io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const img = entry.target;
+        const real = img.getAttribute("data-src");
+        if (real) {
+          img.src = real;
+          img.removeAttribute("data-src");
+        }
+        io.unobserve(img);
+      }
+    }, { rootMargin: "600px 0px" }); // carica prima che arrivi a schermo
+  }
+
+  function makeImgLazy(imgEl, realSrc){
+    // Placeholder subito
+    imgEl.src = PLACEHOLDER_SVG;
+
+    // attributi per performance
+    imgEl.loading = "lazy";
+    imgEl.decoding = "async";
+
+    // Se c'è IntersectionObserver, usa data-src
+    if (io) {
+      imgEl.setAttribute("data-src", realSrc);
+      io.observe(imgEl);
+    } else {
+      // fallback: setta subito
+      imgEl.src = realSrc;
+    }
+
+    // fallback se non trova l'immagine
+    imgEl.onerror = () => {
+      imgEl.onerror = null;
+      imgEl.src = PLACEHOLDER_SVG;
+    };
+  }
+
+  // =========================
+  // RENDER
+  // =========================
+  let ALL = [];
+  let filtered = [];
+
+  function buildCategories(list){
+    const set = new Set(list.map(p => p.category).filter(Boolean));
+    const cats = Array.from(set).sort((a,b) => a.localeCompare(b, "it"));
+    const sel = $("category");
+    // reset
+    sel.innerHTML = `<option value="">Tutte le categorie</option>` +
+      cats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+  }
+
+  function sortProducts(list, mode){
+    const a = [...list];
+    switch(mode){
+      case "name_asc":
+        a.sort((x,y) => x.title.localeCompare(y.title, "it"));
+        break;
+      case "name_desc":
+        a.sort((x,y) => y.title.localeCompare(x.title, "it"));
+        break;
+      case "price_asc":
+        a.sort((x,y) => (x.price_from||0) - (y.price_from||0));
+        break;
+      case "price_desc":
+        a.sort((x,y) => (y.price_from||0) - (x.price_from||0));
+        break;
+      case "featured":
+      default:
+        a.sort((x,y) => {
+          const f = (y.featured?1:0) - (x.featured?1:0);
+          if (f !== 0) return f;
+          return x.title.localeCompare(y.title, "it");
+        });
+        break;
+    }
+    return a;
+  }
+
+  function applyFilters(){
+    const q = $("search").value.trim().toLowerCase();
+    const cat = $("category").value;
+    const mode = $("sort").value;
+
+    let list = ALL;
+
+    if (cat) list = list.filter(p => p.category === cat);
+    if (q) {
+      list = list.filter(p => {
+        const hay = `${p.title} ${p.category} ${p.description} ${p.id}`.toLowerCase();
+        return hay.includes(q);
+      });
+    }
+
+    list = sortProducts(list, mode);
+    filtered = list;
+    renderGrid(list);
+  }
+
+  function renderGrid(list){
+    const grid = $("grid");
+    grid.innerHTML = "";
+
+    if (!list.length) {
+      grid.innerHTML = `
+        <div class="empty">
+          Nessun prodotto trovato. Prova a cambiare ricerca o categoria.
+        </div>`;
+      $("footerInfo").textContent = "";
+      return;
+    }
+
+    // Render "a blocchi" per non impallare la WebView (importantissimo)
+    const CHUNK = 18;
+    let i = 0;
+
+    function renderChunk(){
+      const slice = list.slice(i, i + CHUNK);
+      i += CHUNK;
+
+      const frag = document.createDocumentFragment();
+
+      for (const p of slice) {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const imgbox = document.createElement("div");
+        imgbox.className = "imgbox";
+
+        const img = document.createElement("img");
+        const realSrc = resolveAssetPath(p.image); // <-- qui usa il tuo percorso
+        makeImgLazy(img, realSrc);
+
+        imgbox.appendChild(img);
+
+        if (p.featured) {
+          const b = document.createElement("div");
+          b.className = "badge";
+          b.textContent = "In evidenza";
+          imgbox.appendChild(b);
+        }
+
+        const content = document.createElement("div");
+        content.className = "content";
+
+        const name = document.createElement("p");
+        name.className = "name";
+        name.textContent = p.title;
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.textContent = p.category;
+
+        const desc = document.createElement("p");
+        desc.className = "desc";
+        desc.textContent = p.description;
+
+        const row = document.createElement("div");
+        row.className = "row";
+
+        const price = document.createElement("div");
+        price.className = "price";
+        price.textContent = `Da €${Number(p.price_from||0)}`;
+
+        const btn = document.createElement("button");
+        btn.className = "btn";
+        btn.type = "button";
+        btn.textContent = "Chiedi su WhatsApp";
+        btn.addEventListener("click", () => openWhatsApp(p));
+
+        row.appendChild(price);
+        row.appendChild(btn);
+
+        content.appendChild(name);
+        content.appendChild(meta);
+        content.appendChild(desc);
+        content.appendChild(row);
+
+        card.appendChild(imgbox);
+        card.appendChild(content);
+
+        frag.appendChild(card);
+      }
+
+      grid.appendChild(frag);
+
+      if (i < list.length) {
+        // usa requestIdleCallback se disponibile (super fluido), altrimenti setTimeout
+        if ("requestIdleCallback" in window) {
+          requestIdleCallback(renderChunk, { timeout: 500 });
+        } else {
+          setTimeout(renderChunk, 0);
+        }
+      } else {
+        $("footerInfo").textContent = `Totale prodotti visualizzati: ${list.length}`;
+      }
+    }
+
+    renderChunk();
+  }
+
+  // =========================
+  // INIT
+  // =========================
+  (async function init(){
+    try {
+      setupIntersectionObserver();
+      setStatus("Caricamento prodotti…", true);
+
+      const raw = await fetchJsonSmart(PRODUCTS_JSON);
+      ALL = normalizeProducts(raw);
+
+      buildCategories(ALL);
+
+      // listeners
+      $("search").addEventListener("input", () => applyFilters());
+      $("category").addEventListener("change", () => applyFilters());
+      $("sort").addEventListener("change", () => applyFilters());
+
+      applyFilters();
+
+      setStatus(`Prodotti caricati: ${ALL.length}`, false);
+      toast("Catalogo pronto ✅");
+    } catch (err) {
+      console.error(err);
+      setStatus("Errore caricamento (controlla products_CORRETTO.json)", false);
+      $("grid").innerHTML = `
+        <div class="empty">
+          <b>Errore:</b> non riesco a leggere <code>${escapeHtml(PRODUCTS_JSON)}</code>.<br><br>
+          Controlla che il file sia in <code>app/src/main/assets/</code> e che sia un JSON valido.
+        </div>`;
+      $("footerInfo").textContent = "";
+      toast("Errore caricamento JSON ❌");
+    }
+  })();
+</script>
+
 </body>
 </html>
