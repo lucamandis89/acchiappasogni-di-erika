@@ -1,30 +1,12 @@
 [
   {
-    "id": "AE-1000",
-    "title": "Acchiappasogni - Modello 1",
-    "category": "Acchiappasogni Classici",
-    "price_from": 5,
-    "description": "Acchiappasogni artigianale realizzato a mano con cura nei dettagli. Perfetto come decorazione o regalo. Personalizzabile su richiesta (colori e stile).",
-    "image": "assets/assets/images/assets/images/acchiappasogni_hd/FB_IMG_1759389007934.jpg",
-    "featured": true
-  },
-  {
-    "id": "AE-1001",
-    "title": "Acchiappasogni - Modello 2",
-    "category": "Acchiappasogni Classici",
-    "price_from": 5,
-    "description": "Acchiappasogni fatto a mano, elegante e curato nei dettagli. Ideale per camerette, regali o arredamento. Disponibile anche personalizzato.",
-    "image": "assets/assets/images/assets/images/acchiappasogni_hd/FB_IMG_1759389159757.jpg",
-    "featured": false
-  },
-  {
     "id": "AE-1002",
     "title": "Acchiappasogni - Modello 3",
     "category": "Acchiappasogni Classici",
     "price_from": 5,
-    "description": "Acchiappasogni artigianale con lavorazione dettagliata e stile moderno. Ottimo come idea regalo e decorazione per la casa.",
+    "description": "Acchiappasogni artigianale realizzato a mano con cura nei dettagli. Perfetto come decorazione o regalo. Personalizzabile su richiesta (colori e stile).",
     "image": "assets/assets/images/assets/images/acchiappasogni_hd/FB_IMG_1769994805736.jpg",
-    "featured": false
+    "featured": true
   },
   {
     "id": "AE-1003",
@@ -112,7 +94,7 @@
     "title": "Acchiappasogni - Modello 13",
     "category": "Acchiappasogni Classici",
     "price_from": 5,
-    "description": "Modello realizzato a mano con finiture curate. Perfetto per arredamento e regali personalizzati.",
+    "description": "Modello realizzato a mano con finiture curate. Ideale per arredamento e regali personalizzati.",
     "image": "assets/assets/images/assets/images/acchiappasogni_hd/FB_IMG_1769995066501.jpg",
     "featured": false
   },
@@ -193,7 +175,7 @@
     "title": "Acchiappasogni - Modello 22",
     "category": "Acchiappasogni Classici",
     "price_from": 5,
-    "description": "Acchiappasogni artigianale realizzato con cura e precisione. Ideale per camerette, regali e decorazioni.",
+    "description": "Acchiappasogni artigianale realizzato a mano con cura e precisione. Perfetto come regalo o decorazione.",
     "image": "assets/assets/images/assets/images/acchiappasogni_hd/FB_IMG_1769995140730.jpg",
     "featured": false
   },
@@ -247,7 +229,7 @@
     "title": "Acchiappasogni - Modello 28",
     "category": "Acchiappasogni Classici",
     "price_from": 5,
-    "description": "Acchiappasogni artigianale curato nei dettagli, perfetto come regalo o decorazione. Personalizzabile.",
+    "description": "Acchiappasogni artigianale curato nei dettagli. Perfetto come regalo o decorazione per la casa.",
     "image": "assets/assets/images/assets/images/acchiappasogni_hd/FB_IMG_1769995175050.jpg",
     "featured": false
   },
@@ -310,7 +292,7 @@
     "title": "Acchiappasogni - Modello 35",
     "category": "Acchiappasogni Classici",
     "price_from": 5,
-    "description": "Prodotto artigianale realizzato a mano. Perfetto come decorazione elegante o idea regalo.",
+    "description": "Prodotto artigianale realizzato a mano con cura. Perfetto per regali e decorazioni speciali.",
     "image": "assets/assets/images/assets/images/acchiappasogni_hd/FB_IMG_1769995214922.jpg",
     "featured": false
   },
@@ -517,7 +499,7 @@
     "title": "Acchiappasogni - Modello 58",
     "category": "Acchiappasogni Classici",
     "price_from": 5,
-    "description": "Acchiappasogni fatto a mano con materiali scelti e finiture curate. Personalizzabile su richiesta.",
+    "description": "Acchiappasogni artigianale fatto a mano con materiali scelti e finiture curate. Personalizzabile su richiesta.",
     "image": "assets/assets/images/assets/images/acchiappasogni_hd/FB_IMG_1769995459283.jpg",
     "featured": false
   },
