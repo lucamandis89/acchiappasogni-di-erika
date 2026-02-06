@@ -40,6 +40,7 @@
     <section id="grid" class="grid" aria-live="polite"></section>
   </main>
 
+  <!-- CARRELLO -->
   <div id="drawerBackdrop" class="backdrop hidden"></div>
 
   <aside id="drawer" class="drawer hidden" aria-hidden="true">
@@ -178,10 +179,19 @@
           <textarea id="newDesc" rows="3" placeholder="Descrizione..."></textarea>
         </label>
 
-        <label class="field">
-          <span>Immagine (path)</span>
-          <input id="newImage" type="text" placeholder="./assets/assets/images/.../FB_IMG_....jpg" />
-        </label>
+        <div class="field">
+          <span>Immagine</span>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
+            <button id="btnPickImageNew" class="btn small">Scegli immagine</button>
+            <button id="btnTakePhotoNew" class="btn small">Scatta foto</button>
+            <button id="btnClearImageNew" class="btn danger small">Rimuovi</button>
+          </div>
+          <input id="newImage" type="text" placeholder="(si compila da solo scegliendo/scattando)" style="margin-top:8px;" />
+          <img id="newImagePreview" alt="Anteprima" style="margin-top:10px; width:100%; max-height:220px; object-fit:cover; border-radius:12px; display:none;" />
+          <!-- INPUT FILE NASCOSTI -->
+          <input id="filePickerNew" type="file" accept="image/*" style="display:none;" />
+          <input id="cameraPickerNew" type="file" accept="image/*" capture="environment" style="display:none;" />
+        </div>
 
         <label style="display:flex; gap:8px; align-items:center; margin:10px 0;">
           <input id="newFeatured" type="checkbox" />
