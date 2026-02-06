@@ -1,0 +1,21 @@
+{
+  "name": "Acchiappasogni di Erika",
+  "short_name": "Erika Shop",
+  "description": "Catalogo online per Acchiappasogni artigianali creati da Erika. Ordini diretti via WhatsApp.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#7c5cff",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
