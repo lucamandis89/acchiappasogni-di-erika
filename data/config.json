@@ -1,7 +1,7 @@
 {
-  "shopName": "Acchiappasogni",
-  "shopUrl": "",
-  "whatsappPhone": "",
-  "whatsappLabel": "Ordina su WhatsApp",
-  "orderNote": "Scrivi qui eventuali note: colore, misure, personalizzazioni, ecc."
+  "brandName": "Acchiappasogni di Erika",
+  "whatsappPhone": "393440260906",
+  "productsUrl": "https://lucamandis89.github.io/acchiappasogni-di-erika/data/products.json",
+  "shippingBaseCents": 0,
+  "freeShippingOverCents": 99999999
 }
