@@ -1,11 +1,13 @@
 // =========================
 //  APP - Acchiappasogni
-//  Fix: gestione errori + path immagini per la tua struttura
-//  Struttura repo:
-//   - data/config.json
-//   - data/products.json
-//   - assets/assets/images/*.jpg
+//  Fix definitivo immagini per la tua struttura reale:
+//  assets/assets/images/assets/images/acchiappasogni_hd/*.jpg
+//  Dati:
+//  data/products.json
+//  data/config.json
 // =========================
+
+const IMAGES_BASE = "assets/assets/images/assets/images/acchiappasogni_hd/";
 
 const state = {
   config: {
@@ -38,36 +40,35 @@ function euroFromCents(cents) {
 }
 
 function parseCart() {
-  try {
-    return JSON.parse(localStorage.getItem("cart") || "{}") || {};
-  } catch {
-    return {};
-  }
+  try { return JSON.parse(localStorage.getItem("cart") || "{}") || {}; }
+  catch { return {}; }
 }
-function saveCart() {
-  localStorage.setItem("cart", JSON.stringify(state.cart));
-}
-function cartCount() {
-  return Object.values(state.cart).reduce((a, b) => a + b, 0);
-}
-function updateCartBadge() {
-  const el = $("#cartCount");
-  if (el) el.textContent = cartCount();
-}
+function saveCart() { localStorage.setItem("cart", JSON.stringify(state.cart)); }
+function cartCount() { return Object.values(state.cart).reduce((a, b) => a + b, 0); }
+function updateCartBadge() { const el = $("#cartCount"); if (el) el.textContent = cartCount(); }
 
 function productPriceCents(p) {
   return (Number(p.price_from) || 0) * 100;
 }
 
-// ✅ FIX: corregge automaticamente i percorsi immagine alla tua cartella reale
-// Tu hai: assets/assets/images/...
-function normalizeImagePath(path) {
-  const p = String(path || "");
-  // Se arriva dai vecchi tentativi, riallinea:
-  return p
-    .replace(/^assets\/images\/assets\/images\//, "assets/assets/images/")
-    .replace(/^assets\/images\//, "assets/assets/images/")
-    .replace(/^images\//, "assets/assets/images/");
+/**
+ * ✅ FIX IMMAGINI
+ * Qualunque cosa ci sia in p.image, noi estraiamo SOLO il nome file (FB_IMG_....jpg/png)
+ * e lo ricostruiamo sul tuo percorso reale IMAGES_BASE.
+ */
+function normalizeImagePath(anyPath) {
+  const p = String(anyPath || "").trim();
+
+  // Se è già un URL assoluto, lo lasciamo
+  if (/^https?:\/\//i.test(p)) return p;
+
+  // Estrae il nome file finale (quello dopo l'ultimo /)
+  const file = p.split("/").pop() || "";
+
+  // Se non c'è un file valido, ritorna vuoto (così non rompe la pagina)
+  if (!file || !/\.(png|jpg|jpeg|webp)$/i.test(file)) return "";
+
+  return IMAGES_BASE + file;
 }
 
 function buildCategories() {
@@ -137,8 +138,8 @@ function renderGrid() {
     const imgPath = normalizeImagePath(p.image);
 
     card.innerHTML = `
-      <img loading="lazy" src="${imgPath}" alt="${escapeHtml(p.title)}"
-           onerror="this.style.display='none';" />
+      ${imgPath ? `<img loading="lazy" src="${imgPath}" alt="${escapeHtml(p.title)}"
+           onerror="this.style.display='none';" />` : ``}
       <div class="content">
         <div class="title">${escapeHtml(p.title)}</div>
         <div class="meta">${escapeHtml(p.category || "")}</div>
@@ -195,7 +196,7 @@ function renderCart() {
     const div = document.createElement("div");
     div.className = "cart-item";
     div.innerHTML = `
-      <img src="${imgPath}" alt="${escapeHtml(p.title)}" onerror="this.style.display='none';"/>
+      ${imgPath ? `<img src="${imgPath}" alt="${escapeHtml(p.title)}" onerror="this.style.display='none';"/>` : ``}
       <div>
         <div class="ci-title">${escapeHtml(p.title)}</div>
         <div class="ci-meta">${escapeHtml(p.category || "")}</div>
@@ -336,7 +337,7 @@ function showFatal(msg) {
     <div style="padding:12px; color:var(--muted);">
       <b>Errore:</b> ${escapeHtml(msg)}
       <div style="opacity:.8; font-size:12px; margin-top:6px;">
-        Controlla che esistano: <b>data/products.json</b> e (opzionale) <b>data/config.json</b>
+        Controlla che esista: <b>data/products.json</b>
       </div>
     </div>
   `;
@@ -349,7 +350,6 @@ async function safeFetchJson(path) {
 }
 
 async function init() {
-  // UI listeners
   state.cart = parseCart();
   updateCartBadge();
 
@@ -399,22 +399,16 @@ async function init() {
     openWhatsApp(msg);
   };
 
-  // ✅ Caricamento dati (robusto)
   try {
-    // products è obbligatorio
     const products = await safeFetchJson("data/products.json");
     if (!Array.isArray(products)) throw new Error("products.json non è un array");
     state.products = products;
 
-    // config è opzionale: se fallisce, andiamo avanti lo stesso
     try {
       const cfg = await safeFetchJson("data/config.json");
       state.config = { ...state.config, ...(cfg || {}) };
-    } catch (e) {
-      console.warn("Config non caricato, uso default:", e);
-    }
+    } catch {}
 
-    // brand
     $("#brandName").textContent = state.config.brandName || "Acchiappasogni di Erika";
 
     buildCategories();
