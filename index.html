@@ -126,6 +126,19 @@
 
       <div id="settingsPanel" class="hidden">
         <hr style="margin:14px 0; opacity:.2;" />
+        <div class="section-title">Sincronizzazione (GitHub Pages)</div>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="btnExportJson" class="btn primary">Esporta JSON (copia)</button>
+          <button id="btnImportJson" class="btn small">Importa JSON (incolla)</button>
+          <button id="btnReloadFromSite" class="btn small">Ricarica dal sito</button>
+        </div>
+
+        <p class="small" style="margin-top:8px;">
+          Per far vedere i nuovi prodotti a tutti, incolla l’export nel file <b>data/products.json</b> su GitHub.
+        </p>
+
+        <hr style="margin:14px 0; opacity:.2;" />
         <div class="section-title">Sicurezza</div>
 
         <label class="field">
@@ -188,9 +201,6 @@
           </div>
           <input id="newImage" type="text" placeholder="(si compila da solo scegliendo/scattando)" style="margin-top:8px;" />
           <img id="newImagePreview" alt="Anteprima" style="margin-top:10px; width:100%; max-height:220px; object-fit:cover; border-radius:12px; display:none;" />
-          <!-- INPUT FILE NASCOSTI -->
-          <input id="filePickerNew" type="file" accept="image/*" style="display:none;" />
-          <input id="cameraPickerNew" type="file" accept="image/*" capture="environment" style="display:none;" />
         </div>
 
         <label style="display:flex; gap:8px; align-items:center; margin:10px 0;">
@@ -210,7 +220,7 @@
         </div>
 
         <p class="small" style="margin-top:10px;">
-          Tutto viene salvato nell’app. “Ripristina default” torna ai prodotti del products.json.
+          “Salva modifiche” salva sul tuo telefono. “Esporta JSON” serve per aggiornare GitHub e farlo vedere a tutti.
         </p>
       </div>
     </div>
