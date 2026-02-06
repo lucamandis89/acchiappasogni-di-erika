@@ -1,7 +1,7 @@
 {
   "brandName": "Acchiappasogni di Erika",
   "whatsappPhone": "393440260906",
+  "productsUrl": "https://lucamandis89.github.io/acchiappasogni-di-erika/data/products.json",
   "shippingBaseCents": 0,
-  "freeShippingOverCents": 99999999,
-  "productsUrl": "https://lucamandis89.github.io/acchiappasogni-di-erika/data/products.json"
+  "freeShippingOverCents": 99999999
 }
