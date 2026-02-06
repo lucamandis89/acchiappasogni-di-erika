@@ -15,52 +15,17 @@ function centsFromEuro(v) {
   return Math.round(n * 100);
 }
 function safeId(prefix="ID"){ return `${prefix}-${Date.now()}-${Math.floor(Math.random()*10000)}`; }
-function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
 
-// =====================
-//  COLOR -> NAME (no #xxxxxx)
-// =====================
-function hexToRgb(hex){
-  const h = String(hex||"").trim();
-  const m = /^#?([0-9a-f]{6})$/i.exec(h);
-  if(!m) return null;
-  const x = parseInt(m[1],16);
-  return { r:(x>>16)&255, g:(x>>8)&255, b:x&255 };
+// helper: set value only if element exists
+function setVal(id, value){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.value = value;
 }
-function dist2(a,b){
-  const dr=a.r-b.r, dg=a.g-b.g, db=a.b-b.b;
-  return dr*dr+dg*dg+db*db;
-}
-const COLOR_PALETTE = [
-  {name:"Nero", rgb:{r:0,g:0,b:0}},
-  {name:"Bianco", rgb:{r:255,g:255,b:255}},
-  {name:"Grigio", rgb:{r:120,g:120,b:120}},
-  {name:"Argento", rgb:{r:190,g:190,b:190}},
-  {name:"Oro", rgb:{r:212,g:175,b:55}},
-  {name:"Rosso", rgb:{r:200,g:30,b:30}},
-  {name:"Bordeaux", rgb:{r:120,g:0,b:30}},
-  {name:"Rosa", rgb:{r:255,g:105,b:180}},
-  {name:"Viola", rgb:{r:128,g:0,b:128}},
-  {name:"Lilla", rgb:{r:180,g:140,b:255}},
-  {name:"Blu", rgb:{r:30,g:90,b:200}},
-  {name:"Azzurro", rgb:{r:100,g:170,b:255}},
-  {name:"Turchese", rgb:{r:0,g:180,b:170}},
-  {name:"Verde", rgb:{r:30,g:160,b:80}},
-  {name:"Smeraldo", rgb:{r:0,g:140,b:90}},
-  {name:"Giallo", rgb:{r:240,g:220,b:30}},
-  {name:"Arancione", rgb:{r:255,g:140,b:0}},
-  {name:"Marrone", rgb:{r:120,g:70,b:30}},
-  {name:"Beige", rgb:{r:220,g:200,b:160}}
-];
-function colorName(hex){
-  const rgb = hexToRgb(hex);
-  if(!rgb) return "Colore";
-  let best = COLOR_PALETTE[0], bestD = Infinity;
-  for(const c of COLOR_PALETTE){
-    const d = dist2(rgb,c.rgb);
-    if(d < bestD){ bestD=d; best=c; }
-  }
-  return best.name;
+function setChecked(id, value){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.checked = !!value;
 }
 
 // =====================
@@ -99,30 +64,54 @@ const state = {
 };
 
 // =====================
-//  IMAGE FALLBACK
+//  IMAGE FALLBACK (FIX POTENTE)
 // =====================
 function buildImageCandidates(raw) {
   const original = String(raw || "").trim();
   if (!original) return [];
   if (original.startsWith("data:image/")) return [original];
 
-  const list = [original];
-  if (!original.startsWith("./")) list.push("./" + original);
+  const list = [];
 
+  const add = (p)=>{
+    if(!p) return;
+    list.push(p);
+    if(!p.startsWith("./")) list.push("./" + p);
+  };
+
+  // 1) così com'è
+  add(original);
+
+  // 2) se ti passa solo il nome file (FB_IMG_....jpg)
+  const filenameOnly = original.split("/").pop();
+  if (filenameOnly && filenameOnly !== original) add(filenameOnly);
+
+  // 3) percorsi "standard" usati finora
+  add("assets/" + filenameOnly);
+  add("assets/images/assets/" + filenameOnly);
+
+  // 4) percorsi "doppi" visti nel tuo repo (screenshot):
+  //    assets/assets/images/assets/images/acchiappasogni_hd/...
+  add("assets/assets/images/assets/images/" + filenameOnly);
+  add("assets/assets/images/assets/images/acchiappasogni_hd/" + filenameOnly);
+  add("assets/assets/images/assets/images/assets/" + filenameOnly);
+  add("assets/assets/images/assets/" + filenameOnly);
+
+  // 5) varianti HD che spesso crei
+  add("assets/images/assets/acchiappasogni_hd/" + filenameOnly);
+  add("assets/images/acchiappasogni_hd/" + filenameOnly);
+  add("assets/acchiappasogni_hd/" + filenameOnly);
+
+  // 6) se nel JSON ti arriva già tipo assets/...
   if (original.startsWith("assets/")) {
-    list.push(original.replace("assets/", "assets/images/assets/"));
-    list.push("./" + original.replace("assets/", "assets/images/assets/"));
+    add(original.replace("assets/", "assets/images/assets/"));
+    add(original.replace("assets/", "assets/assets/images/assets/images/"));
   }
 
-  if (!original.includes("/")) {
-    list.push("assets/images/assets/" + original);
-    list.push("./assets/images/assets/" + original);
-    list.push("assets/" + original);
-    list.push("./assets/" + original);
-  }
-
+  // pulizia duplicati
   return Array.from(new Set(list.filter(Boolean)));
 }
+
 function attachImageFallback(imgEl, rawImageValue) {
   const tries = buildImageCandidates(rawImageValue);
   let i = 0;
@@ -295,12 +284,12 @@ function renderGrid(){
 //  CART UI
 // =====================
 function openCart(){
-  $("#drawer").classList.remove("hidden");
-  $("#drawerBackdrop").classList.remove("hidden");
+  $("#drawer")?.classList.remove("hidden");
+  $("#drawerBackdrop")?.classList.remove("hidden");
 }
 function closeCart(){
-  $("#drawer").classList.add("hidden");
-  $("#drawerBackdrop").classList.add("hidden");
+  $("#drawer")?.classList.add("hidden");
+  $("#drawerBackdrop")?.classList.add("hidden");
 }
 function renderCart(){
   const wrap = $("#cartItems");
@@ -365,10 +354,10 @@ function renderTotals(){
     shipping = 0;
   }
 
-  $("#subtotal").textContent = euroFromCents(subtotal);
-  $("#shipping").textContent = euroFromCents(shipping);
-  $("#total").textContent = euroFromCents(subtotal + shipping);
-  $("#shippingHint").textContent = hint;
+  if($("#subtotal")) $("#subtotal").textContent = euroFromCents(subtotal);
+  if($("#shipping")) $("#shipping").textContent = euroFromCents(shipping);
+  if($("#total")) $("#total").textContent = euroFromCents(subtotal + shipping);
+  if($("#shippingHint")) $("#shippingHint").textContent = hint;
 }
 
 // =====================
@@ -391,11 +380,11 @@ function buildWhatsAppMessage(){
   const delivery = document.querySelector('input[name="delivery"]:checked')?.value || "shipping";
   lines.push(`Consegna: ${delivery === "pickup" ? "Ritiro / a mano" : "Spedizione"}`);
 
-  const name = $("#name").value.trim();
-  const street = $("#street").value.trim();
-  const cap = $("#cap").value.trim();
-  const city = $("#city").value.trim();
-  const notes = $("#notes").value.trim();
+  const name = $("#name")?.value?.trim() || "";
+  const street = $("#street")?.value?.trim() || "";
+  const cap = $("#cap")?.value?.trim() || "";
+  const city = $("#city")?.value?.trim() || "";
+  const notes = $("#notes")?.value?.trim() || "";
 
   if(name) lines.push(`Nome: ${name}`);
 
@@ -724,7 +713,7 @@ function adminImportJson(){
 }
 
 // =====================
-//  DESIGNER
+//  DESIGNER (10 cerchi + scelta colori)
 // =====================
 const dream = {
   diameter: 35,
@@ -734,6 +723,9 @@ const dream = {
   webDensity: 14,
 
   colRings: "#222222",
+  multiRingColors: false,
+  ringColors: Array(10).fill("#222222"),
+
   colWeb: "#222222",
   colFeathers: "#333333",
   colBeads: "#b50000",
@@ -760,6 +752,8 @@ const dream = {
 let designerCanvas = null;
 let designerCtx = null;
 
+function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
+
 function calcDreamExtraCents(){
   const p = getPricing();
   let total = 0;
@@ -772,6 +766,35 @@ function calcDreamExtraCents(){
 function updateDreamPriceUI(){
   const el = $("#dreamPrice");
   if(el) el.textContent = euroFromCents(calcDreamExtraCents());
+}
+
+function renderRingColorInputs(){
+  const wrap = $("#ringColorsWrap");
+  const list = $("#ringColorsList");
+  const chk = $("#optMultiRingColors");
+  if(!wrap || !list || !chk) return;
+
+  wrap.style.display = chk.checked ? "block" : "none";
+  list.innerHTML = "";
+
+  const count = clamp(dream.ringCount|0, 1, 10);
+  for(let i=0;i<count;i++){
+    const box = document.createElement("label");
+    box.style.cssText = "display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:900;";
+    box.innerHTML = `
+      <span>Cerchio ${i+1}</span>
+      <input type="color" data-ringcolor="${i}" value="${dream.ringColors[i] || dream.colRings}">
+    `;
+    const input = box.querySelector("input");
+    input.oninput = (e)=>{
+      dream.ringColors[i] = e.target.value;
+      renderDream();
+    };
+    list.appendChild(box);
+  }
+}
+function setAllRingColorsFromMain(){
+  for(let i=0;i<10;i++) dream.ringColors[i] = dream.colRings;
 }
 
 function drawEmoji(ctx, x, y, emoji){
@@ -832,7 +855,7 @@ function initDesigner(){
   resize();
   window.addEventListener("resize", resize);
 
-  designerCanvas.addEventListener("pointerdown", (ev)=>{
+  designerCanvas.addEventListener("pointerdown", async (ev)=>{
     const rect = designerCanvas.getBoundingClientRect();
     const x = ev.clientX - rect.left;
     const y = ev.clientY - rect.top;
@@ -844,7 +867,7 @@ function initDesigner(){
       input.style.display = "none";
       document.body.appendChild(input);
 
-      input.onchange = () => {
+      input.onchange = async () => {
         const file = input.files && input.files[0];
         document.body.removeChild(input);
         if(!file) return;
@@ -924,17 +947,23 @@ function renderDream(){
   const ringCount = clamp(dream.ringCount|0, 1, 10);
   const ringGap = clamp(Number(dream.ringGap)||18, 4, 40);
 
-  // CERCHI
+  // ✅ CERCHI con scelta colore singolo/multiplo
   for(let i=0;i<ringCount;i++){
     const r = radius - i*ringGap;
     if(r < 18) break;
-    ctx.strokeStyle = dream.colRings;
+
+    const ringColor = dream.multiRingColors
+      ? (dream.ringColors[i] || dream.colRings)
+      : dream.colRings;
+
+    ctx.strokeStyle = ringColor;
     ctx.lineWidth = dream.ringWidth;
     ctx.beginPath();
     ctx.arc(cx, topY, r, 0, Math.PI*2);
     ctx.stroke();
   }
 
+  // rete usa l’ultimo cerchio valido
   const innerRadius = Math.max(26, radius - (ringCount-1)*ringGap);
 
   // web
@@ -1045,14 +1074,15 @@ function renderDream(){
 }
 
 function openDesigner(){
-  $("#designerModal").classList.remove("hidden");
-  $("#designerBackdrop").classList.remove("hidden");
+  $("#designerModal")?.classList.remove("hidden");
+  $("#designerBackdrop")?.classList.remove("hidden");
   initDesigner();
+  renderRingColorInputs();
   renderDream();
 }
 function closeDesigner(){
-  $("#designerModal").classList.add("hidden");
-  $("#designerBackdrop").classList.add("hidden");
+  $("#designerModal")?.classList.add("hidden");
+  $("#designerBackdrop")?.classList.add("hidden");
 }
 
 function canvasToBlob(canvas){
@@ -1107,16 +1137,17 @@ function saveCurrentDream(){
 }
 
 function openMyDreams(){
-  $("#myDreamsModal").classList.remove("hidden");
-  $("#myDreamsBackdrop").classList.remove("hidden");
+  $("#myDreamsModal")?.classList.remove("hidden");
+  $("#myDreamsBackdrop")?.classList.remove("hidden");
   renderMyDreams();
 }
 function closeMyDreams(){
-  $("#myDreamsModal").classList.add("hidden");
-  $("#myDreamsBackdrop").classList.add("hidden");
+  $("#myDreamsModal")?.classList.add("hidden");
+  $("#myDreamsBackdrop")?.classList.add("hidden");
 }
 function renderMyDreams(){
   const wrap = $("#myDreamsList");
+  if(!wrap) return;
   wrap.innerHTML = "";
   const arr = loadDreams();
 
@@ -1127,11 +1158,11 @@ function renderMyDreams(){
 
   arr.forEach(item=>{
     const box = document.createElement("div");
-    box.style.border = "1px solid rgba(255,255,255,.12)";
+    box.style.border = "1px solid rgba(0,0,0,.08)";
     box.style.borderRadius = "14px";
     box.style.padding = "10px";
     box.style.marginBottom = "10px";
-    box.style.background = "rgba(255,255,255,.06)";
+    box.style.background = "rgba(255,255,255,.65)";
 
     box.innerHTML = `
       <div style="font-weight:900; margin-bottom:6px;">${escapeHtml(item.name)}</div>
@@ -1148,12 +1179,13 @@ function renderMyDreams(){
 
     box.querySelector("[data-open]").onclick = ()=>{
       Object.assign(dream, JSON.parse(JSON.stringify(item.dream || {})));
-      $("#eventType").value = item.event?.eventType || "";
-      $("#eventQty").value = item.event?.eventQty || "";
-      $("#eventDate").value = item.event?.eventDate || "";
-      $("#eventTheme").value = item.event?.eventTheme || "";
-      $("#designerName").value = item.info?.designerName || "";
-      $("#designerNotes").value = item.info?.designerNotes || "";
+      setVal("eventType", item.event?.eventType || "");
+      setVal("eventQty", item.event?.eventQty || "");
+      setVal("eventDate", item.event?.eventDate || "");
+      setVal("eventTheme", item.event?.eventTheme || "");
+      setVal("designerName", item.info?.designerName || "");
+      setVal("designerNotes", item.info?.designerNotes || "");
+      renderRingColorInputs();
       renderDream();
       closeMyDreams();
       openDesigner();
@@ -1170,7 +1202,7 @@ function renderMyDreams(){
 }
 
 // =====================
-//  SEND DESIGN TO WHATSAPP (colors as words)
+//  SEND DESIGN TO WHATSAPP
 // =====================
 async function sendDreamToWhatsApp(){
   const phone = state.config?.whatsappPhone || "393440260906";
@@ -1194,13 +1226,14 @@ async function sendDreamToWhatsApp(){
     eventTheme ? `🎨 Tema: ${eventTheme}` : null,
     "",
     `• Diametro: ${dream.diameter} cm`,
-    `• Cerchi: ${dream.ringCount} (distanza ${dream.ringGap})`,
+    `• Cerchi: ${dream.ringCount} (gap ${dream.ringGap})`,
     `• Rete densità: ${dream.webDensity}`,
     `• Piume: ${dream.feathers} (lunghezza ${dream.featherLen})`,
-    `• Colore cerchi: ${colorName(dream.colRings)}`,
-    `• Colore rete: ${colorName(dream.colWeb)}`,
-    `• Colore piume: ${colorName(dream.colFeathers)}`,
-    dream.beadsOn ? `• Perline: sì (${dream.beadsQty}) colore ${colorName(dream.colBeads)}` : "• Perline: no",
+    `• Colore cerchi: ${dream.multiRingColors ? "MULTI" : "SINGOLO"}`,
+    dream.multiRingColors ? `• Colori cerchi: ${dream.ringColors.slice(0, clamp(dream.ringCount,1,10)).join(", ")}` : null,
+    `• Rete colore: ${dream.colWeb}`,
+    `• Piume colore: ${dream.colFeathers}`,
+    dream.beadsOn ? `• Perline: sì (${dream.beadsQty}) colore ${dream.colBeads}` : "• Perline: no",
     dream.glitter ? "• Brillantini: sì" : "• Brillantini: no",
     dream.charms ? `• Charms laterali: sì (size ${dream.charmSize})` : "• Charms laterali: no",
     dream.textTop ? `• Scritta: ${dream.textTop}` : null,
@@ -1222,7 +1255,8 @@ async function sendDreamToWhatsApp(){
   try{
     if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
       await navigator.share({ title: "Progetto Acchiappasogni", text: msg, files: [file] });
-      $("#designerHint").textContent = "Condivisione avviata ✅ scegli WhatsApp.";
+      const hint = $("#designerHint");
+      if(hint) hint.textContent = "Condivisione avviata ✅ scegli WhatsApp.";
       return;
     }
   }catch{}
@@ -1230,49 +1264,50 @@ async function sendDreamToWhatsApp(){
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
   window.open(url, "_blank");
   downloadBlob(blob, "progetto_acchiappasogni.png");
-  $("#designerHint").textContent = "WhatsApp aperto ✅ (se non allega, allega l’immagine scaricata).";
+  const hint = $("#designerHint");
+  if(hint) hint.textContent = "WhatsApp aperto ✅ (se non allega, allega l’immagine scaricata).";
 }
 
 // =====================
 //  PRESETS
 // =====================
-function syncDesignerInputs(){
-  $("#optDiameter").value = dream.diameter;
-  $("#optFeathers").value = dream.feathers;
-  $("#optFeatherLen").value = dream.featherLen;
-  $("#optRingWidth").value = dream.ringWidth;
-  $("#optRingCount").value = dream.ringCount;
-  $("#optRingGap").value = dream.ringGap;
-  $("#optWebDensity").value = dream.webDensity;
-
-  $("#colRings").value = dream.colRings;
-  $("#colWeb").value = dream.colWeb;
-  $("#colFeathers").value = dream.colFeathers;
-  $("#colBeads").value = dream.colBeads;
-  $("#colText").value = dream.colText;
-
-  $("#optBeadsOn").checked = !!dream.beadsOn;
-  $("#optBeadsQty").value = dream.beadsQty;
-  $("#optGlitter").checked = !!dream.glitter;
-
-  $("#optTextTop").value = dream.textTop;
-  $("#optSymbol").value = dream.symbol;
-
-  $("#optCharms").checked = !!dream.charms;
-  $("#optCharmSize").value = dream.charmSize;
-}
-
 function presetClassic(){
   Object.assign(dream, {
-    diameter: 35, ringWidth: 5, ringCount: 2, ringGap: 18, webDensity: 14,
-    colRings: "#222222", colWeb: "#222222", colFeathers: "#333333", colBeads: "#b50000", colText: "#b50000",
-    feathers: 3, featherLen: 95,
-    beadsOn: true, beadsQty: 10, glitter: false,
-    textTop: "", symbol: "none",
-    charms: true, charmSize: 34,
-    placed: [], tool: "bead", hasCustomPhoto:false
+    diameter: 35,
+    ringWidth: 5,
+    ringCount: 2,
+    ringGap: 18,
+    webDensity: 14,
+
+    colRings: "#222222",
+    multiRingColors: false,
+    ringColors: Array(10).fill("#222222"),
+
+    colWeb: "#222222",
+    colFeathers: "#333333",
+    colBeads: "#b50000",
+    colText: "#b50000",
+
+    feathers: 3,
+    featherLen: 95,
+
+    beadsOn: true,
+    beadsQty: 10,
+    glitter: false,
+
+    textTop: "",
+    symbol: "none",
+
+    charms: true,
+    charmSize: 34,
+
+    placed: [],
+    tool: "bead",
+    hasCustomPhoto: false
   });
-  syncDesignerInputs(); renderDream();
+  syncDesignerInputs();
+  renderRingColorInputs();
+  renderDream();
 }
 function presetPhoto(){
   presetClassic();
@@ -1281,7 +1316,7 @@ function presetPhoto(){
   dream.glitter = true;
   dream.ringCount = 3;
   dream.ringGap = 16;
-  syncDesignerInputs(); renderDream();
+  syncDesignerInputs(); renderRingColorInputs(); renderDream();
 }
 function presetMarriage(){
   presetClassic();
@@ -1294,7 +1329,8 @@ function presetMarriage(){
   dream.glitter = true;
   dream.ringCount = 4;
   dream.ringGap = 14;
-  syncDesignerInputs(); renderDream();
+  setAllRingColorsFromMain();
+  syncDesignerInputs(); renderRingColorInputs(); renderDream();
 }
 function presetBaptism(){
   presetClassic();
@@ -1307,7 +1343,8 @@ function presetBaptism(){
   dream.glitter = true;
   dream.ringCount = 3;
   dream.ringGap = 16;
-  syncDesignerInputs(); renderDream();
+  setAllRingColorsFromMain();
+  syncDesignerInputs(); renderRingColorInputs(); renderDream();
 }
 function presetCresima(){
   presetClassic();
@@ -1316,7 +1353,7 @@ function presetCresima(){
   dream.glitter = true;
   dream.ringCount = 3;
   dream.ringGap = 16;
-  syncDesignerInputs(); renderDream();
+  syncDesignerInputs(); renderRingColorInputs(); renderDream();
 }
 function presetLaurea(){
   presetClassic();
@@ -1325,7 +1362,7 @@ function presetLaurea(){
   dream.glitter = true;
   dream.ringCount = 4;
   dream.ringGap = 14;
-  syncDesignerInputs(); renderDream();
+  syncDesignerInputs(); renderRingColorInputs(); renderDream();
 }
 function presetBaby(){
   presetClassic();
@@ -1338,7 +1375,8 @@ function presetBaby(){
   dream.glitter = true;
   dream.ringCount = 3;
   dream.ringGap = 16;
-  syncDesignerInputs(); renderDream();
+  setAllRingColorsFromMain();
+  syncDesignerInputs(); renderRingColorInputs(); renderDream();
 }
 function presetFantasy(){
   presetClassic();
@@ -1351,7 +1389,39 @@ function presetFantasy(){
   dream.glitter = true;
   dream.ringCount = 5;
   dream.ringGap = 12;
-  syncDesignerInputs(); renderDream();
+  setAllRingColorsFromMain();
+  syncDesignerInputs(); renderRingColorInputs(); renderDream();
+}
+
+function syncDesignerInputs(){
+  setVal("optDiameter", dream.diameter);
+  setVal("optFeathers", dream.feathers);
+  setVal("optFeatherLen", dream.featherLen);
+
+  setVal("optRingWidth", dream.ringWidth);
+  setVal("optRingCount", dream.ringCount);
+  setVal("optRingGap", dream.ringGap);
+  setVal("optWebDensity", dream.webDensity);
+
+  setVal("colRings", dream.colRings);
+  setChecked("optMultiRingColors", !!dream.multiRingColors);
+
+  setVal("colWeb", dream.colWeb);
+  setVal("colFeathers", dream.colFeathers);
+  setVal("colBeads", dream.colBeads);
+  setVal("colText", dream.colText);
+
+  setChecked("optBeadsOn", !!dream.beadsOn);
+  setVal("optBeadsQty", dream.beadsQty);
+  setChecked("optGlitter", !!dream.glitter);
+
+  setVal("optTextTop", dream.textTop);
+  setVal("optSymbol", dream.symbol);
+
+  setChecked("optCharms", !!dream.charms);
+  setVal("optCharmSize", dream.charmSize);
+
+  renderRingColorInputs();
 }
 
 // =====================
@@ -1390,12 +1460,12 @@ async function loadData(){
 // =====================
 function hookEvents(){
   // cart
-  $("#btnCart").onclick = openCart;
-  $("#btnCloseCart").onclick = closeCart;
-  $("#drawerBackdrop").onclick = closeCart;
+  $("#btnCart") && ($("#btnCart").onclick = openCart);
+  $("#btnCloseCart") && ($("#btnCloseCart").onclick = closeCart);
+  $("#drawerBackdrop") && ($("#drawerBackdrop").onclick = closeCart);
 
   // admin
-  $("#btnAdmin").onclick = openAdmin;
+  $("#btnAdmin") && ($("#btnAdmin").onclick = openAdmin);
 
   // admin panel events
   ensureAdminPanel();
@@ -1431,111 +1501,134 @@ function hookEvents(){
   };
 
   // designer
-  $("#btnDesigner").onclick = openDesigner;
-  $("#btnCloseDesigner").onclick = closeDesigner;
-  $("#designerBackdrop").onclick = closeDesigner;
+  $("#btnDesigner") && ($("#btnDesigner").onclick = openDesigner);
+  $("#btnCloseDesigner") && ($("#btnCloseDesigner").onclick = closeDesigner);
+  $("#designerBackdrop") && ($("#designerBackdrop").onclick = closeDesigner);
 
-  $("#presetBase").onclick = presetClassic;
-  $("#presetPhoto").onclick = presetPhoto;
-  $("#presetMarriage").onclick = presetMarriage;
-  $("#presetBaptism").onclick = presetBaptism;
-  $("#presetCresima").onclick = presetCresima;
-  $("#presetLaurea").onclick = presetLaurea;
-  $("#presetBaby").onclick = presetBaby;
-  $("#presetFantasy").onclick = presetFantasy;
+  $("#presetBase") && ($("#presetBase").onclick = presetClassic);
+  $("#presetPhoto") && ($("#presetPhoto").onclick = presetPhoto);
+  $("#presetMarriage") && ($("#presetMarriage").onclick = presetMarriage);
+  $("#presetBaptism") && ($("#presetBaptism").onclick = presetBaptism);
+  $("#presetCresima") && ($("#presetCresima").onclick = presetCresima);
+  $("#presetLaurea") && ($("#presetLaurea").onclick = presetLaurea);
+  $("#presetBaby") && ($("#presetBaby").onclick = presetBaby);
+  $("#presetFantasy") && ($("#presetFantasy").onclick = presetFantasy);
 
   // tools
   const setTool = (t)=>{ dream.tool = t; };
-  $("#toolBead").onclick = ()=>setTool("bead");
-  $("#toolGlitter").onclick = ()=>setTool("glitter");
-  $("#toolHeart").onclick = ()=>setTool("heart");
-  $("#toolRings").onclick = ()=>setTool("rings");
-  $("#toolBouquet").onclick = ()=>setTool("bouquet");
-  $("#toolRose").onclick = ()=>setTool("rose");
-  $("#toolCrown").onclick = ()=>setTool("crown");
-  $("#toolAngel").onclick = ()=>setTool("angel");
-  $("#toolDove").onclick = ()=>setTool("dove");
-  $("#toolBaby").onclick = ()=>setTool("baby");
-  $("#toolRibbon").onclick = ()=>setTool("ribbon");
-  $("#toolCross").onclick = ()=>setTool("cross");
-  $("#toolMoon").onclick = ()=>setTool("moon");
-  $("#toolStar").onclick = ()=>setTool("star");
-  $("#toolButterfly").onclick = ()=>setTool("butterfly");
-  $("#toolFlower").onclick = ()=>setTool("flower");
-  $("#toolSparkle").onclick = ()=>setTool("sparkle");
-  $("#toolLetter").onclick = ()=>setTool("letter");
-  $("#toolNumber").onclick = ()=>setTool("number");
-  $("#toolPhoto").onclick = ()=>setTool("photo");
+  $("#toolBead") && ($("#toolBead").onclick = ()=>setTool("bead"));
+  $("#toolGlitter") && ($("#toolGlitter").onclick = ()=>setTool("glitter"));
+  $("#toolHeart") && ($("#toolHeart").onclick = ()=>setTool("heart"));
+  $("#toolRings") && ($("#toolRings").onclick = ()=>setTool("rings"));
+  $("#toolBouquet") && ($("#toolBouquet").onclick = ()=>setTool("bouquet"));
+  $("#toolRose") && ($("#toolRose").onclick = ()=>setTool("rose"));
+  $("#toolCrown") && ($("#toolCrown").onclick = ()=>setTool("crown"));
+  $("#toolAngel") && ($("#toolAngel").onclick = ()=>setTool("angel"));
+  $("#toolDove") && ($("#toolDove").onclick = ()=>setTool("dove"));
+  $("#toolBaby") && ($("#toolBaby").onclick = ()=>setTool("baby"));
+  $("#toolRibbon") && ($("#toolRibbon").onclick = ()=>setTool("ribbon"));
+  $("#toolCross") && ($("#toolCross").onclick = ()=>setTool("cross"));
+  $("#toolMoon") && ($("#toolMoon").onclick = ()=>setTool("moon"));
+  $("#toolStar") && ($("#toolStar").onclick = ()=>setTool("star"));
+  $("#toolButterfly") && ($("#toolButterfly").onclick = ()=>setTool("butterfly"));
+  $("#toolFlower") && ($("#toolFlower").onclick = ()=>setTool("flower"));
+  $("#toolSparkle") && ($("#toolSparkle").onclick = ()=>setTool("sparkle"));
+  $("#toolLetter") && ($("#toolLetter").onclick = ()=>setTool("letter"));
+  $("#toolNumber") && ($("#toolNumber").onclick = ()=>setTool("number"));
+  $("#toolPhoto") && ($("#toolPhoto").onclick = ()=>setTool("photo"));
 
-  $("#toolUndo").onclick = ()=>{ dream.placed.pop(); renderDream(); };
-  $("#toolClearAll").onclick = ()=>{
+  $("#toolUndo") && ($("#toolUndo").onclick = ()=>{ dream.placed.pop(); renderDream(); });
+  $("#toolClearAll") && ($("#toolClearAll").onclick = ()=>{
     if(!confirm("Vuoi cancellare tutto?")) return;
     dream.placed = [];
     dream.hasCustomPhoto = false;
     renderDream();
-  };
+  });
 
   // designer inputs
-  $("#optDiameter").oninput = (e)=>{ dream.diameter = Number(e.target.value)||35; renderDream(); };
-  $("#optFeathers").oninput = (e)=>{ dream.feathers = Number(e.target.value)||3; renderDream(); };
-  $("#optFeatherLen").oninput = (e)=>{ dream.featherLen = Number(e.target.value)||95; renderDream(); };
-  $("#optRingWidth").oninput = (e)=>{ dream.ringWidth = Number(e.target.value)||5; renderDream(); };
-  $("#optRingCount").oninput = (e)=>{ dream.ringCount = clamp(Number(e.target.value)||2, 1, 10); renderDream(); };
-  $("#optRingGap").oninput = (e)=>{ dream.ringGap = Number(e.target.value)||18; renderDream(); };
-  $("#optWebDensity").oninput = (e)=>{ dream.webDensity = Number(e.target.value)||14; renderDream(); };
+  $("#optDiameter") && ($("#optDiameter").oninput = (e)=>{ dream.diameter = Number(e.target.value)||35; renderDream(); });
+  $("#optFeathers") && ($("#optFeathers").oninput = (e)=>{ dream.feathers = Number(e.target.value)||3; renderDream(); });
+  $("#optFeatherLen") && ($("#optFeatherLen").oninput = (e)=>{ dream.featherLen = Number(e.target.value)||95; renderDream(); });
+  $("#optRingWidth") && ($("#optRingWidth").oninput = (e)=>{ dream.ringWidth = Number(e.target.value)||5; renderDream(); });
 
-  $("#colRings").oninput = (e)=>{ dream.colRings = e.target.value; renderDream(); };
-  $("#colWeb").oninput = (e)=>{ dream.colWeb = e.target.value; renderDream(); };
-  $("#colFeathers").oninput = (e)=>{ dream.colFeathers = e.target.value; renderDream(); };
-  $("#colBeads").oninput = (e)=>{ dream.colBeads = e.target.value; renderDream(); };
-  $("#colText").oninput = (e)=>{ dream.colText = e.target.value; renderDream(); };
+  $("#optRingCount") && ($("#optRingCount").oninput = (e)=>{
+    dream.ringCount = clamp(Number(e.target.value)||2, 1, 10);
+    renderRingColorInputs();
+    renderDream();
+  });
+  $("#optRingGap") && ($("#optRingGap").oninput = (e)=>{ dream.ringGap = Number(e.target.value)||18; renderDream(); });
+  $("#optWebDensity") && ($("#optWebDensity").oninput = (e)=>{ dream.webDensity = Number(e.target.value)||14; renderDream(); });
 
-  $("#optBeadsOn").onchange = (e)=>{ dream.beadsOn = !!e.target.checked; renderDream(); };
-  $("#optBeadsQty").oninput = (e)=>{ dream.beadsQty = Number(e.target.value)||0; renderDream(); };
-  $("#optGlitter").onchange = (e)=>{ dream.glitter = !!e.target.checked; renderDream(); };
+  $("#colRings") && ($("#colRings").oninput = (e)=>{
+    dream.colRings = e.target.value;
+    if(dream.multiRingColors){
+      setAllRingColorsFromMain();
+      renderRingColorInputs();
+    }
+    renderDream();
+  });
 
-  $("#optTextTop").oninput = (e)=>{ dream.textTop = e.target.value || ""; renderDream(); };
-  $("#optSymbol").onchange = (e)=>{ dream.symbol = e.target.value; renderDream(); };
+  $("#optMultiRingColors") && ($("#optMultiRingColors").onchange = (e)=>{
+    dream.multiRingColors = !!e.target.checked;
+    if(dream.multiRingColors && (!dream.ringColors || !dream.ringColors.length)){
+      dream.ringColors = Array(10).fill(dream.colRings);
+    }
+    renderRingColorInputs();
+    renderDream();
+  });
 
-  $("#optCharms").onchange = (e)=>{ dream.charms = !!e.target.checked; renderDream(); };
-  $("#optCharmSize").oninput = (e)=>{ dream.charmSize = Number(e.target.value)||34; renderDream(); };
+  $("#colWeb") && ($("#colWeb").oninput = (e)=>{ dream.colWeb = e.target.value; renderDream(); });
+  $("#colFeathers") && ($("#colFeathers").oninput = (e)=>{ dream.colFeathers = e.target.value; renderDream(); });
+  $("#colBeads") && ($("#colBeads").oninput = (e)=>{ dream.colBeads = e.target.value; renderDream(); });
+  $("#colText") && ($("#colText").oninput = (e)=>{ dream.colText = e.target.value; renderDream(); });
+
+  $("#optBeadsOn") && ($("#optBeadsOn").onchange = (e)=>{ dream.beadsOn = !!e.target.checked; renderDream(); });
+  $("#optBeadsQty") && ($("#optBeadsQty").oninput = (e)=>{ dream.beadsQty = Number(e.target.value)||0; renderDream(); });
+  $("#optGlitter") && ($("#optGlitter").onchange = (e)=>{ dream.glitter = !!e.target.checked; renderDream(); });
+
+  $("#optTextTop") && ($("#optTextTop").oninput = (e)=>{ dream.textTop = e.target.value || ""; renderDream(); });
+  $("#optSymbol") && ($("#optSymbol").onchange = (e)=>{ dream.symbol = e.target.value; renderDream(); });
+
+  $("#optCharms") && ($("#optCharms").onchange = (e)=>{ dream.charms = !!e.target.checked; renderDream(); });
+  $("#optCharmSize") && ($("#optCharmSize").oninput = (e)=>{ dream.charmSize = Number(e.target.value)||34; renderDream(); });
 
   // designer actions
-  $("#btnSaveDream").onclick = saveCurrentDream;
-  $("#btnMyDreams").onclick = openMyDreams;
-  $("#btnCloseMyDreams").onclick = closeMyDreams;
-  $("#myDreamsBackdrop").onclick = closeMyDreams;
+  $("#btnSaveDream") && ($("#btnSaveDream").onclick = saveCurrentDream);
+  $("#btnMyDreams") && ($("#btnMyDreams").onclick = openMyDreams);
+  $("#btnCloseMyDreams") && ($("#btnCloseMyDreams").onclick = closeMyDreams);
+  $("#myDreamsBackdrop") && ($("#myDreamsBackdrop").onclick = closeMyDreams);
 
-  $("#btnDownloadDesign").onclick = async ()=>{
+  $("#btnDownloadDesign") && ($("#btnDownloadDesign").onclick = async ()=>{
     const blob = await canvasToBlob(designerCanvas);
     downloadBlob(blob, "acchiappasogni_progetto.png");
-  };
-  $("#btnSendDesign").onclick = sendDreamToWhatsApp;
+  });
+  $("#btnSendDesign") && ($("#btnSendDesign").onclick = sendDreamToWhatsApp);
 
   // search
-  $("#search").addEventListener("input", (e)=>{
+  $("#search") && ($("#search").addEventListener("input", (e)=>{
     state.query = e.target.value || "";
     renderGrid();
-  });
+  }));
 
   // delivery toggle
   document.querySelectorAll('input[name="delivery"]').forEach(r=>{
     r.addEventListener("change", ()=>{
       const v = document.querySelector('input[name="delivery"]:checked')?.value || "shipping";
-      $("#shippingFields").style.display = v === "pickup" ? "none" : "";
+      const shipFields = $("#shippingFields");
+      if(shipFields) shipFields.style.display = v === "pickup" ? "none" : "";
       renderTotals();
     });
   });
 
   // send order
-  $("#btnSend").onclick = ()=>{
+  $("#btnSend") && ($("#btnSend").onclick = ()=>{
     const msg = buildWhatsAppMessage();
     const phone = state.config?.whatsappPhone || "393440260906";
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
-  };
+  });
 
   // clear cart
-  $("#btnClear").onclick = ()=>{
+  $("#btnClear") && ($("#btnClear").onclick = ()=>{
     if(confirm("Vuoi svuotare il carrello?")){
       state.cart = {};
       saveCart();
@@ -1544,14 +1637,14 @@ function hookEvents(){
       renderTotals();
       renderGrid();
     }
-  };
+  });
 
   // custom button
-  $("#btnCustom").onclick = ()=>{
+  $("#btnCustom") && ($("#btnCustom").onclick = ()=>{
     const phone = state.config?.whatsappPhone || "393440260906";
     const msg = "Ciao! Vorrei un acchiappasogni personalizzato 😊";
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
-  };
+  });
 }
 
 // =====================
