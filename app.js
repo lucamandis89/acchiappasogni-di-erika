@@ -27,6 +27,10 @@ function buildImageCandidates(raw) {
   const candidates = [];
   if (original) candidates.push(original);
 
+  // data url (base64) va bene così
+  if (original.startsWith("data:image/")) return [original];
+
+  // aiuta hosting / WebView
   if (original && original.startsWith("assets/")) candidates.push("./" + original);
   if (original && original.startsWith("./assets/")) candidates.push(original.replace("./", ""));
 
@@ -117,6 +121,39 @@ function getSortMode() { return localStorage.getItem(LS_SORT_MODE) || "featured"
 function setSortMode(m) { localStorage.setItem(LS_SORT_MODE, m); }
 
 // =====================
+//  FILE -> BASE64
+// =====================
+function fileToDataUrl(file, maxW = 1200, quality = 0.85) {
+  // Comprimo un po' per non far esplodere localStorage
+  return new Promise((resolve, reject) => {
+    if (!file) return reject(new Error("No file"));
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Read error"));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("Image error"));
+      img.onload = () => {
+        const scale = Math.min(1, maxW / img.width);
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+
+        // jpeg per comprimere di più
+        const out = canvas.toDataURL("image/jpeg", quality);
+        resolve(out);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// =====================
 //  FILTRI + SORT
 // =====================
 function matches(p) {
@@ -131,7 +168,6 @@ function sortProducts(list) {
   const mode = getSortMode();
 
   if (mode === "featured") {
-    // featured first, poi newest
     return list.sort((a, b) => {
       const fa = a.featured ? 1 : 0;
       const fb = b.featured ? 1 : 0;
@@ -141,22 +177,10 @@ function sortProducts(list) {
       return db - da;
     });
   }
-
-  if (mode === "newest") {
-    return list.sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
-  }
-
-  if (mode === "title") {
-    return list.sort((a, b) => String(a.title || "").localeCompare(String(b.title || ""), "it"));
-  }
-
-  if (mode === "priceAsc") {
-    return list.sort((a, b) => productPriceCents(a) - productPriceCents(b));
-  }
-
-  if (mode === "priceDesc") {
-    return list.sort((a, b) => productPriceCents(b) - productPriceCents(a));
-  }
+  if (mode === "newest") return list.sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
+  if (mode === "title") return list.sort((a, b) => String(a.title || "").localeCompare(String(b.title || ""), "it"));
+  if (mode === "priceAsc") return list.sort((a, b) => productPriceCents(a) - productPriceCents(b));
+  if (mode === "priceDesc") return list.sort((a, b) => productPriceCents(b) - productPriceCents(a));
 
   return list;
 }
@@ -384,7 +408,6 @@ function openSettings() {
   if ($("#sortMode")) $("#sortMode").value = getSortMode();
   if (unlocked) renderAdminList();
 }
-
 function closeSettings() {
   $("#settingsModal").classList.add("hidden");
   $("#settingsBackdrop").classList.add("hidden");
@@ -407,9 +430,11 @@ function renderAdminList() {
     row.innerHTML = `
       <div style="font-weight:700; margin-bottom:6px;">${escapeHtml(p.title)}</div>
 
-      <div style="display:flex; gap:8px; margin-bottom:10px;">
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
         <button class="btn small" data-dup>Duplica</button>
         <button class="btn danger small" data-del>Elimina</button>
+        <button class="btn small" data-pick>Scegli immagine</button>
+        <button class="btn small" data-cam>Scatta foto</button>
       </div>
 
       <div style="display:grid; gap:8px;">
@@ -424,7 +449,7 @@ function renderAdminList() {
         </label>
 
         <label class="field">
-          <span>Immagine (path)</span>
+          <span>Immagine (path o base64)</span>
           <input data-image type="text" value="${escapeHtml(p.image || "")}" />
         </label>
 
@@ -432,9 +457,16 @@ function renderAdminList() {
           <input data-featured type="checkbox" ${p.featured ? "checked" : ""} />
           <span>In evidenza</span>
         </label>
+
+        <img data-preview style="width:100%; max-height:200px; object-fit:cover; border-radius:12px; display:${p.image ? "block":"none"};" />
       </div>
     `;
 
+    // preview
+    const preview = row.querySelector("[data-preview]");
+    if (p.image) attachImageFallback(preview, p.image);
+
+    // data binding
     row.querySelector("[data-price]").dataset.id = p.id;
     row.querySelector("[data-category]").dataset.id = p.id;
     row.querySelector("[data-image]").dataset.id = p.id;
@@ -442,6 +474,25 @@ function renderAdminList() {
 
     row.querySelector("[data-dup]").onclick = () => duplicateProduct(p.id);
     row.querySelector("[data-del]").onclick = () => deleteProduct(p.id);
+
+    // pick / camera -> aggiorna il campo image (base64) e preview
+    row.querySelector("[data-pick]").onclick = async () => {
+      const dataUrl = await pickImage(false);
+      if (!dataUrl) return;
+      const input = row.querySelector("[data-image]");
+      input.value = dataUrl;
+      preview.style.display = "block";
+      preview.src = dataUrl;
+    };
+
+    row.querySelector("[data-cam]").onclick = async () => {
+      const dataUrl = await pickImage(true);
+      if (!dataUrl) return;
+      const input = row.querySelector("[data-image]");
+      input.value = dataUrl;
+      preview.style.display = "block";
+      preview.src = dataUrl;
+    };
 
     wrap.appendChild(row);
   });
@@ -496,7 +547,7 @@ function addNewProductFromForm() {
 
   if (!title) return alert("Inserisci un titolo.");
   if (!Number.isFinite(price)) return alert("Inserisci un prezzo valido.");
-  if (!image) return alert("Inserisci il path immagine.");
+  if (!image) return alert("Scegli/scatta un’immagine oppure inserisci un path.");
 
   const id = "AE-" + Date.now();
 
@@ -523,6 +574,8 @@ function addNewProductFromForm() {
   $("#newDesc").value = "";
   $("#newImage").value = "";
   $("#newFeatured").checked = false;
+  $("#newImagePreview").style.display = "none";
+  $("#newImagePreview").src = "";
 
   alert("Progetto aggiunto ✅");
 }
@@ -548,10 +601,8 @@ function deleteProduct(id) {
 
   if (!confirm(`Eliminare "${p.title}"?`)) return;
 
-  // rimuovi dal catalogo
   state.products = state.products.filter(x => x.id !== id);
 
-  // rimuovi dal carrello se presente
   if (state.cart[id]) {
     delete state.cart[id];
     saveCart();
@@ -563,6 +614,61 @@ function deleteProduct(id) {
   renderCart();
   renderTotals();
   renderAdminList();
+}
+
+// picker generico (usa input hidden)
+async function pickImage(useCamera) {
+  return new Promise((resolve) => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    if (useCamera) input.setAttribute("capture", "environment");
+    input.style.display = "none";
+    document.body.appendChild(input);
+
+    input.onchange = async () => {
+      const file = input.files && input.files[0];
+      document.body.removeChild(input);
+      if (!file) return resolve(null);
+      try {
+        const dataUrl = await fileToDataUrl(file);
+        resolve(dataUrl);
+      } catch {
+        resolve(null);
+      }
+    };
+
+    input.click();
+  });
+}
+
+// =====================
+//  NEW PRODUCT IMAGE BUTTONS
+// =====================
+function hookNewImageButtons(){
+  const preview = $("#newImagePreview");
+
+  $("#btnPickImageNew").onclick = async () => {
+    const dataUrl = await pickImage(false);
+    if (!dataUrl) return;
+    $("#newImage").value = dataUrl;
+    preview.style.display = "block";
+    preview.src = dataUrl;
+  };
+
+  $("#btnTakePhotoNew").onclick = async () => {
+    const dataUrl = await pickImage(true);
+    if (!dataUrl) return;
+    $("#newImage").value = dataUrl;
+    preview.style.display = "block";
+    preview.src = dataUrl;
+  };
+
+  $("#btnClearImageNew").onclick = () => {
+    $("#newImage").value = "";
+    preview.style.display = "none";
+    preview.src = "";
+  };
 }
 
 // =====================
@@ -724,6 +830,9 @@ function hookEvents() {
       closeSettings();
     }
   };
+
+  // new image buttons
+  hookNewImageButtons();
 }
 
 (function init() {
