@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Acchiappasogni di Erika</title>
 
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#7c5cff">
 
@@ -24,6 +23,7 @@
 
     <div class="actions">
       <button id="btnCustom" class="btn ghost">Personalizzato</button>
+      <button id="btnSettings" class="btn ghost">Impostazioni</button>
       <button id="btnCart" class="btn">Carrello <span id="cartCount" class="badge">0</span></button>
     </div>
   </header>
@@ -103,9 +103,111 @@
     </div>
   </aside>
 
+  <!-- IMPOSTAZIONI -->
+  <div id="settingsBackdrop" class="backdrop hidden"></div>
+
+  <aside id="settingsModal" class="drawer hidden" aria-hidden="true">
+    <div class="drawer-header">
+      <div class="drawer-title">Impostazioni (Admin)</div>
+      <button id="btnCloseSettings" class="btn ghost">Chiudi</button>
+    </div>
+
+    <div style="padding:12px;">
+      <div id="settingsLocked">
+        <div class="section-title">Accesso</div>
+        <label class="field">
+          <span>Password</span>
+          <input id="adminPass" type="password" placeholder="Inserisci password..." />
+        </label>
+        <button id="btnUnlock" class="btn primary">Entra</button>
+        <p class="small" style="margin-top:8px;">Accesso richiesto per modificare prodotti e prezzi.</p>
+      </div>
+
+      <div id="settingsPanel" class="hidden">
+        <hr style="margin:14px 0; opacity:.2;" />
+        <div class="section-title">Sicurezza</div>
+
+        <label class="field">
+          <span>Nuova password</span>
+          <input id="newAdminPass" type="password" placeholder="Scrivi nuova password..." />
+        </label>
+
+        <label class="field">
+          <span>Conferma password</span>
+          <input id="newAdminPass2" type="password" placeholder="Ripeti nuova password..." />
+        </label>
+
+        <button id="btnChangePass" class="btn primary">Cambia password</button>
+
+        <hr style="margin:14px 0; opacity:.2;" />
+        <div class="section-title">Ordinamento prodotti</div>
+
+        <label class="field">
+          <span>Ordina per</span>
+          <select id="sortMode">
+            <option value="featured">In evidenza (default)</option>
+            <option value="newest">Più recenti</option>
+            <option value="title">Titolo (A-Z)</option>
+            <option value="priceAsc">Prezzo (crescente)</option>
+            <option value="priceDesc">Prezzo (decrescente)</option>
+          </select>
+        </label>
+
+        <button id="btnApplySort" class="btn primary">Applica ordinamento</button>
+
+        <hr style="margin:14px 0; opacity:.2;" />
+        <div class="section-title">Aggiungi nuovo progetto</div>
+
+        <label class="field">
+          <span>Titolo</span>
+          <input id="newTitle" type="text" placeholder="Es. Acchiappasogni - Modello 123" />
+        </label>
+
+        <label class="field">
+          <span>Categoria</span>
+          <input id="newCategory" type="text" placeholder="Es. Acchiappasogni Classici" />
+        </label>
+
+        <label class="field">
+          <span>Prezzo (€)</span>
+          <input id="newPrice" type="number" step="0.01" placeholder="Es. 5" />
+        </label>
+
+        <label class="field">
+          <span>Descrizione</span>
+          <textarea id="newDesc" rows="3" placeholder="Descrizione..."></textarea>
+        </label>
+
+        <label class="field">
+          <span>Immagine (path)</span>
+          <input id="newImage" type="text" placeholder="./assets/assets/images/.../FB_IMG_....jpg" />
+        </label>
+
+        <label style="display:flex; gap:8px; align-items:center; margin:10px 0;">
+          <input id="newFeatured" type="checkbox" />
+          <span>In evidenza</span>
+        </label>
+
+        <button id="btnAddProduct" class="btn primary">Aggiungi progetto</button>
+
+        <hr style="margin:14px 0; opacity:.2;" />
+        <div class="section-title">Modifica / Duplica / Elimina</div>
+        <div id="adminList"></div>
+
+        <div style="display:flex; gap:8px; margin-top:12px;">
+          <button id="btnSaveAll" class="btn primary" style="flex:1;">Salva modifiche</button>
+          <button id="btnResetAll" class="btn danger" style="flex:1;">Ripristina default</button>
+        </div>
+
+        <p class="small" style="margin-top:10px;">
+          Tutto viene salvato nell’app. “Ripristina default” torna ai prodotti del products.json.
+        </p>
+      </div>
+    </div>
+  </aside>
+
   <script src="app.js"></script>
 
-  <!-- Service Worker -->
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("./service-worker.js");
