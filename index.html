@@ -22,11 +22,10 @@
     </div>
 
     <div class="actions">
-      <button id="btnDesigner" class="btn primary" style="font-weight:800;">
-        🎨 Personalizza il tuo Acchiappasogni
+      <button id="btnDesigner" class="btn primary" style="font-weight:900;">
+        🎨 CREA IL TUO ACCHIAPPASOGNI
       </button>
       <button id="btnCustom" class="btn ghost">Personalizzato</button>
-      <button id="btnSettings" class="btn ghost">Impostazioni</button>
       <button id="btnCart" class="btn">
         Carrello <span id="cartCount" class="badge">0</span>
       </button>
@@ -109,162 +108,115 @@
     </div>
   </aside>
 
-  <!-- IMPOSTAZIONI -->
-  <div id="settingsBackdrop" class="backdrop hidden"></div>
-
-  <aside id="settingsModal" class="drawer hidden" aria-hidden="true">
-    <div class="drawer-header">
-      <div class="drawer-title">Impostazioni (Admin)</div>
-      <button id="btnCloseSettings" class="btn ghost">Chiudi</button>
-    </div>
-
-    <div style="padding:12px;">
-      <div id="settingsLocked">
-        <div class="section-title">Accesso</div>
-        <label class="field">
-          <span>Password</span>
-          <input id="adminPass" type="password" placeholder="Inserisci password..." />
-        </label>
-        <button id="btnUnlock" class="btn primary">Entra</button>
-        <p class="small" style="margin-top:8px;">Accesso richiesto per modificare prodotti e prezzi.</p>
-      </div>
-
-      <div id="settingsPanel" class="hidden">
-        <hr style="margin:14px 0; opacity:.2;" />
-        <div class="section-title">Sincronizzazione (GitHub Pages)</div>
-
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button id="btnExportJson" class="btn primary">Esporta JSON (copia)</button>
-          <button id="btnImportJson" class="btn small">Importa JSON (incolla)</button>
-          <button id="btnReloadFromSite" class="btn small">Ricarica dal sito</button>
-        </div>
-
-        <p class="small" style="margin-top:8px;">
-          Per far vedere i nuovi prodotti a tutti, incolla l’export nel file <b>data/products.json</b> su GitHub.
-        </p>
-
-        <hr style="margin:14px 0; opacity:.2;" />
-        <div class="section-title">Sicurezza</div>
-
-        <label class="field">
-          <span>Nuova password</span>
-          <input id="newAdminPass" type="password" placeholder="Scrivi nuova password..." />
-        </label>
-
-        <label class="field">
-          <span>Conferma password</span>
-          <input id="newAdminPass2" type="password" placeholder="Ripeti nuova password..." />
-        </label>
-
-        <button id="btnChangePass" class="btn primary">Cambia password</button>
-
-        <hr style="margin:14px 0; opacity:.2;" />
-        <div class="section-title">Ordinamento prodotti</div>
-
-        <label class="field">
-          <span>Ordina per</span>
-          <select id="sortMode">
-            <option value="featured">In evidenza (default)</option>
-            <option value="newest">Più recenti</option>
-            <option value="title">Titolo (A-Z)</option>
-            <option value="priceAsc">Prezzo (crescente)</option>
-            <option value="priceDesc">Prezzo (decrescente)</option>
-          </select>
-        </label>
-
-        <button id="btnApplySort" class="btn primary">Applica ordinamento</button>
-
-        <hr style="margin:14px 0; opacity:.2;" />
-        <div class="section-title">Aggiungi nuovo progetto</div>
-
-        <label class="field">
-          <span>Titolo</span>
-          <input id="newTitle" type="text" placeholder="Es. Acchiappasogni - Modello 123" />
-        </label>
-
-        <label class="field">
-          <span>Categoria</span>
-          <input id="newCategory" type="text" placeholder="Es. Acchiappasogni Classici" />
-        </label>
-
-        <label class="field">
-          <span>Prezzo (€)</span>
-          <input id="newPrice" type="number" step="0.01" placeholder="Es. 5" />
-        </label>
-
-        <label class="field">
-          <span>Descrizione</span>
-          <textarea id="newDesc" rows="3" placeholder="Descrizione..."></textarea>
-        </label>
-
-        <div class="field">
-          <span>Immagine</span>
-          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
-            <button id="btnPickImageNew" class="btn small">Scegli immagine</button>
-            <button id="btnTakePhotoNew" class="btn small">Scatta foto</button>
-            <button id="btnClearImageNew" class="btn danger small">Rimuovi</button>
-          </div>
-          <input id="newImage" type="text" placeholder="(si compila da solo scegliendo/scattando)" style="margin-top:8px;" />
-          <img id="newImagePreview" alt="Anteprima" style="margin-top:10px; width:100%; max-height:220px; object-fit:cover; border-radius:12px; display:none;" />
-        </div>
-
-        <label style="display:flex; gap:8px; align-items:center; margin:10px 0;">
-          <input id="newFeatured" type="checkbox" />
-          <span>In evidenza</span>
-        </label>
-
-        <button id="btnAddProduct" class="btn primary">Aggiungi progetto</button>
-
-        <hr style="margin:14px 0; opacity:.2;" />
-        <div class="section-title">Modifica / Duplica / Elimina</div>
-        <div id="adminList"></div>
-
-        <div style="display:flex; gap:8px; margin-top:12px;">
-          <button id="btnSaveAll" class="btn primary" style="flex:1;">Salva modifiche</button>
-          <button id="btnResetAll" class="btn danger" style="flex:1;">Ripristina default</button>
-        </div>
-
-        <p class="small" style="margin-top:10px;">
-          “Salva modifiche” salva sul tuo telefono. “Esporta JSON” serve per aggiornare GitHub e farlo vedere a tutti.
-        </p>
-      </div>
-    </div>
-  </aside>
-
-  <!-- CONFIGURATORE ACCHIAPPASOGNI -->
+  <!-- CONFIGURATORE -->
   <div id="designerBackdrop" class="backdrop hidden"></div>
 
   <aside id="designerModal" class="drawer hidden" aria-hidden="true">
     <div class="drawer-header">
-      <div class="drawer-title">Personalizza il tuo Acchiappasogni</div>
+      <div class="drawer-title">Crea il tuo Acchiappasogni</div>
       <button id="btnCloseDesigner" class="btn ghost">Chiudi</button>
     </div>
 
     <div style="padding:12px;">
-      <div class="section-title">Idee già composte (modificabili)</div>
+
+      <div class="section-title">Evento / Bomboniera</div>
+      <div style="display:grid; gap:10px; margin-top:8px;">
+        <label class="field" style="margin:0;">
+          <span>Tipo evento</span>
+          <select id="eventType">
+            <option value="">Seleziona...</option>
+            <option value="Battesimo">Battesimo</option>
+            <option value="Comunione">Comunione</option>
+            <option value="Cresima">Cresima</option>
+            <option value="Matrimonio">Matrimonio</option>
+            <option value="Laurea">Laurea</option>
+            <option value="Nascita">Nascita</option>
+            <option value="Compleanno">Compleanno</option>
+            <option value="Altro">Altro</option>
+          </select>
+        </label>
+
+        <div class="two">
+          <label class="field" style="margin:0;">
+            <span>Quantità bomboniere</span>
+            <input id="eventQty" type="number" min="1" max="300" placeholder="Es. 30">
+          </label>
+
+          <label class="field" style="margin:0;">
+            <span>Data evento</span>
+            <input id="eventDate" type="date">
+          </label>
+        </div>
+
+        <label class="field" style="margin:0;">
+          <span>Tema (facoltativo)</span>
+          <input id="eventTheme" type="text" placeholder="Es. Rosa e oro, mare, angeli...">
+        </label>
+      </div>
+
+      <div class="section-title" style="margin-top:14px;">Idee già composte (modificabili)</div>
       <div style="display:flex; gap:8px; flex-wrap:wrap; margin:10px 0;">
         <button id="presetBase" class="btn small">Classico</button>
-        <button id="presetPhoto" class="btn small">Stile foto (scritta + AA)</button>
-        <button id="presetRomantic" class="btn small">Cuore</button>
-        <button id="presetMoon" class="btn small">Luna</button>
-        <button id="presetStar" class="btn small">Stella</button>
+        <button id="presetPhoto" class="btn small">Stile Foto (AA)</button>
+        <button id="presetMarriage" class="btn small">Matrimonio</button>
+        <button id="presetBaptism" class="btn small">Battesimo</button>
+        <button id="presetCresima" class="btn small">Cresima</button>
+        <button id="presetLaurea" class="btn small">Laurea</button>
+        <button id="presetBaby" class="btn small">Nascita</button>
+        <button id="presetFantasy" class="btn small">Fantasy</button>
       </div>
 
       <div class="section-title">Strumenti (tocca l’anteprima per aggiungere)</div>
-      <div style="display:flex; gap:8px; flex-wrap:wrap; margin:10px 0;">
-        <button id="toolBead" class="btn small">Perlina</button>
-        <button id="toolGlitter" class="btn small">Brillantino</button>
-        <button id="toolSymbol" class="btn small">Simbolo</button>
-        <button id="toolMiniFeather" class="btn small">Piumetta</button>
-        <button id="toolUndo" class="btn danger small">Annulla</button>
+
+      <div class="section-title" style="font-size:14px; opacity:.8; margin-top:8px;">Amore / Matrimonio</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin:8px 0;">
+        <button id="toolHeart" class="btn small">❤️ Cuore</button>
+        <button id="toolRings" class="btn small">💍 Fedi</button>
+        <button id="toolBouquet" class="btn small">💐 Bouquet</button>
+        <button id="toolRose" class="btn small">🌹 Rosa</button>
+        <button id="toolCrown" class="btn small">👑 Corona</button>
       </div>
-      <p class="small" style="margin-top:-4px; color:var(--muted);">
-        Consiglio: seleziona uno strumento e poi tocca sull’immagine per piazzarlo.
-      </p>
+
+      <div class="section-title" style="font-size:14px; opacity:.8;">Battesimo / Nascita</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin:8px 0;">
+        <button id="toolAngel" class="btn small">👼 Angelo</button>
+        <button id="toolDove" class="btn small">🕊️ Colomba</button>
+        <button id="toolBaby" class="btn small">👶 Bebè</button>
+        <button id="toolRibbon" class="btn small">🎀 Fiocco</button>
+        <button id="toolCross" class="btn small">✝️ Croce</button>
+      </div>
+
+      <div class="section-title" style="font-size:14px; opacity:.8;">Fantasy / Notte</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin:8px 0;">
+        <button id="toolMoon" class="btn small">🌙 Luna</button>
+        <button id="toolStar" class="btn small">⭐ Stella</button>
+        <button id="toolButterfly" class="btn small">🦋 Farfalla</button>
+        <button id="toolFlower" class="btn small">🌸 Fiore</button>
+        <button id="toolSparkle" class="btn small">✨ Magia</button>
+      </div>
+
+      <div class="section-title" style="font-size:14px; opacity:.8;">Extra</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin:8px 0;">
+        <button id="toolBead" class="btn small">🔴 Perlina</button>
+        <button id="toolGlitter" class="btn small">✨ Brillantino</button>
+        <button id="toolLetter" class="btn small">🔤 Lettera</button>
+        <button id="toolNumber" class="btn small">🔢 Numero</button>
+        <button id="toolPhoto" class="btn small">📷 Foto</button>
+      </div>
+
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin:8px 0;">
+        <button id="toolUndo" class="btn danger small">Annulla</button>
+        <button id="toolClearAll" class="btn danger small">Pulisci</button>
+      </div>
 
       <div class="section-title">Anteprima</div>
       <div style="border:1px solid rgba(0,0,0,.12); border-radius:16px; overflow:hidden; margin-top:8px;">
         <canvas id="designerCanvas" style="width:100%; height:360px; display:block; background:#fff;"></canvas>
+      </div>
+
+      <div class="section-title" style="margin-top:12px;">Prezzo stimato</div>
+      <div style="padding:10px; border-radius:14px; background:rgba(0,0,0,.05); font-weight:900;">
+        Totale extra configurazione: <span id="dreamPrice">€ 0,00</span>
       </div>
 
       <div class="section-title" style="margin-top:12px;">Componenti e variabili</div>
@@ -277,7 +229,7 @@
 
         <label class="field" style="margin:0;">
           <span>Numero piume</span>
-          <input id="optFeathers" type="range" min="1" max="7" value="3">
+          <input id="optFeathers" type="range" min="1" max="9" value="3">
         </label>
 
         <label class="field" style="margin:0;">
@@ -314,10 +266,12 @@
             <input id="optBeadsOn" type="checkbox" checked>
             <span>Perline</span>
           </label>
+
           <label class="field" style="margin:0; min-width:180px;">
             <span>Quantità perline</span>
             <input id="optBeadsQty" type="range" min="0" max="30" value="10">
           </label>
+
           <label style="display:flex; gap:8px; align-items:center;">
             <input id="optGlitter" type="checkbox">
             <span>Brillantini</span>
@@ -338,18 +292,20 @@
           <span>Simbolo centrale</span>
           <select id="optSymbol">
             <option value="none">Nessuno</option>
-            <option value="AA">AA (come foto)</option>
+            <option value="AA">AA</option>
             <option value="heart">Cuore</option>
             <option value="moon">Luna</option>
             <option value="star">Stella</option>
+            <option value="cross">Croce</option>
           </select>
         </label>
 
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <label style="display:flex; gap:8px; align-items:center;">
             <input id="optCharms" type="checkbox" checked>
-            <span>Charms laterali (come foto)</span>
+            <span>Charms laterali</span>
           </label>
+
           <label class="field" style="margin:0; min-width:180px;">
             <span>Grandezza charms</span>
             <input id="optCharmSize" type="range" min="18" max="60" value="34">
@@ -363,8 +319,13 @@
 
         <label class="field" style="margin:0;">
           <span>Note (facoltative)</span>
-          <textarea id="designerNotes" rows="3" placeholder="Colore preferito, dimensioni, dettagli..."></textarea>
+          <textarea id="designerNotes" rows="3" placeholder="Colore preferito, dettagli..."></textarea>
         </label>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
+          <button id="btnSaveDream" class="btn small" style="flex:1;">Salva progetto</button>
+          <button id="btnMyDreams" class="btn small" style="flex:1;">I miei progetti</button>
+        </div>
 
         <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
           <button id="btnSendDesign" class="btn primary" style="flex:1;">Invia progetto su WhatsApp</button>
@@ -373,6 +334,18 @@
 
         <p class="small" id="designerHint" style="margin-top:6px;"></p>
       </div>
+    </div>
+  </aside>
+
+  <!-- MODAL "I MIEI PROGETTI" -->
+  <div id="myDreamsBackdrop" class="backdrop hidden"></div>
+  <aside id="myDreamsModal" class="drawer hidden" aria-hidden="true">
+    <div class="drawer-header">
+      <div class="drawer-title">I miei progetti salvati</div>
+      <button id="btnCloseMyDreams" class="btn ghost">Chiudi</button>
+    </div>
+    <div style="padding:12px;">
+      <div id="myDreamsList"></div>
     </div>
   </aside>
 
