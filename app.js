@@ -15,6 +15,53 @@ function centsFromEuro(v) {
   return Math.round(n * 100);
 }
 function safeId(prefix="ID"){ return `${prefix}-${Date.now()}-${Math.floor(Math.random()*10000)}`; }
+function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
+
+// =====================
+//  COLOR -> NAME (no #xxxxxx)
+// =====================
+function hexToRgb(hex){
+  const h = String(hex||"").trim();
+  const m = /^#?([0-9a-f]{6})$/i.exec(h);
+  if(!m) return null;
+  const x = parseInt(m[1],16);
+  return { r:(x>>16)&255, g:(x>>8)&255, b:x&255 };
+}
+function dist2(a,b){
+  const dr=a.r-b.r, dg=a.g-b.g, db=a.b-b.b;
+  return dr*dr+dg*dg+db*db;
+}
+const COLOR_PALETTE = [
+  {name:"Nero", rgb:{r:0,g:0,b:0}},
+  {name:"Bianco", rgb:{r:255,g:255,b:255}},
+  {name:"Grigio", rgb:{r:120,g:120,b:120}},
+  {name:"Argento", rgb:{r:190,g:190,b:190}},
+  {name:"Oro", rgb:{r:212,g:175,b:55}},
+  {name:"Rosso", rgb:{r:200,g:30,b:30}},
+  {name:"Bordeaux", rgb:{r:120,g:0,b:30}},
+  {name:"Rosa", rgb:{r:255,g:105,b:180}},
+  {name:"Viola", rgb:{r:128,g:0,b:128}},
+  {name:"Lilla", rgb:{r:180,g:140,b:255}},
+  {name:"Blu", rgb:{r:30,g:90,b:200}},
+  {name:"Azzurro", rgb:{r:100,g:170,b:255}},
+  {name:"Turchese", rgb:{r:0,g:180,b:170}},
+  {name:"Verde", rgb:{r:30,g:160,b:80}},
+  {name:"Smeraldo", rgb:{r:0,g:140,b:90}},
+  {name:"Giallo", rgb:{r:240,g:220,b:30}},
+  {name:"Arancione", rgb:{r:255,g:140,b:0}},
+  {name:"Marrone", rgb:{r:120,g:70,b:30}},
+  {name:"Beige", rgb:{r:220,g:200,b:160}}
+];
+function colorName(hex){
+  const rgb = hexToRgb(hex);
+  if(!rgb) return "Colore";
+  let best = COLOR_PALETTE[0], bestD = Infinity;
+  for(const c of COLOR_PALETTE){
+    const d = dist2(rgb,c.rgb);
+    if(d < bestD){ bestD=d; best=c; }
+  }
+  return best.name;
+}
 
 // =====================
 //  STORAGE KEYS
@@ -677,7 +724,7 @@ function adminImportJson(){
 }
 
 // =====================
-//  DESIGNER (10 cerchi + scelta colori)
+//  DESIGNER
 // =====================
 const dream = {
   diameter: 35,
@@ -686,11 +733,7 @@ const dream = {
   ringGap: 18,
   webDensity: 14,
 
-  // ✅ scelta colori cerchi
   colRings: "#222222",
-  multiRingColors: false,
-  ringColors: Array(10).fill("#222222"),
-
   colWeb: "#222222",
   colFeathers: "#333333",
   colBeads: "#b50000",
@@ -717,8 +760,6 @@ const dream = {
 let designerCanvas = null;
 let designerCtx = null;
 
-function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
-
 function calcDreamExtraCents(){
   const p = getPricing();
   let total = 0;
@@ -731,35 +772,6 @@ function calcDreamExtraCents(){
 function updateDreamPriceUI(){
   const el = $("#dreamPrice");
   if(el) el.textContent = euroFromCents(calcDreamExtraCents());
-}
-
-function renderRingColorInputs(){
-  const wrap = $("#ringColorsWrap");
-  const list = $("#ringColorsList");
-  const chk = $("#optMultiRingColors");
-  if(!wrap || !list || !chk) return;
-
-  wrap.style.display = chk.checked ? "block" : "none";
-  list.innerHTML = "";
-
-  const count = clamp(dream.ringCount|0, 1, 10);
-  for(let i=0;i<count;i++){
-    const box = document.createElement("label");
-    box.style.cssText = "display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:900;";
-    box.innerHTML = `
-      <span>Cerchio ${i+1}</span>
-      <input type="color" data-ringcolor="${i}" value="${dream.ringColors[i] || dream.colRings}">
-    `;
-    const input = box.querySelector("input");
-    input.oninput = (e)=>{
-      dream.ringColors[i] = e.target.value;
-      renderDream();
-    };
-    list.appendChild(box);
-  }
-}
-function setAllRingColorsFromMain(){
-  for(let i=0;i<10;i++) dream.ringColors[i] = dream.colRings;
 }
 
 function drawEmoji(ctx, x, y, emoji){
@@ -820,7 +832,7 @@ function initDesigner(){
   resize();
   window.addEventListener("resize", resize);
 
-  designerCanvas.addEventListener("pointerdown", async (ev)=>{
+  designerCanvas.addEventListener("pointerdown", (ev)=>{
     const rect = designerCanvas.getBoundingClientRect();
     const x = ev.clientX - rect.left;
     const y = ev.clientY - rect.top;
@@ -832,7 +844,7 @@ function initDesigner(){
       input.style.display = "none";
       document.body.appendChild(input);
 
-      input.onchange = async () => {
+      input.onchange = () => {
         const file = input.files && input.files[0];
         document.body.removeChild(input);
         if(!file) return;
@@ -912,23 +924,17 @@ function renderDream(){
   const ringCount = clamp(dream.ringCount|0, 1, 10);
   const ringGap = clamp(Number(dream.ringGap)||18, 4, 40);
 
-  // ✅ CERCHI con scelta colore singolo/multiplo
+  // CERCHI
   for(let i=0;i<ringCount;i++){
     const r = radius - i*ringGap;
     if(r < 18) break;
-
-    const ringColor = dream.multiRingColors
-      ? (dream.ringColors[i] || dream.colRings)
-      : dream.colRings;
-
-    ctx.strokeStyle = ringColor;
+    ctx.strokeStyle = dream.colRings;
     ctx.lineWidth = dream.ringWidth;
     ctx.beginPath();
     ctx.arc(cx, topY, r, 0, Math.PI*2);
     ctx.stroke();
   }
 
-  // rete usa l’ultimo cerchio valido
   const innerRadius = Math.max(26, radius - (ringCount-1)*ringGap);
 
   // web
@@ -1042,7 +1048,6 @@ function openDesigner(){
   $("#designerModal").classList.remove("hidden");
   $("#designerBackdrop").classList.remove("hidden");
   initDesigner();
-  renderRingColorInputs();
   renderDream();
 }
 function closeDesigner(){
@@ -1122,11 +1127,11 @@ function renderMyDreams(){
 
   arr.forEach(item=>{
     const box = document.createElement("div");
-    box.style.border = "1px solid rgba(0,0,0,.08)";
+    box.style.border = "1px solid rgba(255,255,255,.12)";
     box.style.borderRadius = "14px";
     box.style.padding = "10px";
     box.style.marginBottom = "10px";
-    box.style.background = "rgba(255,255,255,.65)";
+    box.style.background = "rgba(255,255,255,.06)";
 
     box.innerHTML = `
       <div style="font-weight:900; margin-bottom:6px;">${escapeHtml(item.name)}</div>
@@ -1149,7 +1154,6 @@ function renderMyDreams(){
       $("#eventTheme").value = item.event?.eventTheme || "";
       $("#designerName").value = item.info?.designerName || "";
       $("#designerNotes").value = item.info?.designerNotes || "";
-      renderRingColorInputs();
       renderDream();
       closeMyDreams();
       openDesigner();
@@ -1166,7 +1170,7 @@ function renderMyDreams(){
 }
 
 // =====================
-//  SEND DESIGN TO WHATSAPP
+//  SEND DESIGN TO WHATSAPP (colors as words)
 // =====================
 async function sendDreamToWhatsApp(){
   const phone = state.config?.whatsappPhone || "393440260906";
@@ -1190,14 +1194,13 @@ async function sendDreamToWhatsApp(){
     eventTheme ? `🎨 Tema: ${eventTheme}` : null,
     "",
     `• Diametro: ${dream.diameter} cm`,
-    `• Cerchi: ${dream.ringCount} (gap ${dream.ringGap})`,
+    `• Cerchi: ${dream.ringCount} (distanza ${dream.ringGap})`,
     `• Rete densità: ${dream.webDensity}`,
     `• Piume: ${dream.feathers} (lunghezza ${dream.featherLen})`,
-    `• Colore cerchi: ${dream.multiRingColors ? "MULTI" : "SINGOLO"}`,
-    dream.multiRingColors ? `• Colori cerchi: ${dream.ringColors.slice(0, clamp(dream.ringCount,1,10)).join(", ")}` : null,
-    `• Rete colore: ${dream.colWeb}`,
-    `• Piume colore: ${dream.colFeathers}`,
-    dream.beadsOn ? `• Perline: sì (${dream.beadsQty}) colore ${dream.colBeads}` : "• Perline: no",
+    `• Colore cerchi: ${colorName(dream.colRings)}`,
+    `• Colore rete: ${colorName(dream.colWeb)}`,
+    `• Colore piume: ${colorName(dream.colFeathers)}`,
+    dream.beadsOn ? `• Perline: sì (${dream.beadsQty}) colore ${colorName(dream.colBeads)}` : "• Perline: no",
     dream.glitter ? "• Brillantini: sì" : "• Brillantini: no",
     dream.charms ? `• Charms laterali: sì (size ${dream.charmSize})` : "• Charms laterali: no",
     dream.textTop ? `• Scritta: ${dream.textTop}` : null,
@@ -1224,7 +1227,6 @@ async function sendDreamToWhatsApp(){
     }
   }catch{}
 
-  // fallback: apre WhatsApp col testo + scarica immagine
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
   window.open(url, "_blank");
   downloadBlob(blob, "progetto_acchiappasogni.png");
@@ -1234,141 +1236,16 @@ async function sendDreamToWhatsApp(){
 // =====================
 //  PRESETS
 // =====================
-function presetClassic(){
-  Object.assign(dream, {
-    diameter: 35,
-    ringWidth: 5,
-    ringCount: 2,
-    ringGap: 18,
-    webDensity: 14,
-
-    colRings: "#222222",
-    multiRingColors: false,
-    ringColors: Array(10).fill("#222222"),
-
-    colWeb: "#222222",
-    colFeathers: "#333333",
-    colBeads: "#b50000",
-    colText: "#b50000",
-
-    feathers: 3,
-    featherLen: 95,
-
-    beadsOn: true,
-    beadsQty: 10,
-    glitter: false,
-
-    textTop: "",
-    symbol: "none",
-
-    charms: true,
-    charmSize: 34,
-
-    placed: [],
-    tool: "bead",
-    hasCustomPhoto: false
-  });
-  syncDesignerInputs();
-  renderRingColorInputs();
-  renderDream();
-}
-function presetPhoto(){
-  presetClassic();
-  dream.textTop = "REAL HASTA LA MUERTE";
-  dream.symbol = "AA";
-  dream.glitter = true;
-  dream.ringCount = 3;
-  dream.ringGap = 16;
-  syncDesignerInputs(); renderRingColorInputs(); renderDream();
-}
-function presetMarriage(){
-  presetClassic();
-  dream.textTop = "MATRIMONIO";
-  dream.symbol = "heart";
-  dream.colRings = "#ffffff";
-  dream.colWeb = "#ffffff";
-  dream.colFeathers = "#ffffff";
-  dream.colBeads = "#ffd700";
-  dream.glitter = true;
-  dream.ringCount = 4;
-  dream.ringGap = 14;
-  setAllRingColorsFromMain();
-  syncDesignerInputs(); renderRingColorInputs(); renderDream();
-}
-function presetBaptism(){
-  presetClassic();
-  dream.textTop = "BATTESIMO";
-  dream.symbol = "cross";
-  dream.colRings = "#87ceeb";
-  dream.colWeb = "#87ceeb";
-  dream.colFeathers = "#ffffff";
-  dream.colBeads = "#ffd700";
-  dream.glitter = true;
-  dream.ringCount = 3;
-  dream.ringGap = 16;
-  setAllRingColorsFromMain();
-  syncDesignerInputs(); renderRingColorInputs(); renderDream();
-}
-function presetCresima(){
-  presetClassic();
-  dream.textTop = "CRESIMA";
-  dream.symbol = "cross";
-  dream.glitter = true;
-  dream.ringCount = 3;
-  dream.ringGap = 16;
-  syncDesignerInputs(); renderRingColorInputs(); renderDream();
-}
-function presetLaurea(){
-  presetClassic();
-  dream.textTop = "LAUREA";
-  dream.symbol = "star";
-  dream.glitter = true;
-  dream.ringCount = 4;
-  dream.ringGap = 14;
-  syncDesignerInputs(); renderRingColorInputs(); renderDream();
-}
-function presetBaby(){
-  presetClassic();
-  dream.textTop = "NASCITA";
-  dream.symbol = "heart";
-  dream.colRings = "#ffc0cb";
-  dream.colWeb = "#ffc0cb";
-  dream.colFeathers = "#ffffff";
-  dream.colBeads = "#ffd700";
-  dream.glitter = true;
-  dream.ringCount = 3;
-  dream.ringGap = 16;
-  setAllRingColorsFromMain();
-  syncDesignerInputs(); renderRingColorInputs(); renderDream();
-}
-function presetFantasy(){
-  presetClassic();
-  dream.textTop = "FANTASY";
-  dream.symbol = "moon";
-  dream.colRings = "#1b1b3a";
-  dream.colWeb = "#1b1b3a";
-  dream.colFeathers = "#2b2b5a";
-  dream.colBeads = "#ffd700";
-  dream.glitter = true;
-  dream.ringCount = 5;
-  dream.ringGap = 12;
-  setAllRingColorsFromMain();
-  syncDesignerInputs(); renderRingColorInputs(); renderDream();
-}
-
 function syncDesignerInputs(){
   $("#optDiameter").value = dream.diameter;
   $("#optFeathers").value = dream.feathers;
   $("#optFeatherLen").value = dream.featherLen;
-
   $("#optRingWidth").value = dream.ringWidth;
   $("#optRingCount").value = dream.ringCount;
   $("#optRingGap").value = dream.ringGap;
   $("#optWebDensity").value = dream.webDensity;
 
   $("#colRings").value = dream.colRings;
-  $("#optMultiRingColors").checked = !!dream.multiRingColors;
-
   $("#colWeb").value = dream.colWeb;
   $("#colFeathers").value = dream.colFeathers;
   $("#colBeads").value = dream.colBeads;
@@ -1383,8 +1260,98 @@ function syncDesignerInputs(){
 
   $("#optCharms").checked = !!dream.charms;
   $("#optCharmSize").value = dream.charmSize;
+}
 
-  renderRingColorInputs();
+function presetClassic(){
+  Object.assign(dream, {
+    diameter: 35, ringWidth: 5, ringCount: 2, ringGap: 18, webDensity: 14,
+    colRings: "#222222", colWeb: "#222222", colFeathers: "#333333", colBeads: "#b50000", colText: "#b50000",
+    feathers: 3, featherLen: 95,
+    beadsOn: true, beadsQty: 10, glitter: false,
+    textTop: "", symbol: "none",
+    charms: true, charmSize: 34,
+    placed: [], tool: "bead", hasCustomPhoto:false
+  });
+  syncDesignerInputs(); renderDream();
+}
+function presetPhoto(){
+  presetClassic();
+  dream.textTop = "REAL HASTA LA MUERTE";
+  dream.symbol = "AA";
+  dream.glitter = true;
+  dream.ringCount = 3;
+  dream.ringGap = 16;
+  syncDesignerInputs(); renderDream();
+}
+function presetMarriage(){
+  presetClassic();
+  dream.textTop = "MATRIMONIO";
+  dream.symbol = "heart";
+  dream.colRings = "#ffffff";
+  dream.colWeb = "#ffffff";
+  dream.colFeathers = "#ffffff";
+  dream.colBeads = "#ffd700";
+  dream.glitter = true;
+  dream.ringCount = 4;
+  dream.ringGap = 14;
+  syncDesignerInputs(); renderDream();
+}
+function presetBaptism(){
+  presetClassic();
+  dream.textTop = "BATTESIMO";
+  dream.symbol = "cross";
+  dream.colRings = "#87ceeb";
+  dream.colWeb = "#87ceeb";
+  dream.colFeathers = "#ffffff";
+  dream.colBeads = "#ffd700";
+  dream.glitter = true;
+  dream.ringCount = 3;
+  dream.ringGap = 16;
+  syncDesignerInputs(); renderDream();
+}
+function presetCresima(){
+  presetClassic();
+  dream.textTop = "CRESIMA";
+  dream.symbol = "cross";
+  dream.glitter = true;
+  dream.ringCount = 3;
+  dream.ringGap = 16;
+  syncDesignerInputs(); renderDream();
+}
+function presetLaurea(){
+  presetClassic();
+  dream.textTop = "LAUREA";
+  dream.symbol = "star";
+  dream.glitter = true;
+  dream.ringCount = 4;
+  dream.ringGap = 14;
+  syncDesignerInputs(); renderDream();
+}
+function presetBaby(){
+  presetClassic();
+  dream.textTop = "NASCITA";
+  dream.symbol = "heart";
+  dream.colRings = "#ffc0cb";
+  dream.colWeb = "#ffc0cb";
+  dream.colFeathers = "#ffffff";
+  dream.colBeads = "#ffd700";
+  dream.glitter = true;
+  dream.ringCount = 3;
+  dream.ringGap = 16;
+  syncDesignerInputs(); renderDream();
+}
+function presetFantasy(){
+  presetClassic();
+  dream.textTop = "FANTASY";
+  dream.symbol = "moon";
+  dream.colRings = "#1b1b3a";
+  dream.colWeb = "#1b1b3a";
+  dream.colFeathers = "#2b2b5a";
+  dream.colBeads = "#ffd700";
+  dream.glitter = true;
+  dream.ringCount = 5;
+  dream.ringGap = 12;
+  syncDesignerInputs(); renderDream();
 }
 
 // =====================
@@ -1513,33 +1480,11 @@ function hookEvents(){
   $("#optFeathers").oninput = (e)=>{ dream.feathers = Number(e.target.value)||3; renderDream(); };
   $("#optFeatherLen").oninput = (e)=>{ dream.featherLen = Number(e.target.value)||95; renderDream(); };
   $("#optRingWidth").oninput = (e)=>{ dream.ringWidth = Number(e.target.value)||5; renderDream(); };
-
-  $("#optRingCount").oninput = (e)=>{
-    dream.ringCount = clamp(Number(e.target.value)||2, 1, 10);
-    renderRingColorInputs();
-    renderDream();
-  };
+  $("#optRingCount").oninput = (e)=>{ dream.ringCount = clamp(Number(e.target.value)||2, 1, 10); renderDream(); };
   $("#optRingGap").oninput = (e)=>{ dream.ringGap = Number(e.target.value)||18; renderDream(); };
   $("#optWebDensity").oninput = (e)=>{ dream.webDensity = Number(e.target.value)||14; renderDream(); };
 
-  $("#colRings").oninput = (e)=>{
-    dream.colRings = e.target.value;
-    if(dream.multiRingColors){
-      setAllRingColorsFromMain();
-      renderRingColorInputs();
-    }
-    renderDream();
-  };
-
-  $("#optMultiRingColors").onchange = (e)=>{
-    dream.multiRingColors = !!e.target.checked;
-    if(dream.multiRingColors && (!dream.ringColors || !dream.ringColors.length)){
-      dream.ringColors = Array(10).fill(dream.colRings);
-    }
-    renderRingColorInputs();
-    renderDream();
-  };
-
+  $("#colRings").oninput = (e)=>{ dream.colRings = e.target.value; renderDream(); };
   $("#colWeb").oninput = (e)=>{ dream.colWeb = e.target.value; renderDream(); };
   $("#colFeathers").oninput = (e)=>{ dream.colFeathers = e.target.value; renderDream(); };
   $("#colBeads").oninput = (e)=>{ dream.colBeads = e.target.value; renderDream(); };
