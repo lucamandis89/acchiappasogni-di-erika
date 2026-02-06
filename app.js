@@ -24,15 +24,13 @@ const IMG_PLACEHOLDER =
 
 function buildImageCandidates(raw) {
   const original = String(raw || "").trim();
-  const candidates = [];
-  if (original) candidates.push(original);
-
-  // data url (base64) va bene così
+  if (!original) return [];
   if (original.startsWith("data:image/")) return [original];
 
-  // aiuta hosting / WebView
-  if (original && original.startsWith("assets/")) candidates.push("./" + original);
-  if (original && original.startsWith("./assets/")) candidates.push(original.replace("./", ""));
+  const candidates = [original];
+
+  if (original.startsWith("assets/")) candidates.push("./" + original);
+  if (original.startsWith("./assets/")) candidates.push(original.replace("./", ""));
 
   return Array.from(new Set(candidates.filter(Boolean)));
 }
@@ -121,10 +119,9 @@ function getSortMode() { return localStorage.getItem(LS_SORT_MODE) || "featured"
 function setSortMode(m) { localStorage.setItem(LS_SORT_MODE, m); }
 
 // =====================
-//  FILE -> BASE64
+//  FILE -> BASE64 (compress)
 // =====================
 function fileToDataUrl(file, maxW = 1200, quality = 0.85) {
-  // Comprimo un po' per non far esplodere localStorage
   return new Promise((resolve, reject) => {
     if (!file) return reject(new Error("No file"));
     const reader = new FileReader();
@@ -143,7 +140,6 @@ function fileToDataUrl(file, maxW = 1200, quality = 0.85) {
         const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, w, h);
 
-        // jpeg per comprimere di più
         const out = canvas.toDataURL("image/jpeg", quality);
         resolve(out);
       };
@@ -153,8 +149,33 @@ function fileToDataUrl(file, maxW = 1200, quality = 0.85) {
   });
 }
 
+async function pickImage(useCamera) {
+  return new Promise((resolve) => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    if (useCamera) input.setAttribute("capture", "environment");
+    input.style.display = "none";
+    document.body.appendChild(input);
+
+    input.onchange = async () => {
+      const file = input.files && input.files[0];
+      document.body.removeChild(input);
+      if (!file) return resolve(null);
+      try {
+        const dataUrl = await fileToDataUrl(file);
+        resolve(dataUrl);
+      } catch {
+        resolve(null);
+      }
+    };
+
+    input.click();
+  });
+}
+
 // =====================
-//  FILTRI + SORT
+//  FILTER + SORT
 // =====================
 function matches(p) {
   const q = state.query.trim().toLowerCase();
@@ -394,7 +415,7 @@ function rebuildCategories() {
 }
 
 // =====================
-//  SETTINGS UI
+//  SETTINGS
 // =====================
 function openSettings() {
   $("#settingsModal").classList.remove("hidden");
@@ -462,11 +483,9 @@ function renderAdminList() {
       </div>
     `;
 
-    // preview
     const preview = row.querySelector("[data-preview]");
     if (p.image) attachImageFallback(preview, p.image);
 
-    // data binding
     row.querySelector("[data-price]").dataset.id = p.id;
     row.querySelector("[data-category]").dataset.id = p.id;
     row.querySelector("[data-image]").dataset.id = p.id;
@@ -475,7 +494,6 @@ function renderAdminList() {
     row.querySelector("[data-dup]").onclick = () => duplicateProduct(p.id);
     row.querySelector("[data-del]").onclick = () => deleteProduct(p.id);
 
-    // pick / camera -> aggiorna il campo image (base64) e preview
     row.querySelector("[data-pick]").onclick = async () => {
       const dataUrl = await pickImage(false);
       if (!dataUrl) return;
@@ -539,9 +557,7 @@ function addNewProductFromForm() {
   const title = $("#newTitle").value.trim();
   const category = $("#newCategory").value.trim() || "Altro";
   const price = parseFloat($("#newPrice").value);
-  const description =
-    $("#newDesc").value.trim() ||
-    "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.";
+  const description = $("#newDesc").value.trim() || "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.";
   const image = $("#newImage").value.trim();
   const featured = $("#newFeatured").checked;
 
@@ -616,35 +632,6 @@ function deleteProduct(id) {
   renderAdminList();
 }
 
-// picker generico (usa input hidden)
-async function pickImage(useCamera) {
-  return new Promise((resolve) => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    if (useCamera) input.setAttribute("capture", "environment");
-    input.style.display = "none";
-    document.body.appendChild(input);
-
-    input.onchange = async () => {
-      const file = input.files && input.files[0];
-      document.body.removeChild(input);
-      if (!file) return resolve(null);
-      try {
-        const dataUrl = await fileToDataUrl(file);
-        resolve(dataUrl);
-      } catch {
-        resolve(null);
-      }
-    };
-
-    input.click();
-  });
-}
-
-// =====================
-//  NEW PRODUCT IMAGE BUTTONS
-// =====================
 function hookNewImageButtons(){
   const preview = $("#newImagePreview");
 
@@ -672,28 +659,126 @@ function hookNewImageButtons(){
 }
 
 // =====================
-//  LOAD DATA
+//  SYNC (EXPORT/IMPORT/RELOAD)
 // =====================
-async function loadData() {
+async function copyToClipboard(text){
+  try{
+    await navigator.clipboard.writeText(text);
+    return true;
+  }catch{
+    // fallback
+    try{
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      return true;
+    }catch{
+      return false;
+    }
+  }
+}
+
+function normalizeProductsForExport(arr){
+  // pulizia minima + garantisci createdAt
+  return arr.map((p, idx) => ({
+    id: String(p.id || ("AE-" + (Date.now()+idx))),
+    title: p.title || "",
+    category: p.category || "Altro",
+    price: (typeof p.price === "number") ? p.price : (typeof p.price_from === "number" ? p.price_from : 0),
+    price_from: (typeof p.price_from === "number") ? p.price_from : (typeof p.price === "number" ? p.price : 0),
+    description: p.description || "",
+    image: p.image || "",
+    featured: !!p.featured,
+    createdAt: Number(p.createdAt || (Date.now()-idx))
+  }));
+}
+
+async function exportProductsJson(){
+  applyAdminEditsToState();
+  const clean = normalizeProductsForExport(state.products);
+  const json = JSON.stringify(clean, null, 2);
+  const ok = await copyToClipboard(json);
+  if(ok) alert("JSON copiato negli appunti ✅\nOra incollalo su GitHub in data/products.json");
+  else alert("Non riesco a copiare automaticamente. Ti apro un prompt per copiare manualmente.");
+}
+
+async function importProductsJson(){
+  const text = prompt("Incolla qui il JSON completo (array di prodotti):");
+  if(!text) return;
+  try{
+    const arr = JSON.parse(text);
+    if(!Array.isArray(arr)) throw new Error("non array");
+    const clean = normalizeProductsForExport(arr);
+    state.products = clean;
+    saveOverrideProducts(clean);
+    rebuildCategories();
+    renderGrid();
+    renderCart();
+    renderTotals();
+    renderAdminList();
+    alert("Import completato ✅");
+  }catch{
+    alert("JSON non valido ❌");
+  }
+}
+
+async function reloadFromSite(){
+  // cancella override locale e ricarica dal GitHub
+  resetOverrideProducts();
+  localStorage.removeItem(LS_ADMIN_UNLOCKED);
+  await loadData(true);
+  alert("Ricaricato dal sito ✅");
+}
+
+// =====================
+//  LOAD DATA (da productsUrl)
+// =====================
+async function fetchJson(url){
+  const bust = (url.includes("?") ? "&" : "?") + "v=" + Date.now();
+  const res = await fetch(url + bust, { cache: "no-store" });
+  if(!res.ok) throw new Error("fetch failed");
+  return await res.json();
+}
+
+async function loadData(forceRemote=false) {
+  // config
   try {
-    const cfg = await fetch("data/config.json").then((r) => r.json());
-    state.config = cfg;
-    if (cfg.brandName) $("#brandName").textContent = cfg.brandName;
+    state.config = await fetchJson("data/config.json");
+    if (state.config.brandName) $("#brandName").textContent = state.config.brandName;
   } catch {
     state.config = {};
   }
 
-  const prods = await fetch("data/products.json").then((r) => r.json());
-  const baseArr = Array.isArray(prods) ? prods : (prods.products || []);
+  // products source
+  let baseArr = [];
+  const productsUrl = state.config.productsUrl;
+
+  try{
+    if(productsUrl){
+      baseArr = await fetchJson(productsUrl);
+    }else{
+      baseArr = await fetchJson("data/products.json");
+    }
+  }catch{
+    // fallback locale
+    try{
+      baseArr = await fetchJson("data/products.json");
+    }catch{
+      baseArr = [];
+    }
+  }
+
+  // normalizza
+  baseArr = Array.isArray(baseArr) ? baseArr : (baseArr.products || []);
+  baseArr = normalizeProductsForExport(baseArr);
+
   state.baseProducts = baseArr;
 
   const override = loadOverrideProducts();
-  state.products = override ? override : baseArr;
-
-  // se mancano createdAt, aggiungilo una volta (solo in memoria)
-  state.products.forEach((p, idx) => {
-    if (!p.createdAt) p.createdAt = Date.now() - idx;
-  });
+  state.products = override && !forceRemote ? override : baseArr;
 
   rebuildCategories();
   renderGrid();
@@ -778,10 +863,8 @@ function hookEvents() {
   $("#btnChangePass").onclick = () => {
     const p1 = $("#newAdminPass").value.trim();
     const p2 = $("#newAdminPass2").value.trim();
-
     if (p1.length < 4) return alert("Password troppo corta (minimo 4 caratteri).");
     if (p1 !== p2) return alert("Le due password non coincidono.");
-
     setAdminPassword(p1);
     $("#newAdminPass").value = "";
     $("#newAdminPass2").value = "";
@@ -808,20 +891,15 @@ function hookEvents() {
     renderCart();
     renderTotals();
     renderAdminList();
-    alert("Modifiche salvate ✅");
+    alert("Modifiche salvate ✅ (solo sul tuo telefono)");
   };
 
   // reset
   $("#btnResetAll").onclick = () => {
-    if (confirm("Ripristinare i prodotti originali (da products.json)?")) {
+    if (confirm("Ripristinare i prodotti originali (dal sito / products.json)?")) {
       resetOverrideProducts();
       localStorage.removeItem(LS_ADMIN_UNLOCKED);
       state.products = state.baseProducts;
-
-      state.products.forEach((p, idx) => {
-        if (!p.createdAt) p.createdAt = Date.now() - idx;
-      });
-
       rebuildCategories();
       renderGrid();
       renderCart();
@@ -833,10 +911,15 @@ function hookEvents() {
 
   // new image buttons
   hookNewImageButtons();
+
+  // export/import/reload
+  $("#btnExportJson").onclick = () => exportProductsJson();
+  $("#btnImportJson").onclick = () => importProductsJson();
+  $("#btnReloadFromSite").onclick = () => reloadFromSite();
 }
 
 (function init() {
   state.cart = parseCart();
   hookEvents();
-  loadData();
+  loadData(false);
 })();
