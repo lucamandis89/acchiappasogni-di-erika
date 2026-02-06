@@ -22,9 +22,14 @@
     </div>
 
     <div class="actions">
+      <button id="btnDesigner" class="btn primary" style="font-weight:800;">
+        🎨 Personalizza il tuo Acchiappasogni
+      </button>
       <button id="btnCustom" class="btn ghost">Personalizzato</button>
       <button id="btnSettings" class="btn ghost">Impostazioni</button>
-      <button id="btnCart" class="btn">Carrello <span id="cartCount" class="badge">0</span></button>
+      <button id="btnCart" class="btn">
+        Carrello <span id="cartCount" class="badge">0</span>
+      </button>
     </div>
   </header>
 
@@ -222,6 +227,151 @@
         <p class="small" style="margin-top:10px;">
           “Salva modifiche” salva sul tuo telefono. “Esporta JSON” serve per aggiornare GitHub e farlo vedere a tutti.
         </p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONFIGURATORE ACCHIAPPASOGNI -->
+  <div id="designerBackdrop" class="backdrop hidden"></div>
+
+  <aside id="designerModal" class="drawer hidden" aria-hidden="true">
+    <div class="drawer-header">
+      <div class="drawer-title">Personalizza il tuo Acchiappasogni</div>
+      <button id="btnCloseDesigner" class="btn ghost">Chiudi</button>
+    </div>
+
+    <div style="padding:12px;">
+      <div class="section-title">Idee già composte (modificabili)</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin:10px 0;">
+        <button id="presetBase" class="btn small">Classico</button>
+        <button id="presetPhoto" class="btn small">Stile foto (scritta + AA)</button>
+        <button id="presetRomantic" class="btn small">Cuore</button>
+        <button id="presetMoon" class="btn small">Luna</button>
+        <button id="presetStar" class="btn small">Stella</button>
+      </div>
+
+      <div class="section-title">Strumenti (tocca l’anteprima per aggiungere)</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin:10px 0;">
+        <button id="toolBead" class="btn small">Perlina</button>
+        <button id="toolGlitter" class="btn small">Brillantino</button>
+        <button id="toolSymbol" class="btn small">Simbolo</button>
+        <button id="toolMiniFeather" class="btn small">Piumetta</button>
+        <button id="toolUndo" class="btn danger small">Annulla</button>
+      </div>
+      <p class="small" style="margin-top:-4px; color:var(--muted);">
+        Consiglio: seleziona uno strumento e poi tocca sull’immagine per piazzarlo.
+      </p>
+
+      <div class="section-title">Anteprima</div>
+      <div style="border:1px solid rgba(0,0,0,.12); border-radius:16px; overflow:hidden; margin-top:8px;">
+        <canvas id="designerCanvas" style="width:100%; height:360px; display:block; background:#fff;"></canvas>
+      </div>
+
+      <div class="section-title" style="margin-top:12px;">Componenti e variabili</div>
+
+      <div style="display:grid; gap:10px; margin-top:8px;">
+        <label class="field" style="margin:0;">
+          <span>Diametro (cm)</span>
+          <input id="optDiameter" type="range" min="12" max="60" value="35">
+        </label>
+
+        <label class="field" style="margin:0;">
+          <span>Numero piume</span>
+          <input id="optFeathers" type="range" min="1" max="7" value="3">
+        </label>
+
+        <label class="field" style="margin:0;">
+          <span>Lunghezza piume</span>
+          <input id="optFeatherLen" type="range" min="40" max="140" value="95">
+        </label>
+
+        <label class="field" style="margin:0;">
+          <span>Spessore cerchi</span>
+          <input id="optRingWidth" type="range" min="2" max="10" value="5">
+        </label>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <label class="field" style="margin:0; min-width:150px;">
+            <span>Colore cerchi</span>
+            <input id="colRings" type="color" value="#222222">
+          </label>
+          <label class="field" style="margin:0; min-width:150px;">
+            <span>Colore rete</span>
+            <input id="colWeb" type="color" value="#222222">
+          </label>
+          <label class="field" style="margin:0; min-width:150px;">
+            <span>Colore piume</span>
+            <input id="colFeathers" type="color" value="#333333">
+          </label>
+          <label class="field" style="margin:0; min-width:150px;">
+            <span>Colore perline</span>
+            <input id="colBeads" type="color" value="#b50000">
+          </label>
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <label style="display:flex; gap:8px; align-items:center;">
+            <input id="optBeadsOn" type="checkbox" checked>
+            <span>Perline</span>
+          </label>
+          <label class="field" style="margin:0; min-width:180px;">
+            <span>Quantità perline</span>
+            <input id="optBeadsQty" type="range" min="0" max="30" value="10">
+          </label>
+          <label style="display:flex; gap:8px; align-items:center;">
+            <input id="optGlitter" type="checkbox">
+            <span>Brillantini</span>
+          </label>
+        </div>
+
+        <label class="field" style="margin:0;">
+          <span>Scritta sopra (opzionale)</span>
+          <input id="optTextTop" type="text" placeholder="Es. REAL HASTA LA MUERTE">
+        </label>
+
+        <label class="field" style="margin:0;">
+          <span>Colore scritta</span>
+          <input id="colText" type="color" value="#b50000">
+        </label>
+
+        <label class="field" style="margin:0;">
+          <span>Simbolo centrale</span>
+          <select id="optSymbol">
+            <option value="none">Nessuno</option>
+            <option value="AA">AA (come foto)</option>
+            <option value="heart">Cuore</option>
+            <option value="moon">Luna</option>
+            <option value="star">Stella</option>
+          </select>
+        </label>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <label style="display:flex; gap:8px; align-items:center;">
+            <input id="optCharms" type="checkbox" checked>
+            <span>Charms laterali (come foto)</span>
+          </label>
+          <label class="field" style="margin:0; min-width:180px;">
+            <span>Grandezza charms</span>
+            <input id="optCharmSize" type="range" min="18" max="60" value="34">
+          </label>
+        </div>
+
+        <label class="field" style="margin:0;">
+          <span>Nome (facoltativo)</span>
+          <input id="designerName" type="text" placeholder="Es. Maria">
+        </label>
+
+        <label class="field" style="margin:0;">
+          <span>Note (facoltative)</span>
+          <textarea id="designerNotes" rows="3" placeholder="Colore preferito, dimensioni, dettagli..."></textarea>
+        </label>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
+          <button id="btnSendDesign" class="btn primary" style="flex:1;">Invia progetto su WhatsApp</button>
+          <button id="btnDownloadDesign" class="btn small" style="flex:1;">Scarica immagine</button>
+        </div>
+
+        <p class="small" id="designerHint" style="margin-top:6px;"></p>
       </div>
     </div>
   </aside>
