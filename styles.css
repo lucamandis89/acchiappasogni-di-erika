@@ -175,3 +175,4 @@ body{
 .two{display:grid; grid-template-columns:1fr 1fr; gap:10px}
 .radios{display:flex; gap:14px; margin-top:10px; color:var(--muted)}
 .small{margin-top:10px; color:var(--muted); font-size:12px}
+/* CSS placeholder */
