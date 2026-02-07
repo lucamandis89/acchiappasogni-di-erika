@@ -17,7 +17,6 @@
       --danger:#ff4d6d;
       --ok:#00e5a8;
       --shadow: 0 12px 40px rgba(0,0,0,.35);
-      --r:16px;
       --r2:22px;
     }
     *{box-sizing:border-box}
@@ -31,6 +30,7 @@
       color:var(--text);
       -webkit-font-smoothing:antialiased;
       text-rendering:optimizeLegibility;
+      touch-action: manipulation;
     }
     header{
       position:sticky; top:0; z-index:20;
@@ -50,23 +50,16 @@
       user-select:none;
       transition: transform .06s ease, background .15s ease;
       display:inline-flex; align-items:center; gap:8px;
+      -webkit-tap-highlight-color: transparent;
     }
     .btn:active{transform: translateY(1px)}
     .btn.primary{
       background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(45,212,191,.55));
       border-color: rgba(255,255,255,.16);
     }
-    .btn.danger{
-      background: rgba(255,77,109,.12);
-      border-color: rgba(255,77,109,.35);
-      color:#ffd6de;
-    }
-    .btn.ok{
-      background: rgba(0,229,168,.12);
-      border-color: rgba(0,229,168,.35);
-      color:#c9fff2;
-    }
-    .btn.small{padding:8px 10px; font-size:12px; border-radius:10px;}
+    .btn.ok{ background: rgba(0,229,168,.12); border-color: rgba(0,229,168,.35); color:#c9fff2;}
+    .btn.danger{ background: rgba(255,77,109,.12); border-color: rgba(255,77,109,.35); color:#ffd6de;}
+
     main{
       padding:12px;
       display:grid;
@@ -89,6 +82,7 @@
     .toolbar{display:flex; gap:8px; flex-wrap:wrap;}
     .toolGroup{display:flex; gap:8px; flex-wrap:wrap; padding:8px; border-radius:16px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.03);}
     .status{display:flex; gap:10px; flex-wrap:wrap; align-items:center; font-size:12px; color:var(--muted);}
+
     .stage{
       width:100%;
       aspect-ratio: 1 / 1;
@@ -100,7 +94,6 @@
         radial-gradient(600px 600px at 50% 30%, rgba(255,255,255,.06), transparent 60%),
         radial-gradient(1000px 800px at 30% 90%, rgba(45,212,191,.10), transparent 55%),
         rgba(255,255,255,.03);
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,.2);
     }
     .stage svg{width:100%; height:100%; display:block; touch-action:none;}
     .tabs{display:flex; gap:8px; flex-wrap:wrap; padding:10px 10px 0;}
@@ -124,10 +117,7 @@
     .section.active{display:grid;}
     .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
     @media (max-width: 520px){ .grid2{grid-template-columns:1fr;} }
-    label{
-      font-size:12px; color:var(--muted); font-weight:1000;
-      display:flex; flex-direction:column; gap:6px;
-    }
+    label{font-size:12px; color:var(--muted); font-weight:1000; display:flex; flex-direction:column; gap:6px;}
     input[type="number"], input[type="text"], select, input[type="color"]{
       width:100%;
       padding:10px 12px;
@@ -149,48 +139,11 @@
       font-size:12px;
       line-height:1.35;
     }
-    .chipRow{display:flex; flex-wrap:wrap; gap:8px;}
-    .chip{
-      padding:9px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.03);
-      color:var(--text);
-      font-weight:1000;
-      font-size:12px;
-      cursor:pointer;
-      user-select:none;
-    }
-    .chip.on{
-      background: rgba(124,92,255,.22);
-      border-color: rgba(124,92,255,.45);
-    }
-    .list{list-style:none; margin:0; padding:0; display:grid; gap:8px;}
-    .item{
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:10px 10px;
-    }
-    .item .left{display:flex; gap:10px; align-items:center; min-width:0;}
-    .badge{
-      width:34px; height:34px; border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.15);
-      display:grid; place-items:center;
-      font-weight:1000; color:var(--muted);
-      flex:0 0 auto;
-    }
-    .item .title{margin:0; font-weight:1000; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-    .item .meta{margin:2px 0 0; font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
     .selOutline{
       fill:none; stroke: rgba(124,92,255,.95);
       stroke-width:2.2; stroke-dasharray:5 4;
       pointer-events:none;
-      filter: drop-shadow(0 2px 6px rgba(124,92,255,.20));
     }
-    @keyframes blink { 0%, 55%{opacity:1} 56%, 75%{opacity:.25} 76%, 100%{opacity:1} }
   </style>
 </head>
 
@@ -200,1264 +153,384 @@
     <div>
       <h1>✨ Personalizzato — Acchiappasogni di Erika</h1>
       <div style="font-size:12px;color:var(--muted);font-weight:900;margin-top:4px">
-        Torna al catalogo quando vuoi • Salva • Invia su WhatsApp
+        Torna al catalogo • Salva progetto • Invia su WhatsApp
       </div>
     </div>
     <div style="display:flex; gap:10px; flex-wrap:wrap">
       <button class="btn" id="backToCatalog">⬅️ Catalogo</button>
-      <button class="btn" id="btnSalva">📌 Salva</button>
+      <button class="btn ok" id="btnSaveProject">💾 Salva progetto</button>
       <button class="btn primary" id="btnInvia">💬 Invia WhatsApp</button>
     </div>
   </div>
 </header>
 
 <main>
-  <!-- PREVIEW -->
   <section class="card">
     <div class="head">
       <h2>Anteprima</h2>
-      <p class="hint">Tocca un elemento per selezionarlo • Trascina per spostare • Usa i pulsanti per allineare/portare avanti/eliminare.</p>
+      <p class="hint">Tocca per selezionare • Trascina per spostare • (Fix mobile attivo)</p>
 
       <div class="toolbar">
         <div class="toolGroup">
-          <button class="btn small" id="btnUndo">↩️ Annulla</button>
-          <button class="btn small" id="btnRedo">↪️ Ripeti</button>
-          <button class="btn small" id="btnCenter">🎯 Allinea al centro</button>
-          <button class="btn small" id="btnDistribute">📏 Distribuisci</button>
-          <button class="btn small" id="btnMirror">🪞 Specchia S/D</button>
-          <button class="btn small" id="btnLock">🔒 Blocca</button>
-        </div>
-        <div class="toolGroup">
-          <button class="btn small" id="btnBack">⬇️ Indietro</button>
-          <button class="btn small" id="btnFront">⬆️ Avanti</button>
-          <button class="btn small danger" id="btnDelete">🗑️ Elimina</button>
+          <button class="btn" id="btnCenter">🎯 Centro</button>
+          <button class="btn danger" id="btnDelete">🗑️ Elimina</button>
         </div>
       </div>
 
       <div class="status">
         <span>Selezione: <b id="selName">nessuna</b></span>
-        <span>•</span>
-        <span>Totale stimato: <b id="totalPrice">0,00€</b></span>
       </div>
     </div>
 
     <div class="body">
       <div class="stage">
         <svg id="svg" viewBox="0 0 1000 1000" role="img" aria-label="Configuratore">
-          <defs>
-            <filter id="softShadow">
-              <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity=".35"/>
-            </filter>
-            <filter id="ringShadow">
-              <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000" flood-opacity=".35"/>
-            </filter>
-            <filter id="rope">
-              <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="2" result="noise"/>
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2" xChannelSelector="R" yChannelSelector="G"/>
-            </filter>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="3.2" result="b"/>
-              <feMerge>
-                <feMergeNode in="b"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-          </defs>
-
           <g id="scene">
-            <g id="baseModel"></g>
-            <g id="lightsLayer"></g>
-            <g id="accessoriesLayer"></g>
-            <g id="textLayer"></g>
-            <g id="uiLayer"></g>
+            <g id="base"></g>
+            <g id="acc"></g>
+            <g id="ui"></g>
           </g>
         </svg>
       </div>
     </div>
   </section>
 
-  <!-- CONTROLS -->
   <aside class="card">
     <div class="head">
       <h2>Controlli</h2>
-      <p class="hint">Scegli modello e colori, aggiungi accessori e scritta. (Funziona anche su app WebView)</p>
+      <p class="hint">Modello base (triplo) + colori.</p>
     </div>
 
     <div class="tabs" id="tabs">
       <div class="tab active" data-tab="modello">1) Modello</div>
-      <div class="tab" data-tab="tessitura">2) Tessitura</div>
-      <div class="tab" data-tab="accessori">3) Accessori</div>
-      <div class="tab" data-tab="scritta">4) Scritta</div>
-      <div class="tab" data-tab="luci">5) Luci</div>
-      <div class="tab" data-tab="salva">6) Salva</div>
-      <div class="tab" data-tab="prezzi">7) Prezzi</div>
+      <div class="tab" data-tab="scritta">2) Scritta</div>
+      <div class="tab" data-tab="salva">3) Salva</div>
     </div>
 
     <div class="body">
-      <!-- MODELLO -->
       <div class="section active" id="sec-modello">
-        <div class="note">✅ Consiglio: scegli un modello pronto e poi personalizza.</div>
+        <div class="note">Scegli colori e applica.</div>
         <div class="grid2">
-          <label>Modello
-            <select id="modelSelect">
-              <option value="classic" selected>Classico (1 cerchio + piume)</option>
-              <option value="triple">Triplo (1 grande + 2 piccoli)</option>
-              <option value="moon">Luna</option>
-              <option value="mini">Mini</option>
-            </select>
-          </label>
-          <label>Colore cerchio
-            <input type="color" id="ringColor" value="#b6936a"/>
-          </label>
+          <label>Colore cerchio <input type="color" id="ringColor" value="#b6936a"/></label>
+          <label>Colore rete <input type="color" id="webColor" value="#f2f2f2"/></label>
         </div>
         <div class="grid2">
-          <label>Colore rete
-            <input type="color" id="webColor" value="#f2f2f2"/>
-          </label>
-          <label>Perla centrale
-            <input type="color" id="centerBeadColor" value="#d7d7d7"/>
-          </label>
+          <label>Perla centrale <input type="color" id="beadColor" value="#d7d7d7"/></label>
+          <label>Numero piume <input type="number" id="feathers" min="0" max="12" step="1" value="6"/></label>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap">
-          <button class="btn ok" id="btnApplyModel">✨ Applica</button>
-          <button class="btn" id="btnReset">🔄 Riparti pulito</button>
+          <button class="btn ok" id="btnApply">✨ Applica</button>
+          <button class="btn" id="btnReset">🔄 Reset</button>
         </div>
       </div>
 
-      <!-- TESSITURA -->
-      <div class="section" id="sec-tessitura">
-        <div class="note">Scegli la tessitura della rete.</div>
-        <label>Cerchio
-          <select id="weaveRingSelect"></select>
-        </label>
-        <div class="grid2">
-          <label>Tipo
-            <select id="weaveType">
-              <option value="spider" selected>Ragnatela</option>
-              <option value="star">Stella</option>
-              <option value="flower">Fiore</option>
-              <option value="spiral">Spirale</option>
-              <option value="simple">Semplice</option>
-            </select>
-          </label>
-          <label>Densità
-            <input type="number" id="weaveDensity" min="3" max="14" step="1" value="9"/>
-          </label>
-        </div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap">
-          <button class="btn ok" id="btnApplyWeave">🧵 Applica</button>
-          <button class="btn" id="btnWeaveAll">✨ Tutti</button>
-        </div>
-      </div>
-
-      <!-- ACCESSORI -->
-      <div class="section" id="sec-accessori">
-        <div class="note">Scegli tema e aggiungi accessori.</div>
-        <div class="chipRow" id="themeChips"></div>
-        <div class="grid2">
-          <label>Colore accessorio
-            <input type="color" id="accColor" value="#ffffff"/>
-          </label>
-          <label>Dimensione
-            <select id="accSize">
-              <option value="0.8">Piccola</option>
-              <option value="1" selected>Normale</option>
-              <option value="1.25">Grande</option>
-            </select>
-          </label>
-        </div>
-        <ul class="list" id="accList"></ul>
-      </div>
-
-      <!-- SCRITTA -->
       <div class="section" id="sec-scritta">
         <div class="note">Aggiungi una scritta (nome/dedica).</div>
-        <label>Testo
-          <input type="text" id="textValue" placeholder="Es: Merry Christmas / Nome..." />
-        </label>
+        <label>Testo <input type="text" id="txt" placeholder="Es: Merry Christmas / Nome..."/></label>
         <div class="grid2">
-          <label>Colore
-            <input type="color" id="textColor" value="#ffd34d"/>
-          </label>
-          <label>Font
-            <select id="textFont">
-              <option value="sans" selected>Moderno</option>
-              <option value="serif">Elegante</option>
-              <option value="script">Corsivo</option>
-            </select>
-          </label>
-        </div>
-        <div class="grid2">
-          <label>Dimensione
-            <input type="number" id="textSize" min="18" max="120" step="2" value="56"/>
-          </label>
-          <label>Ombra
-            <select id="textShadow">
-              <option value="on" selected>On</option>
-              <option value="off">Off</option>
-            </select>
-          </label>
+          <label>Colore <input type="color" id="txtColor" value="#ffd34d"/></label>
+          <label>Dimensione <input type="number" id="txtSize" min="18" max="120" step="2" value="56"/></label>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap">
-          <button class="btn ok" id="btnAddText">✍️ Aggiungi/aggiorna</button>
+          <button class="btn ok" id="btnAddText">✍️ Aggiungi</button>
           <button class="btn danger" id="btnRemoveText">🗑️ Rimuovi</button>
         </div>
       </div>
 
-      <!-- LUCI -->
-      <div class="section" id="sec-luci">
-        <div class="note">Effetto luci LED grafico.</div>
-        <div class="grid2">
-          <label>Luci
-            <select id="lightsOn">
-              <option value="off" selected>Off</option>
-              <option value="on">On</option>
-            </select>
-          </label>
-          <label>Colore
-            <select id="lightsColor">
-              <option value="multicolor" selected>Multicolor</option>
-              <option value="#ffffff">Bianco</option>
-              <option value="#6aa9ff">Blu</option>
-              <option value="#ff3b7b">Rosa</option>
-              <option value="#7cffb7">Verde</option>
-              <option value="#ffd34d">Oro</option>
-            </select>
-          </label>
-        </div>
-        <div class="grid2">
-          <label>Intensità
-            <input type="number" id="lightsIntensity" min="20" max="100" step="5" value="75"/>
-          </label>
-          <label>Modalità
-            <select id="lightsMode">
-              <option value="steady" selected>Fissa</option>
-              <option value="blink">Lampeggio</option>
-            </select>
-          </label>
-        </div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap">
-          <button class="btn ok" id="btnApplyLights">💡 Applica</button>
-          <button class="btn" id="btnLightsAuto">✨ Auto</button>
-        </div>
-      </div>
-
-      <!-- SALVA -->
       <div class="section" id="sec-salva">
-        <div class="note">Salva e imposta WhatsApp.</div>
-        <div class="grid2">
-          <label>Nome progetto
-            <input type="text" id="projectName" placeholder="Es: Natale Rosso..." />
-          </label>
-          <label>Numero WhatsApp (tuo)
-            <input type="text" id="waNumber" placeholder="Es: 39333..." />
-          </label>
-        </div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap">
-          <button class="btn ok" id="btnDownloadPNG">📥 PNG</button>
-          <button class="btn" id="btnDownloadJSON">📌 JSON</button>
-          <label style="margin:0">
-            <span style="font-size:12px; color:var(--muted); font-weight:1000; margin-bottom:6px; display:block">📂 Carica JSON</span>
-            <input type="file" id="fileLoadJSON" accept="application/json" />
-          </label>
-        </div>
+        <div class="note">Qui scegli titolo e descrizione del progetto.</div>
+        <label>Titolo progetto <input type="text" id="pTitle" placeholder="Es: Natale Rosso"/></label>
+        <label>Descrizione <input type="text" id="pDesc" placeholder="Es: Triplo, oro, piume bianche..."/></label>
       </div>
-
-      <!-- PREZZI -->
-      <div class="section" id="sec-prezzi">
-        <div class="note">
-          Prezzi base (modificabili nel codice). Totale stimato visibile in alto.
-        </div>
-        <div class="note" id="priceSummary"></div>
-      </div>
-
     </div>
   </aside>
 </main>
 
 <script>
-/* ===== STORAGE ===== */
-const STORAGE_KEY = "ery_configurator_v1";
-
-/* ===== PRICES ===== */
-const PRICES = {
-  ring_big: 4.00,
-  ring_small: 2.00,
-  feather: 0.50,
-  bead: 0.20,
-  charm: 1.50,
-  flower: 1.50,
-  bow: 2.00,
-  gnome: 2.50,
-  text: 3.00,
-  lights: 4.00
+/* ====== KEYS compatibili con HOME ====== */
+const K = {
+  projects: "ae_builder_projects_v1",
+  wa: "ae_wa_number_v1"
 };
 
-const ACCESSORIES = [
-  { id:"feather",  label:"Piuma",          icon:"🪶", themes:["Classico","Nascita","Matrimonio"], priceKey:"feather", colorable:true,  kind:"feather" },
-  { id:"bead",     label:"Perlina",        icon:"🫧", themes:["Classico","Nascita","Matrimonio","Natale"], priceKey:"bead", colorable:true, kind:"bead" },
-  { id:"star",     label:"Stellina",       icon:"⭐", themes:["Natale","Nascita"], priceKey:"charm", colorable:true, kind:"charm" },
-  { id:"heart",    label:"Cuore",          icon:"❤️", themes:["Matrimonio","Nascita"], priceKey:"charm", colorable:true, kind:"charm" },
-  { id:"snow",     label:"Fiocco di neve", icon:"❄️", themes:["Natale"], priceKey:"charm", colorable:true, kind:"charm" },
-  { id:"holly",    label:"Agrifoglio",     icon:"🍃", themes:["Natale"], priceKey:"charm", colorable:true, kind:"charm" },
-  { id:"flower",   label:"Fiore",          icon:"🌸", themes:["Matrimonio","Nascita","Classico"], priceKey:"flower", colorable:true, kind:"flower" },
-  { id:"bow",      label:"Fiocco",         icon:"🎀", themes:["Natale","Matrimonio","Nascita"], priceKey:"bow", colorable:true, kind:"bow" },
-  { id:"gnome",    label:"Gnomo",          icon:"🧑‍🎄", themes:["Natale"], priceKey:"gnome", colorable:false, kind:"gnome" },
-  { id:"initials", label:"Iniziali",       icon:"🔤", themes:["Matrimonio","Nascita"], priceKey:"text", colorable:true, kind:"miniText" }
-];
-
-const THEMES = ["Tutti","Classico","Natale","Matrimonio","Nascita"];
-
-/* ===== STATE ===== */
-const state = {
-  model: "classic",
-  ringColor: "#b6936a",
-  webColor: "#f2f2f2",
-  centerBeadColor: "#d7d7d7",
-  rings: { bigDiameter: 520, smallDiameter: 220, smallCount: 2, ringStroke: 16 },
-  weaves: {},
-  lights: { on:false, color:"multicolor", intensity:75, mode:"steady" },
-  text: { on:false, value:"", color:"#ffd34d", font:"sans", size:56, shadow:true, x:500, y:140 },
-  selectedId: null,
-  elements: [],
-  history: [],
-  future: [],
-  waNumber: "",
-  projectName: ""
-};
-
-/* ===== DOM ===== */
 const $ = (q)=>document.querySelector(q);
-const svg = $("#svg");
-const baseModel = $("#baseModel");
-const lightsLayer = $("#lightsLayer");
-const accessoriesLayer = $("#accessoriesLayer");
-const textLayer = $("#textLayer");
-const uiLayer = $("#uiLayer");
 
-function euro(n){
-  const s = (Math.round(n*100)/100).toFixed(2).replace(".", ",");
-  return s + "€";
-}
-function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
-function uid(prefix="el"){ return prefix+"_"+Math.random().toString(16).slice(2)+"_"+Date.now().toString(16).slice(2); }
-function deepClone(o){ return JSON.parse(JSON.stringify(o)); }
-function clearNode(node){ while(node.firstChild) node.removeChild(node.firstChild); }
-function svgEl(name, attrs={}){
-  const el = document.createElementNS("http://www.w3.org/2000/svg", name);
-  Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k, v));
-  return el;
-}
+$("#backToCatalog").onclick = ()=> window.location.href = "index.html";
 
-/* ===== NAV ===== */
-$("#backToCatalog").onclick = ()=>{ window.location.href = "index.html"; };
-
-/* ===== TABS ===== */
-$("#tabs").addEventListener("click", (e)=>{
-  const tab = e.target.closest(".tab");
-  if(!tab) return;
-  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-  tab.classList.add("active");
-  const key = tab.dataset.tab;
+$("#tabs").addEventListener("click",(e)=>{
+  const t = e.target.closest(".tab");
+  if(!t) return;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  t.classList.add("active");
+  const key = t.dataset.tab;
   document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
   $("#sec-"+key).classList.add("active");
 });
 
-/* ===== HISTORY ===== */
-function snapshot(){
-  return {
-    model: state.model,
-    ringColor: state.ringColor,
-    webColor: state.webColor,
-    centerBeadColor: state.centerBeadColor,
-    rings: deepClone(state.rings),
-    weaves: deepClone(state.weaves),
-    lights: deepClone(state.lights),
-    text: deepClone(state.text),
-    elements: deepClone(state.elements),
-    waNumber: state.waNumber,
-    projectName: state.projectName
-  };
+function uid(prefix="x"){ return prefix+"_"+Math.random().toString(16).slice(2)+"_"+Date.now().toString(16); }
+
+function svgEl(name, attrs={}){
+  const el = document.createElementNS("http://www.w3.org/2000/svg", name);
+  Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,v));
+  return el;
 }
-function saveToHistory(){
-  state.history.push(snapshot());
-  if(state.history.length>60) state.history.shift();
-  state.future = [];
-}
-function restore(snap){
-  Object.assign(state, snap);
-  state.selectedId = null;
-  syncInputs();
-  rebuildAll();
-}
+function clearNode(n){ while(n.firstChild) n.removeChild(n.firstChild); }
 
-/* ===== WEAVE ===== */
-function weavePath(cx, cy, radius, type="spider", density=9){
-  density = clamp(density, 3, 14);
+const svg = $("#svg");
+const base = $("#base");
+const acc = $("#acc");
+const ui = $("#ui");
 
-  if(type === "simple"){
-    const spokes = Math.max(6, density);
-    let d = "";
-    for(let i=0;i<spokes;i++){
-      const a = (Math.PI*2/spokes)*i - Math.PI/2;
-      d += `M ${cx} ${cy} L ${cx + Math.cos(a)*radius} ${cy + Math.sin(a)*radius} `;
-    }
-    return svgEl("path", { d });
-  }
+const state = {
+  ringColor: $("#ringColor").value,
+  webColor: $("#webColor").value,
+  beadColor: $("#beadColor").value,
+  feathers: parseInt($("#feathers").value,10),
+  text: { on:false, value:"", color:"#ffd34d", size:56, x:500, y:130 },
+  selected: null,
+  acc: []
+};
 
-  if(type === "star"){
-    const points = Math.max(5, Math.min(10, density));
-    let d = "";
-    for(let i=0;i<points;i++){
-      const a = (Math.PI*2/points)*i - Math.PI/2;
-      d += `M ${cx} ${cy} L ${cx + Math.cos(a)*radius} ${cy + Math.sin(a)*radius} `;
-    }
-    for(let k=1;k<=3;k++){
-      const rr = radius*(0.25 + k*0.17);
-      let pts = [];
-      for(let i=0;i<points;i++){
-        const a = (Math.PI*2/points)*i - Math.PI/2;
-        pts.push([cx + Math.cos(a)*rr, cy + Math.sin(a)*rr]);
-      }
-      d += `M ${pts[0][0]} ${pts[0][1]} `;
-      for(let i=1;i<pts.length;i++) d += `L ${pts[i][0]} ${pts[i][1]} `;
-      d += "Z ";
-    }
-    return svgEl("path", { d });
-  }
-
-  if(type === "flower"){
-    const petals = Math.max(6, Math.min(14, density+2));
-    let d = "";
-    for(let i=0;i<petals;i++){
-      const a = (Math.PI*2/petals)*i - Math.PI/2;
-      const x1 = cx + Math.cos(a)*radius;
-      const y1 = cy + Math.sin(a)*radius;
-      const a2 = a + (Math.PI*2/petals)*0.45;
-      const x2 = cx + Math.cos(a2)*(radius*0.55);
-      const y2 = cy + Math.sin(a2)*(radius*0.55);
-      d += `M ${cx} ${cy} Q ${x2} ${y2} ${x1} ${y1} `;
-    }
-    const rr = radius*0.45;
-    d += `M ${cx+rr} ${cy} A ${rr} ${rr} 0 1 0 ${cx-rr} ${cy} A ${rr} ${rr} 0 1 0 ${cx+rr} ${cy} `;
-    return svgEl("path", { d });
-  }
-
-  if(type === "spiral"){
-    const turns = density;
-    const steps = turns*22;
-    let d = "";
-    for(let i=0;i<=steps;i++){
-      const t = i/steps;
-      const a = t*turns*Math.PI*2 - Math.PI/2;
-      const rr = t*radius;
-      const x = cx + Math.cos(a)*rr;
-      const y = cy + Math.sin(a)*rr;
-      d += (i===0?`M ${x} ${y} `:`L ${x} ${y} `);
-    }
-    return svgEl("path", { d });
-  }
-
-  // spider
-  const rings = Math.max(4, density);
-  const spokes = 12;
-  let d = "";
-
-  for(let i=0;i<spokes;i++){
-    const a = (Math.PI*2/spokes)*i - Math.PI/2;
-    d += `M ${cx} ${cy} L ${cx + Math.cos(a)*radius} ${cy + Math.sin(a)*radius} `;
-  }
-  for(let r=1;r<=rings;r++){
-    const rr = radius*(r/(rings+0.5));
-    let pts = [];
-    for(let i=0;i<spokes;i++){
-      const a = (Math.PI*2/spokes)*i - Math.PI/2;
-      const wobble = (Math.sin(i*1.7 + r*0.8) * 0.03 + 0.02) * radius;
-      pts.push([cx + Math.cos(a)*(rr+wobble), cy + Math.sin(a)*(rr+wobble)]);
-    }
-    d += `M ${pts[0][0]} ${pts[0][1]} `;
-    for(let i=1;i<pts.length;i++) d += `L ${pts[i][0]} ${pts[i][1]} `;
-    d += "Z ";
-  }
-  return svgEl("path", { d });
-}
-
-/* ===== BASE MODEL ===== */
-function registerRingOption(ringId, label){
-  const sel = $("#weaveRingSelect");
-  if(![...sel.options].some(o=>o.value===ringId)){
-    const opt = document.createElement("option");
-    opt.value = ringId;
-    opt.textContent = label;
-    sel.appendChild(opt);
-  }
-  if(!state.weaves[ringId]) state.weaves[ringId] = { type:"spider", density:9 };
-}
-
-function buildCrescentPath(cx, cy, rOuter, rInner){
-  const shift = rOuter*0.35;
-  const x2 = cx + shift;
-  const p1 = [cx, cy - rOuter];
-  const p2 = [cx, cy + rOuter];
-  const p3 = [x2, cy + rInner];
-  const p4 = [x2, cy - rInner];
-  return [
-    `M ${p1[0]} ${p1[1]}`,
-    `A ${rOuter} ${rOuter} 0 1 1 ${p2[0]} ${p2[1]}`,
-    `A ${rOuter} ${rOuter} 0 1 1 ${p1[0]} ${p1[1]}`,
-    `Z`,
-    `M ${p3[0]} ${p3[1]}`,
-    `A ${rInner} ${rInner} 0 1 0 ${p4[0]} ${p4[1]}`,
-    `A ${rInner} ${rInner} 0 1 0 ${p3[0]} ${p3[1]}`,
-    `Z`
-  ].join(" ");
-}
-
-function buildBase(){
-  clearNode(baseModel);
-  $("#weaveRingSelect").innerHTML = "";
+function build(){
+  clearNode(base);
+  clearNode(acc);
+  clearNode(ui);
 
   const cX=500, cY=420;
-  const bigR = state.rings.bigDiameter/2;
-  const ringStroke = state.rings.ringStroke;
+  const bigR=260, smallR=110;
 
-  if(state.model==="moon"){
-    const g = svgEl("g", {"data-id":"moon", "data-type":"ring", "filter":"url(#ringShadow)"});
-    const crescent = buildCrescentPath(cX, cY, bigR, bigR*0.68);
-    g.appendChild(svgEl("path", {d:crescent, fill:"none", stroke:state.ringColor, "stroke-width":ringStroke, "stroke-linecap":"round", "stroke-linejoin":"round", filter:"url(#rope)"}));
-
-    // web clipped in crescent (simple)
-    const web = weavePath(cX, cY, bigR*0.85, "spider", 9);
-    web.setAttribute("stroke", state.webColor);
-    web.setAttribute("stroke-width", "2.2");
-    web.setAttribute("opacity", "0.95");
-    web.setAttribute("filter", "url(#softShadow)");
-    g.appendChild(web);
-
-    g.appendChild(svgEl("circle", {cx:cX, cy:cY, r:10, fill:state.centerBeadColor, filter:"url(#softShadow)"}));
-    baseModel.appendChild(g);
-
-    registerRingOption("moon", "Luna");
-  } else {
-    // big ring
-    const big = svgEl("g", {"data-id":"big", "data-type":"ring", "filter":"url(#ringShadow)"});
-    big.appendChild(svgEl("circle", {cx:cX, cy:cY, r:bigR, fill:"none", stroke:state.ringColor, "stroke-width":ringStroke, filter:"url(#rope)"}));
-    const wc = state.weaves.big || {type:"spider", density:9};
-    state.weaves.big = wc;
-    const web = weavePath(cX, cY, bigR - ringStroke*0.9, wc.type, wc.density);
-    web.setAttribute("stroke", state.webColor);
-    web.setAttribute("stroke-width", "2.2");
-    web.setAttribute("opacity", "0.95");
-    web.setAttribute("filter", "url(#softShadow)");
-    big.appendChild(web);
-    big.appendChild(svgEl("circle", {cx:cX, cy:cY, r:10, fill:state.centerBeadColor, filter:"url(#softShadow)"}));
-    baseModel.appendChild(big);
-    registerRingOption("big", "Cerchio grande");
-
-    // small rings for classic/triple/mini
-    const sc = (state.model==="mini") ? 0 : (state.model==="triple" ? 2 : state.rings.smallCount);
-    const sr = state.rings.smallDiameter/2;
-    if(sc>0){
-      const startY = cY + bigR + 110;
-      const xs = sc===2 ? [cX - sr - 40, cX + sr + 40] : [cX];
-      for(let i=0;i<sc;i++){
-        const id = "s"+(i+1);
-        const x = xs[i] ?? (cX + (i-((sc-1)/2))*(sr*2+36));
-        const g = svgEl("g", {"data-id":id, "data-type":"ring", "filter":"url(#ringShadow)"});
-        g.appendChild(svgEl("circle", {cx:x, cy:startY, r:sr, fill:"none", stroke:state.ringColor, "stroke-width":ringStroke, filter:"url(#rope)"}));
-        const wc2 = state.weaves[id] || {type:"spider", density:9};
-        state.weaves[id] = wc2;
-        const w2 = weavePath(x, startY, sr - ringStroke*0.9, wc2.type, wc2.density);
-        w2.setAttribute("stroke", state.webColor);
-        w2.setAttribute("stroke-width", "2.2");
-        w2.setAttribute("opacity", "0.95");
-        w2.setAttribute("filter", "url(#softShadow)");
-        g.appendChild(w2);
-        g.appendChild(svgEl("circle", {cx:x, cy:startY, r:8, fill:state.centerBeadColor, filter:"url(#softShadow)"}));
-        baseModel.appendChild(g);
-        registerRingOption(id, "Cerchio " + id.toUpperCase());
-      }
-    }
-
-    // auto feathers if empty
-    ensureDefaultFeathers();
+  // big ring
+  base.appendChild(svgEl("circle",{cx:cX, cy:cY, r:bigR, fill:"none", stroke:state.ringColor, "stroke-width":"18", "data-type":"ring", "data-id":"big"}));
+  // web simple
+  for(let i=0;i<12;i++){
+    const a = (Math.PI*2/12)*i - Math.PI/2;
+    base.appendChild(svgEl("line",{x1:cX,y1:cY,x2:cX+Math.cos(a)*bigR,y2:cY+Math.sin(a)*bigR, stroke:state.webColor, "stroke-width":"2"}));
   }
+  base.appendChild(svgEl("circle",{cx:cX, cy:cY, r:10, fill:state.beadColor}));
 
-  rebuildLights();
-  rebuildAccessories();
-  rebuildText();
-  updateSelectionUI();
-  updatePrice();
-}
+  // 2 small rings
+  const sY = cY + bigR + 120;
+  const s1X = cX - smallR - 45;
+  const s2X = cX + smallR + 45;
 
-function ensureDefaultFeathers(){
-  const hasFeather = state.elements.some(e=>e.kind==="feather");
-  if(hasFeather) return;
+  ["s1","s2"].forEach((id,idx)=>{
+    const x = idx===0 ? s1X : s2X;
+    base.appendChild(svgEl("circle",{cx:x, cy:sY, r:smallR, fill:"none", stroke:state.ringColor, "stroke-width":"18", "data-type":"ring", "data-id":id}));
+    for(let i=0;i<10;i++){
+      const a = (Math.PI*2/10)*i - Math.PI/2;
+      base.appendChild(svgEl("line",{x1:x,y1:sY,x2:x+Math.cos(a)*smallR,y2:sY+Math.sin(a)*smallR, stroke:state.webColor, "stroke-width":"2"}));
+    }
+    base.appendChild(svgEl("circle",{cx:x, cy:sY, r:8, fill:state.beadColor}));
+  });
 
-  if(state.model!=="classic" && state.model!=="triple") return;
-  const bigR = state.rings.bigDiameter/2;
-  const startX = 500 - 170;
-  const y = 420 + bigR + 190;
+  // feathers
+  state.acc = [];
+  const startX = 500 - 180;
+  const y = sY + smallR + 60;
+  for(let i=0;i<state.feathers;i++){
+    const id = uid("f");
+    state.acc.push({id, x:startX + i*65, y:y + Math.sin(i)*10});
+  }
+  state.acc.forEach(f=>{
+    const g = svgEl("g", {"data-type":"acc","data-id":f.id, cursor:"grab"});
+    g.setAttribute("transform", `translate(${f.x} ${f.y})`);
+    g.appendChild(svgEl("path",{d:"M 0 0 C 40 -20 70 -5 90 10 C 70 25 40 35 0 18 Z", fill:"#ffffff", opacity:"0.92"}));
+    acc.appendChild(g);
+  });
 
-  for(let i=0;i<6;i++){
-    state.elements.push({
-      id: uid("a"),
-      accId:"feather",
-      kind:"feather",
-      label:"Piuma",
-      x: startX + i*70,
-      y: y + Math.sin(i)*10,
-      rot: (-15 + i*6),
-      scale: 1.05,
-      color:"#ffffff",
-      locked:false,
-      z: Date.now()+i
+  // text
+  if(state.text.on && state.text.value){
+    const t = svgEl("text", {
+      x: state.text.x, y: state.text.y,
+      "text-anchor":"middle", "dominant-baseline":"middle",
+      fill: state.text.color, "font-size": state.text.size,
+      "font-weight":"1000",
+      "data-type":"text", "data-id":"mainText"
     });
-  }
-}
-
-/* ===== ACCESSORIES ===== */
-function accessorySVG(el){
-  const g = svgEl("g", {"data-id":el.id, "data-type":"acc", cursor:"grab"});
-  g.setAttribute("transform", `translate(${el.x} ${el.y}) rotate(${el.rot}) scale(${el.scale})`);
-  const color = el.color || "#fff";
-
-  if(el.kind==="feather"){
-    g.appendChild(svgEl("path", {
-      d:"M 0 0 C 40 -20 70 -5 90 10 C 70 25 40 35 0 18 C 18 25 40 30 65 35 C 45 20 25 10 0 0 Z",
-      fill: color, opacity:"0.92", filter:"url(#softShadow)"
-    }));
-    g.appendChild(svgEl("path", {d:"M 8 8 C 30 18 55 28 78 30", fill:"none", stroke:"rgba(0,0,0,.25)", "stroke-width":"2"}));
-  } else if(el.kind==="bead"){
-    g.appendChild(svgEl("circle", {cx:0, cy:0, r:12, fill:color, filter:"url(#softShadow)"}));
-    g.appendChild(svgEl("circle", {cx:-4, cy:-5, r:4, fill:"rgba(255,255,255,.55)"}));
-  } else if(el.kind==="charm"){
-    g.appendChild(svgEl("circle", {cx:0, cy:0, r:14, fill:color, filter:"url(#softShadow)"}));
-    g.appendChild(svgEl("circle", {cx:0, cy:0, r:6, fill:"rgba(255,255,255,.22)"}));
-  } else if(el.kind==="flower"){
-    for(let i=0;i<7;i++){
-      const a = (Math.PI*2/7)*i;
-      g.appendChild(svgEl("circle", {cx:Math.cos(a)*16, cy:Math.sin(a)*16, r:10, fill:color, opacity:"0.9", filter:"url(#softShadow)"}));
-    }
-    g.appendChild(svgEl("circle", {cx:0, cy:0, r:8, fill:"rgba(255,255,255,.35)"}));
-  } else if(el.kind==="bow"){
-    g.appendChild(svgEl("path", {d:"M 0 0 C -28 -16 -48 -4 -50 10 C -40 18 -20 16 0 0 Z", fill:color, filter:"url(#softShadow)"}));
-    g.appendChild(svgEl("path", {d:"M 0 0 C 28 -16 48 -4 50 10 C 40 18 20 16 0 0 Z", fill:color, filter:"url(#softShadow)"}));
-    g.appendChild(svgEl("circle", {cx:0, cy:0, r:9, fill:"rgba(0,0,0,.15)"}));
-  } else if(el.kind==="gnome"){
-    g.appendChild(svgEl("path", {d:"M -28 10 C -20 -25 20 -25 28 10 Z", fill:"#ff3b7b", filter:"url(#softShadow)"}));
-    g.appendChild(svgEl("circle", {cx:0, cy:14, r:14, fill:"#f4d7c7", filter:"url(#softShadow)"}));
-    g.appendChild(svgEl("path", {d:"M -18 34 C -10 10 10 10 18 34 Z", fill:"#ffffff", filter:"url(#softShadow)"}));
-    g.appendChild(svgEl("circle", {cx:0, cy:18, r:4, fill:"#ffd34d"}));
-  } else if(el.kind==="miniText"){
-    const t = svgEl("text", {x:0, y:0, "text-anchor":"middle", "dominant-baseline":"middle", fill:color, "font-size":"30", "font-weight":"1000"});
-    t.textContent = el.text || "E&L";
-    g.appendChild(t);
+    t.textContent = state.text.value;
+    acc.appendChild(t);
   }
 
-  return g;
+  renderSelection();
 }
 
-function rebuildAccessories(){
-  clearNode(accessoriesLayer);
-  [...state.elements].sort((a,b)=>(a.z||0)-(b.z||0)).forEach(el=>{
-    accessoriesLayer.appendChild(accessorySVG(el));
-  });
-}
+function renderSelection(){
+  clearNode(ui);
+  $("#selName").textContent = state.selected ? state.selected : "nessuna";
+  if(!state.selected) return;
 
-function rebuildText(){
-  clearNode(textLayer);
-  if(!state.text.on || !state.text.value) return;
-  const fam = (state.text.font==="script" ? "cursive" : (state.text.font==="serif" ? "serif" : "sans-serif"));
-  const t = svgEl("text", {
-    "data-id":"mainText", "data-type":"text",
-    x: state.text.x, y: state.text.y,
-    "text-anchor":"middle", "dominant-baseline":"middle",
-    fill: state.text.color,
-    "font-size": state.text.size,
-    "font-weight":"1000",
-    "font-family": fam
-  });
-  t.textContent = state.text.value;
-  if(state.text.shadow) t.setAttribute("filter","url(#softShadow)");
-  textLayer.appendChild(t);
-}
-
-function rebuildLights(){
-  clearNode(lightsLayer);
-  if(!state.lights.on) return;
-
-  const ringX = 500, ringY = 420;
-  const ringR = state.rings.bigDiameter/2 + state.rings.ringStroke*0.5;
-  const count = 30;
-  const intensity = clamp(state.lights.intensity,20,100)/100;
-
-  for(let i=0;i<count;i++){
-    const a = (Math.PI*2/count)*i - Math.PI/2;
-    const x = ringX + Math.cos(a)*ringR;
-    const y = ringY + Math.sin(a)*ringR;
-
-    let c = state.lights.color;
-    if(c==="multicolor"){
-      const palette = ["#ffffff","#ffd34d","#ff3b7b","#7cffb7","#6aa9ff","#c084fc"];
-      c = palette[i % palette.length];
-    }
-
-    const dot = svgEl("circle", {cx:x, cy:y, r:6, fill:c, opacity:String(0.5 + intensity*0.5), filter:"url(#glow)"});
-    if(state.lights.mode==="blink"){
-      dot.style.animation = `blink 1.2s ${(i%6)*0.08}s infinite`;
-    }
-    lightsLayer.appendChild(dot);
-  }
-}
-
-/* ===== SELECTION UI ===== */
-function updateSelectionUI(){
-  clearNode(uiLayer);
-  $("#selName").textContent = state.selectedId ? state.selectedId : "nessuna";
-  if(!state.selectedId) return;
-
-  if(state.selectedId.startsWith("ring:")){
-    const rid = state.selectedId.split(":")[1];
-    $("#selName").textContent = "Cerchio " + rid;
-    const ringNode = [...baseModel.querySelectorAll('g[data-type="ring"]')].find(g=>g.getAttribute("data-id")===rid);
-    if(ringNode){
-      const c = ringNode.querySelector("circle");
-      if(c){
-        uiLayer.appendChild(svgEl("circle", {
-          cx:c.getAttribute("cx"), cy:c.getAttribute("cy"), r:c.getAttribute("r"), class:"selOutline"
-        }));
-      }
-    }
+  if(state.selected==="text"){
+    ui.appendChild(svgEl("rect",{x:260,y:80,width:480,height:120,rx:16,class:"selOutline"}));
     return;
   }
-
-  if(state.selectedId==="text"){
-    $("#selName").textContent = "Scritta";
-    try{
-      const t = textLayer.querySelector("text");
-      const bb = t.getBBox();
-      uiLayer.appendChild(svgEl("rect", {x:bb.x-8,y:bb.y-8,width:bb.width+16,height:bb.height+16,rx:14,class:"selOutline"}));
-    }catch(e){}
-    return;
-  }
-
-  const el = state.elements.find(e=>e.id===state.selectedId);
+  const el = state.acc.find(x=>x.id===state.selected);
   if(el){
-    $("#selName").textContent = el.label || "Elemento";
-    uiLayer.appendChild(svgEl("rect", {x:el.x-40,y:el.y-40,width:80,height:80,rx:16,class:"selOutline"}));
+    ui.appendChild(svgEl("rect",{x:el.x-10,y:el.y-10,width:110,height:70,rx:16,class:"selOutline"}));
   }
 }
-function selectElement(id){
-  state.selectedId = id;
-  updateSelectionUI();
-}
 
-/* ===== DRAG ===== */
-let drag = null;
+/* ===== FIX TOUCH + DRAG ===== */
+let drag=null;
+
 function getPoint(evt){
   const pt = svg.createSVGPoint();
-  const e = evt.touches ? evt.touches[0] : evt;
-  pt.x = e.clientX; pt.y = e.clientY;
+  pt.x = evt.clientX; pt.y = evt.clientY;
   const m = svg.getScreenCTM().inverse();
   return pt.matrixTransform(m);
 }
 
-svg.addEventListener("pointerdown", (e)=>{
-  const target = e.target.closest("[data-type]");
-  if(!target){ state.selectedId=null; updateSelectionUI(); return; }
+svg.addEventListener("pointerdown",(e)=>{
+  e.preventDefault(); // FIX MOBILE
+  const t = e.target.closest("[data-type]");
+  if(!t){ state.selected=null; renderSelection(); return; }
 
-  const type = target.getAttribute("data-type");
-  const id = target.getAttribute("data-id");
+  const type = t.getAttribute("data-type");
+  const id = t.getAttribute("data-id");
 
-  if(type==="ring"){ selectElement("ring:"+id); return; }
-
-  if(type==="text"){
-    selectElement("text");
-    saveToHistory();
-    const p = getPoint(e);
-    drag = {kind:"text", dx:p.x - state.text.x, dy:p.y - state.text.y};
-    return;
-  }
-
+  if(type==="text"){ state.selected="text"; renderSelection(); drag={kind:"text", dx:0, dy:0}; return; }
   if(type==="acc"){
-    selectElement(id);
-    const el = state.elements.find(x=>x.id===id);
-    if(!el || el.locked) return;
-    saveToHistory();
+    state.selected=id;
+    renderSelection();
     const p = getPoint(e);
-    drag = {kind:"acc", id, ox: el.x - p.x, oy: el.y - p.y};
+    const el = state.acc.find(x=>x.id===id);
+    if(el) drag={kind:"acc", id, ox: el.x - p.x, oy: el.y - p.y};
     return;
   }
+  // ring selection only
+  state.selected="ring:"+id;
+  renderSelection();
 });
 
-svg.addEventListener("pointermove", (e)=>{
+svg.addEventListener("pointermove",(e)=>{
   if(!drag) return;
   const p = getPoint(e);
-
   if(drag.kind==="acc"){
-    const el = state.elements.find(x=>x.id===drag.id);
-    if(!el || el.locked) return;
+    const el = state.acc.find(x=>x.id===drag.id);
+    if(!el) return;
     el.x = p.x + drag.ox;
     el.y = p.y + drag.oy;
-    rebuildAccessories();
-    updateSelectionUI();
+    build();
+    state.selected = drag.id;
+    renderSelection();
   }
-
   if(drag.kind==="text"){
-    state.text.x = p.x - drag.dx;
-    state.text.y = p.y - drag.dy;
-    rebuildText();
-    updateSelectionUI();
+    state.text.x = p.x;
+    state.text.y = p.y;
+    build();
+    state.selected = "text";
+    renderSelection();
   }
 });
-window.addEventListener("pointerup", ()=>{ drag=null; });
 
-/* ===== ACTIONS ===== */
-$("#btnDelete").onclick = ()=>{
-  if(!state.selectedId) return;
-  saveToHistory();
+window.addEventListener("pointerup",()=> drag=null);
 
-  if(state.selectedId.startsWith("ring:")) return;
-
-  if(state.selectedId==="text"){
-    state.text.on=false; state.text.value="";
-    rebuildText(); state.selectedId=null; updateSelectionUI(); updatePrice(); saveLocal();
-    return;
-  }
-  const idx = state.elements.findIndex(e=>e.id===state.selectedId);
-  if(idx>=0){
-    state.elements.splice(idx,1);
-    state.selectedId=null;
-    rebuildAccessories(); updateSelectionUI(); updatePrice(); saveLocal();
-  }
-};
-$("#btnBack").onclick = ()=>{
-  const el = state.elements.find(e=>e.id===state.selectedId);
-  if(!el) return;
-  saveToHistory();
-  el.z = (el.z||0) - 100000;
-  rebuildAccessories();
-};
-$("#btnFront").onclick = ()=>{
-  const el = state.elements.find(e=>e.id===state.selectedId);
-  if(!el) return;
-  saveToHistory();
-  el.z = (el.z||0) + 100000;
-  rebuildAccessories();
-};
-$("#btnCenter").onclick = ()=>{
-  if(!state.selectedId) return;
-  saveToHistory();
-
-  if(state.selectedId==="text"){
-    state.text.x = 500;
-    rebuildText();
-    updateSelectionUI();
-    return;
-  }
-  const el = state.elements.find(e=>e.id===state.selectedId);
-  if(el){
-    el.x = 500;
-    rebuildAccessories();
-    updateSelectionUI();
-  }
-};
-$("#btnDistribute").onclick = ()=>{
-  saveToHistory();
-  const feathers = state.elements.filter(e=>e.kind==="feather");
-  if(feathers.length<2) return;
-  feathers.sort((a,b)=>a.x-b.x);
-  const minX=250, maxX=750, step=(maxX-minX)/(feathers.length-1);
-  feathers.forEach((f,i)=>f.x=minX+step*i);
-  rebuildAccessories();
-  updateSelectionUI();
-};
-$("#btnMirror").onclick = ()=>{
-  const el = state.elements.find(e=>e.id===state.selectedId);
-  if(!el) return;
-  saveToHistory();
-  el.scale = -(el.scale||1);
-  rebuildAccessories();
-  updateSelectionUI();
-};
-$("#btnLock").onclick = ()=>{
-  const el = state.elements.find(e=>e.id===state.selectedId);
-  if(!el) return;
-  saveToHistory();
-  el.locked = !el.locked;
-  alert(el.locked ? "Bloccato ✅" : "Sbloccato 🔓");
-};
-
-$("#btnUndo").onclick = ()=>{
-  if(state.history.length===0) return;
-  const last = state.history.pop();
-  state.future.push(snapshot());
-  restore(last);
-};
-$("#btnRedo").onclick = ()=>{
-  if(state.future.length===0) return;
-  const next = state.future.pop();
-  state.history.push(snapshot());
-  restore(next);
-};
-
-/* ===== CONTROLS ===== */
-function syncInputs(){
-  $("#modelSelect").value = state.model;
-  $("#ringColor").value = state.ringColor;
-  $("#webColor").value = state.webColor;
-  $("#centerBeadColor").value = state.centerBeadColor;
-
-  $("#projectName").value = state.projectName || "";
-  $("#waNumber").value = state.waNumber || "";
-
-  // weave
-  const sel = $("#weaveRingSelect");
-  if(sel.options.length>0 && !sel.value) sel.value = sel.options[0].value;
-  const rid = sel.value;
-  const conf = state.weaves[rid] || {type:"spider", density:9};
-  $("#weaveType").value = conf.type;
-  $("#weaveDensity").value = conf.density;
-
-  // lights
-  $("#lightsOn").value = state.lights.on ? "on" : "off";
-  $("#lightsColor").value = state.lights.color;
-  $("#lightsIntensity").value = state.lights.intensity;
-  $("#lightsMode").value = state.lights.mode;
-
-  // text
-  $("#textValue").value = state.text.value;
-  $("#textColor").value = state.text.color;
-  $("#textFont").value = state.text.font;
-  $("#textSize").value = state.text.size;
-  $("#textShadow").value = state.text.shadow ? "on" : "off";
-}
-
-$("#btnApplyModel").onclick = ()=>{
-  saveToHistory();
-  state.model = $("#modelSelect").value;
+/* ===== BUTTONS ===== */
+$("#btnApply").onclick = ()=>{
   state.ringColor = $("#ringColor").value;
   state.webColor = $("#webColor").value;
-  state.centerBeadColor = $("#centerBeadColor").value;
-  buildBase();
-  saveLocal();
+  state.beadColor = $("#beadColor").value;
+  state.feathers = parseInt($("#feathers").value,10) || 0;
+  build();
 };
-
 $("#btnReset").onclick = ()=>{
-  if(!confirm("Ripartire pulito?")) return;
-  state.history=[]; state.future=[];
-  state.elements=[];
-  state.weaves={};
-  state.text={ on:false, value:"", color:"#ffd34d", font:"sans", size:56, shadow:true, x:500, y:140 };
-  state.lights={ on:false, color:"multicolor", intensity:75, mode:"steady" };
-  buildBase();
-  saveLocal();
-};
-
-$("#btnApplyWeave").onclick = ()=>{
-  saveToHistory();
-  const rid = $("#weaveRingSelect").value;
-  state.weaves[rid] = { type: $("#weaveType").value, density: parseInt($("#weaveDensity").value,10) };
-  buildBase();
-  saveLocal();
-};
-$("#btnWeaveAll").onclick = ()=>{
-  saveToHistory();
-  const type = $("#weaveType").value;
-  const density = parseInt($("#weaveDensity").value,10);
-  Object.keys(state.weaves).forEach(k=> state.weaves[k] = {type, density});
-  buildBase();
-  saveLocal();
-};
-
-$("#btnApplyLights").onclick = ()=>{
-  saveToHistory();
-  state.lights.on = $("#lightsOn").value==="on";
-  state.lights.color = $("#lightsColor").value;
-  state.lights.intensity = parseInt($("#lightsIntensity").value,10);
-  state.lights.mode = $("#lightsMode").value;
-  rebuildLights();
-  updatePrice();
-  saveLocal();
-};
-$("#btnLightsAuto").onclick = ()=>{
-  saveToHistory();
-  state.lights.on = true;
-  state.lights.color = "multicolor";
-  state.lights.intensity = 80;
-  state.lights.mode = "blink";
-  syncInputs();
-  rebuildLights();
-  updatePrice();
-  saveLocal();
+  $("#ringColor").value="#b6936a";
+  $("#webColor").value="#f2f2f2";
+  $("#beadColor").value="#d7d7d7";
+  $("#feathers").value="6";
+  state.text.on=false; state.text.value="";
+  $("#txt").value="";
+  build();
 };
 
 $("#btnAddText").onclick = ()=>{
-  saveToHistory();
+  const v = ($("#txt").value||"").trim();
   state.text.on = true;
-  state.text.value = $("#textValue").value.trim();
-  state.text.color = $("#textColor").value;
-  state.text.font = $("#textFont").value;
-  state.text.size = parseInt($("#textSize").value,10);
-  state.text.shadow = $("#textShadow").value==="on";
-  rebuildText();
-  selectElement("text");
-  updatePrice();
-  saveLocal();
+  state.text.value = v;
+  state.text.color = $("#txtColor").value;
+  state.text.size = parseInt($("#txtSize").value,10) || 56;
+  build();
+  state.selected="text";
+  renderSelection();
 };
 $("#btnRemoveText").onclick = ()=>{
-  saveToHistory();
-  state.text.on = false;
-  state.text.value = "";
-  rebuildText();
-  state.selectedId=null;
-  updateSelectionUI();
-  updatePrice();
-  saveLocal();
+  state.text.on=false; state.text.value="";
+  build();
+  state.selected=null;
+  renderSelection();
 };
 
-/* ===== ACCESSORIES UI ===== */
-let currentTheme = "Tutti";
-
-function renderThemeChips(){
-  const wrap = $("#themeChips");
-  wrap.innerHTML = "";
-  THEMES.forEach(t=>{
-    const chip = document.createElement("div");
-    chip.className = "chip" + (t===currentTheme ? " on" : "");
-    chip.textContent = t;
-    chip.onclick = ()=>{ currentTheme=t; renderThemeChips(); renderAccessoryList(); };
-    wrap.appendChild(chip);
-  });
-}
-function renderAccessoryList(){
-  const list = $("#accList");
-  list.innerHTML = "";
-
-  const filtered = ACCESSORIES.filter(a=>{
-    if(currentTheme==="Tutti") return true;
-    return a.themes.includes(currentTheme);
-  });
-
-  filtered.forEach(a=>{
-    const li = document.createElement("li");
-    li.className = "item";
-    li.innerHTML = `
-      <div class="left">
-        <div class="badge">${a.icon}</div>
-        <div style="min-width:0">
-          <p class="title">${a.label}</p>
-          <p class="meta">${a.themes.join(" • ")}</p>
-        </div>
-      </div>
-      <button class="btn small ok">Aggiungi</button>
-    `;
-    li.querySelector("button").onclick = ()=>{
-      addAccessory(a.id);
-      saveLocal();
-    };
-    list.appendChild(li);
-  });
-}
-
-function addAccessory(accId){
-  const def = ACCESSORIES.find(a=>a.id===accId);
-  if(!def) return;
-  saveToHistory();
-
-  const el = {
-    id: uid("a"),
-    accId,
-    kind: def.kind,
-    label: def.label,
-    x: 500,
-    y: 650,
-    rot: 0,
-    scale: parseFloat($("#accSize").value || "1"),
-    color: $("#accColor").value || "#ffffff",
-    locked:false,
-    z: Date.now()
-  };
-
-  if(def.kind==="miniText"){
-    el.text = prompt("Scrivi iniziali / testo breve:", "E&L") || "E&L";
-    el.font = "serif";
+$("#btnCenter").onclick = ()=>{
+  if(state.selected && state.selected.startsWith("f_")){
+    const el = state.acc.find(x=>x.id===state.selected);
+    if(el){ el.x=500; build(); state.selected=el.id; renderSelection(); }
   }
-
-  state.elements.push(el);
-  rebuildAccessories();
-  selectElement(el.id);
-  updatePrice();
-}
-
-/* ===== PRICES ===== */
-function countAccessories(){
-  const c = { feather:0, bead:0, charm:0, flower:0, bow:0, gnome:0, text:0 };
-  state.elements.forEach(e=>{
-    const def = ACCESSORIES.find(a=>a.id===e.accId);
-    if(!def) return;
-    c[def.priceKey] = (c[def.priceKey]||0) + 1;
-  });
-  if(state.text.on && state.text.value) c.text += 1;
-  return c;
-}
-function computeTotal(){
-  let total = 0;
-  total += PRICES.ring_big;
-  if(state.model==="triple") total += PRICES.ring_small * 2;
-  else if(state.model==="classic") total += PRICES.ring_small * state.rings.smallCount;
-  // mini: no small
-  if(state.lights.on) total += PRICES.lights;
-
-  const counts = countAccessories();
-  Object.keys(counts).forEach(k=> total += (PRICES[k]||0)*counts[k]);
-
-  const accTotal = state.elements.length + ((state.text.on && state.text.value)?1:0);
-  let disc = 0;
-  if(accTotal>=30) disc = 0.15;
-  else if(accTotal>=20) disc = 0.10;
-  else if(accTotal>=10) disc = 0.05;
-
-  total = total*(1-disc);
-  return { total, disc, counts, accTotal };
-}
-function updatePrice(){
-  const res = computeTotal();
-  $("#totalPrice").textContent = euro(res.total);
-  const c = res.counts;
-  const lines = [];
-  lines.push(`Rings: grande ${euro(PRICES.ring_big)} + piccoli (se previsti)`);
-  if(state.lights.on) lines.push(`Luci: ${euro(PRICES.lights)}`);
-  lines.push(`Accessori: piume ${c.feather}, perline ${c.bead}, charm ${c.charm}, fiori ${c.flower}, fiocchi ${c.bow}, gnomi ${c.gnome}, testi ${c.text}`);
-  if(res.disc>0) lines.push(`Sconto quantità: -${Math.round(res.disc*100)}%`);
-  $("#priceSummary").innerHTML = lines.join("<br>");
-}
-
-/* ===== SAVE/LOAD ===== */
-function saveLocal(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot()));
-}
-function loadLocal(){
-  try{
-    const s = localStorage.getItem(STORAGE_KEY);
-    if(!s) return;
-    const snap = JSON.parse(s);
-    restore({...snapshot(), ...snap});
-  }catch(e){}
-}
-$("#btnSalva").onclick = ()=>{
-  state.waNumber = $("#waNumber").value.trim();
-  state.projectName = $("#projectName").value.trim();
-  saveLocal();
-  alert("Salvato ✅");
+  if(state.selected==="text"){
+    state.text.x=500; build(); state.selected="text"; renderSelection();
+  }
 };
 
-$("#btnDownloadJSON").onclick = ()=>{
-  const data = JSON.stringify(snapshot(), null, 2);
-  const blob = new Blob([data], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = (state.projectName ? state.projectName.replace(/\s+/g,"_") : "progetto") + ".json";
-  a.click();
+$("#btnDelete").onclick = ()=>{
+  if(!state.selected) return;
+  if(state.selected==="text"){
+    state.text.on=false; state.text.value=""; build(); state.selected=null; renderSelection(); return;
+  }
+  const idx = state.acc.findIndex(x=>x.id===state.selected);
+  if(idx>=0){ state.acc.splice(idx,1); build(); state.selected=null; renderSelection(); }
 };
 
-$("#fileLoadJSON").addEventListener("change", (e)=>{
-  const file = e.target.files?.[0];
-  if(!file) return;
-  const r = new FileReader();
-  r.onload = ()=>{
-    try{
-      const snap = JSON.parse(r.result);
-      restore({...snapshot(), ...snap});
-      saveLocal();
-      alert("Caricato ✅");
-    }catch(err){
-      alert("JSON non valido");
-    }
-  };
-  r.readAsText(file);
-});
+/* ===== SAVE PROJECT (to HOME) ===== */
+function loadProjects(){
+  try{ return JSON.parse(localStorage.getItem(K.projects) || "[]"); }catch{ return []; }
+}
+function saveProjects(arr){
+  localStorage.setItem(K.projects, JSON.stringify(arr));
+}
 
-$("#btnDownloadPNG").onclick = ()=>{
+function svgToPngDataURL(){
   const clone = svg.cloneNode(true);
-  const ui = clone.querySelector("#uiLayer");
-  if(ui) ui.innerHTML = "";
   const xml = new XMLSerializer().serializeToString(clone);
   const svg64 = btoa(unescape(encodeURIComponent(xml)));
   const image64 = "data:image/svg+xml;base64," + svg64;
 
-  const img = new Image();
-  img.onload = ()=>{
-    const c = document.createElement("canvas");
-    c.width = 1400; c.height = 1400;
-    const ctx = c.getContext("2d");
-    ctx.drawImage(img, 0, 0, c.width, c.height);
-    c.toBlob((blob)=>{
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = (state.projectName ? state.projectName.replace(/\s+/g,"_") : "acchiappasogni") + ".png";
-      a.click();
-    });
-  };
-  img.src = image64;
-};
-
-/* ===== WHATSAPP ===== */
-function buildWhatsAppMessage(){
-  const res = computeTotal();
-  const name = ($("#projectName").value || state.projectName || "Progetto").trim();
-  const counts = res.counts;
-  const lines = [];
-  lines.push(`Ciao! 😊 Vorrei un acchiappasogni personalizzato.`);
-  lines.push(`Nome progetto: ${name}`);
-  lines.push(`Modello: ${state.model}`);
-  lines.push(`Colori: cerchio ${state.ringColor} • rete ${state.webColor} • perla ${state.centerBeadColor}`);
-  if(state.text.on && state.text.value) lines.push(`Scritta: "${state.text.value}" (colore ${state.text.color})`);
-  lines.push(`Accessori: piume ${counts.feather}, perline ${counts.bead}, charm ${counts.charm}, fiori ${counts.flower}, fiocchi ${counts.bow}, gnomi ${counts.gnome}`);
-  if(state.lights.on) lines.push(`Luci: ON (${state.lights.color}, ${state.lights.intensity}%, ${state.lights.mode})`);
-  if(res.disc>0) lines.push(`Sconto quantità: -${Math.round(res.disc*100)}%`);
-  lines.push(`Totale stimato: ${euro(res.total)}`);
-  lines.push(`Grazie! 🙏`);
-  return lines.join("\n");
-}
-function openWhatsApp(){
-  const num = ($("#waNumber").value || state.waNumber || "").replace(/\D/g,"");
-  if(!num){
-    alert("Inserisci il tuo numero WhatsApp nella scheda Salva.");
-    return;
-  }
-  const msg = encodeURIComponent(buildWhatsAppMessage());
-  window.open(`https://wa.me/${num}?text=${msg}`, "_blank");
-}
-$("#btnInvia").onclick = openWhatsApp;
-
-/* ===== INIT ===== */
-function rebuildAll(){
-  buildBase();
-  renderThemeChips();
-  renderAccessoryList();
-  updatePrice();
-}
-function init(){
-  renderThemeChips();
-  renderAccessoryList();
-  loadLocal();
-  syncInputs();
-  buildBase();
-  updatePrice();
-
-  $("#projectName").addEventListener("input", ()=>{ state.projectName=$("#projectName").value.trim(); saveLocal(); });
-  $("#waNumber").addEventListener("input", ()=>{ state.waNumber=$("#waNumber").value.trim(); saveLocal(); });
-
-  $("#weaveRingSelect").addEventListener("change", ()=>{
-    const rid = $("#weaveRingSelect").value;
-    const conf = state.weaves[rid] || {type:"spider", density:9};
-    $("#weaveType").value = conf.type;
-    $("#weaveDensity").value = conf.density;
+  return new Promise((resolve)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const c = document.createElement("canvas");
+      c.width = 1200; c.height = 1200;
+      const ctx = c.getContext("2d");
+      ctx.drawImage(img,0,0,c.width,c.height);
+      // jpeg più leggero
+      resolve(c.toDataURL("image/jpeg", 0.8));
+    };
+    img.src = image64;
   });
 }
-init();
+
+$("#btnSaveProject").onclick = async ()=>{
+  const title = ($("#pTitle").value||"").trim() || "Progetto";
+  const desc = ($("#pDesc").value||"").trim();
+
+  const img = await svgToPngDataURL();
+  const pr = { id: uid("pr"), title, desc, img, ts: Date.now() };
+
+  const arr = loadProjects();
+  arr.push(pr);
+  saveProjects(arr);
+
+  alert("Progetto salvato ✅ Ora lo vedi in Home.");
+};
+
+$("#btnInvia").onclick = async ()=>{
+  const num = (localStorage.getItem(K.wa)||"").replace(/\D/g,"");
+  if(!num){ alert("Imposta il numero WhatsApp in Impostazioni (Home)."); return; }
+  const title = ($("#pTitle").value||"").trim() || "Progetto";
+  const desc = ($("#pDesc").value||"").trim();
+  const msg = encodeURIComponent(`Ciao! 😊\nVorrei questo progetto personalizzato:\n- ${title}\n- ${desc}\nGrazie!`);
+  window.open(`https://wa.me/${num}?text=${msg}`,"_blank");
+};
+
+/* INIT */
+build();
 </script>
 </body>
 </html>
