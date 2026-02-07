@@ -1,933 +1,2135 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Acchiappasogni di Erika</title>
   <style>
     :root{
-      --bg:#0b1027;
-      --panel:#0f1636;
-      --card:#111a3f;
-      --line:rgba(255,255,255,.10);
-      --text:#eef2ff;
-      --muted:#b9c3ff;
+      --bg1:#070a12;
+      --bg2:#0b1430;
+      --text:#e9efff;
+      --muted:#b9c6ffcc;
       --accent:#7c5cff;
-      --accent2:#2dd4bf;
       --danger:#ff4d6d;
-      --ok:#00e5a8;
-      --shadow:0 12px 40px rgba(0,0,0,.35);
-      --r:16px;
-      --r2:22px;
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --radius: 18px;
     }
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:
-        radial-gradient(1200px 900px at 20% -10%, rgba(124,92,255,.35), transparent 60%),
-        radial-gradient(1200px 900px at 110% 10%, rgba(45,212,191,.22), transparent 55%),
-        var(--bg);
       color:var(--text);
-      -webkit-font-smoothing:antialiased;
-      text-rendering:optimizeLegibility;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 700px at 20% 0%, rgba(124,92,255,.18), transparent 55%),
+        radial-gradient(1000px 600px at 90% 30%, rgba(110,231,255,.12), transparent 55%),
+        linear-gradient(180deg, var(--bg2), var(--bg1));
+      min-height:100vh;
     }
-    header{
-      position:sticky; top:0; z-index:30;
-      padding:12px 12px 10px;
-      border-bottom:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(11,16,39,.92), rgba(11,16,39,.60));
-      backdrop-filter: blur(12px);
+    .wrap{max-width:1200px;margin:0 auto;padding:14px 12px 80px}
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(7,10,18,.92), rgba(7,10,18,.65));
+      border-bottom:1px solid rgba(35,54,95,.45);
     }
-    .top{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
-    .brand{display:flex; flex-direction:column; gap:4px; min-width:0;}
-    .brand h1{margin:0; font-size:14px; font-weight:1000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-    .brand .sub{font-size:12px; color:var(--muted); display:flex; gap:10px; flex-wrap:wrap;}
+    .topbar-inner{max-width:1200px;margin:0 auto;padding:10px 12px; display:flex; gap:10px; align-items:center;}
+    .brand{display:flex; gap:10px; align-items:center; min-width: 210px;}
+    .logo{
+      width:28px;height:28px;border-radius:10px;
+      background: radial-gradient(circle at 30% 30%, rgba(110,231,255,.9), rgba(124,92,255,.7));
+      box-shadow: 0 10px 30px rgba(124,92,255,.25);
+      display:flex;align-items:center;justify-content:center;
+      font-weight:800;
+    }
+    .brand h1{font-size:14px;margin:0;line-height:1.05}
+    .brand small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
     .btn{
-      border:none; cursor:pointer;
-      padding:10px 12px; border-radius:12px;
-      font-weight:1000; font-size:13px; color:var(--text);
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      user-select:none;
-      transition: transform .06s ease, background .15s ease;
+      border:1px solid rgba(35,54,95,.65);
+      background: rgba(15,27,51,.55);
+      color:var(--text);
+      padding:8px 10px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-weight:700;
+      font-size:12px;
       display:inline-flex; align-items:center; gap:8px;
-      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 10px 24px rgba(0,0,0,.18);
+      user-select:none;
+      transition: transform .06s ease, background .2s ease, border .2s ease;
+      white-space:nowrap;
     }
+    .btn:hover{background: rgba(15,27,51,.85); border-color: rgba(124,92,255,.5)}
     .btn:active{transform: translateY(1px)}
     .btn.primary{
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(45,212,191,.55));
-      border-color: rgba(255,255,255,.16);
+      border-color: rgba(124,92,255,.75);
+      background: linear-gradient(180deg, rgba(124,92,255,.9), rgba(124,92,255,.55));
     }
-    .btn.ok{ background: rgba(0,229,168,.12); border-color: rgba(0,229,168,.35); color:#c9fff2;}
-    .btn.danger{ background: rgba(255,77,109,.12); border-color: rgba(255,77,109,.35); color:#ffd6de;}
-    .btn.ghost{ background: transparent; }
-    .badge{
-      display:inline-grid; place-items:center;
-      min-width:22px; height:22px; padding:0 6px;
-      border-radius:999px; font-weight:1000;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.28);
-      color:var(--text);
+    .btn.danger{
+      border-color: rgba(255,77,109,.65);
+      background: rgba(255,77,109,.12);
+    }
+    .spacer{flex:1}
+    .pill{
+      padding:6px 10px;
+      border-radius: 999px;
+      background: rgba(15,27,51,.55);
+      border:1px solid rgba(35,54,95,.55);
       font-size:12px;
+      color:var(--muted);
+      display:flex; gap:8px; align-items:center;
     }
 
-    main{padding:12px; display:grid; gap:12px}
-    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
-    input[type="search"], input[type="text"], input[type="number"], textarea{
-      flex:1 1 260px;
+    .search-row{padding:12px 0 10px}
+    .search{
+      width:100%;
+      border-radius: 14px;
+      border:1px solid rgba(35,54,95,.55);
+      background: rgba(15,27,51,.55);
+      color:var(--text);
       padding:12px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      color:var(--text);
-      font-weight:900;
       outline:none;
+      box-shadow: var(--shadow);
     }
-    textarea{min-height:90px; resize:vertical}
-    .chips{display:flex; gap:8px; flex-wrap:wrap;}
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
     .chip{
-      padding:9px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.03);
-      color:var(--text);
-      font-weight:1000;
-      font-size:12px;
+      padding:7px 10px;border-radius:999px;
+      border:1px solid rgba(35,54,95,.55);
+      background: rgba(15,27,51,.45);
+      color: var(--muted);
       cursor:pointer;
+      font-weight:800;
+      font-size:12px;
       user-select:none;
     }
-    .chip.on{
+    .chip.active{
       background: rgba(124,92,255,.22);
-      border-color: rgba(124,92,255,.45);
+      border-color: rgba(124,92,255,.65);
+      color: var(--text);
     }
-
-    .section{
-      border:1px solid var(--line);
-      border-radius: var(--r2);
-      background: linear-gradient(180deg, rgba(17,26,63,.55), rgba(15,22,54,.55));
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .shead{
-      padding:12px 12px 10px;
-      border-bottom:1px solid var(--line);
-      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
-    }
-    .shead h2{margin:0; font-size:14px; font-weight:1000}
-    .small{font-size:12px; color:var(--muted); font-weight:900}
-    .sbody{padding:12px; display:grid; gap:12px;}
 
     .grid{
       display:grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap:12px;
+      margin-top:12px;
     }
-    @media (min-width: 860px){ .grid{grid-template-columns: repeat(3, minmax(0, 1fr));} }
+    @media (max-width: 980px){ .grid{grid-template-columns: repeat(2, minmax(0, 1fr));} .brand{min-width: 0;} }
+    @media (max-width: 560px){ .grid{grid-template-columns: 1fr;} }
+
     .card{
-      border:1px solid var(--line);
-      border-radius: var(--r2);
-      background: linear-gradient(180deg, rgba(17,26,63,.55), rgba(15,22,54,.55));
-      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(15,27,51,.88), rgba(15,27,51,.55));
+      border: 1px solid rgba(35,54,95,.6);
       overflow:hidden;
+      box-shadow: var(--shadow);
       display:flex;
       flex-direction:column;
+      min-height: 250px;
     }
     .img{
-      aspect-ratio: 4 / 3;
-      background: rgba(255,255,255,.06);
-      display:grid;
-      place-items:center;
-      overflow:hidden;
       position:relative;
+      width:100%;
+      aspect-ratio: 4 / 3;
+      background: rgba(255,255,255,.04);
+      overflow:hidden;
     }
-    .img img{width:100%; height:100%; object-fit:cover; display:block;}
-    .img .ph{color:rgba(255,255,255,.55); font-weight:900; font-size:12px; padding:16px; text-align:center;}
-    .cbody{padding:10px 10px 12px; display:grid; gap:10px;}
-    .title{margin:0; font-weight:1000; font-size:13px; line-height:1.2;}
-    .meta{margin:0; color:var(--muted); font-size:11px;}
-    .price{font-weight:1000; font-size:13px;}
-    .qtyRow{display:flex; align-items:center; justify-content:space-between; gap:10px;}
-    .qty{display:flex; align-items:center; gap:8px;}
-    .qbtn{
-      width:34px; height:34px; border-radius:12px;
+    .img img{
+      width:100%; height:100%;
+      object-fit: cover;
+      display:block;
+      filter: saturate(1.02) contrast(1.02);
+    }
+    .img .badge{
+      position:absolute; top:10px; left:10px;
+      padding:6px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.35);
       border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
+      font-size:12px;
+      font-weight:900;
+    }
+    .content{padding:12px 12px 10px; display:flex; flex-direction:column; gap:8px; flex:1}
+    .title{font-weight:900; font-size:14px; line-height:1.2}
+    .meta{display:flex; flex-wrap:wrap; gap:8px; align-items:center; color:var(--muted); font-size:12px}
+    .price{font-weight:900; color: #ffffff; font-size:14px}
+    .row{display:flex; align-items:center; gap:8px; margin-top:auto}
+    .qty{
+      display:flex; align-items:center; gap:8px;
+      border:1px solid rgba(35,54,95,.6);
+      border-radius: 999px;
+      padding:6px 8px;
+      background: rgba(7,10,18,.35);
       color:var(--text);
-      font-weight:1000;
-      cursor:pointer;
-    }
-    .qnum{min-width:18px; text-align:center; font-weight:1000;}
-    .tools{display:flex; gap:8px; flex-wrap:wrap;}
-
-    .footerBar{
-      position:sticky; bottom:0; z-index:35;
-      padding:10px 12px;
-      border-top:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(15,22,54,.0), rgba(15,22,54,.86));
-      backdrop-filter: blur(10px);
-      display:flex;
-      gap:10px;
-      align-items:center;
+      font-weight:900;
+      min-width: 110px;
       justify-content:space-between;
-      flex-wrap:wrap;
+    }
+    .qbtn{
+      width:26px;height:26px;border-radius:999px;
+      display:flex;align-items:center;justify-content:center;
+      border:1px solid rgba(35,54,95,.6);
+      background: rgba(15,27,51,.7);
+      cursor:pointer;
+      user-select:none;
+    }
+    .qbtn:active{transform: translateY(1px)}
+    .add{flex:1; justify-content:center}
+    .footerbar{
+      position:fixed; left:0; right:0; bottom:0; z-index:80;
+      background: rgba(7,10,18,.9);
+      border-top:1px solid rgba(35,54,95,.45);
+      backdrop-filter: blur(10px);
+    }
+    .footerbar-inner{
+      max-width:1200px;margin:0 auto;padding:10px 12px;
+      display:flex; gap:10px; align-items:center;
     }
 
-    /* MODAL */
-    .modal{
-      display:none;
-      position:fixed; inset:0; z-index:999;
+    /* Modal */
+    .modal-back{
+      position:fixed; inset:0; z-index:200;
       background: rgba(0,0,0,.55);
-      padding:18px;
-      overflow:auto;
-    }
-    .modal .box{
-      max-width: 980px;
-      margin: 26px auto;
-      background: rgba(15,22,54,.98);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius: 18px;
+      display:none;
+      align-items:center; justify-content:center;
       padding: 14px;
-      box-shadow: var(--shadow);
     }
-    .modal .mhead{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
-    .split{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
-    @media (max-width: 920px){ .split{grid-template-columns:1fr;} }
-    .panel{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      border-radius: 16px;
-      padding: 12px;
+    .modal{
+      width:min(920px, 100%);
+      background: linear-gradient(180deg, rgba(15,27,51,.98), rgba(15,27,51,.86));
+      border:1px solid rgba(35,54,95,.7);
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+      overflow:hidden;
+    }
+    .modal-head{
+      display:flex; align-items:center; gap:10px;
+      padding:12px 12px;
+      border-bottom:1px solid rgba(35,54,95,.55);
+    }
+    .modal-head h2{margin:0;font-size:14px}
+    .modal-body{padding:12px}
+    .form{
       display:grid;
+      grid-template-columns: 1fr 1fr;
       gap:10px;
     }
-    .label{font-size:12px; color:var(--muted); font-weight:1000;}
-    .hr{height:1px; background: rgba(255,255,255,.10); margin:6px 0;}
+    @media (max-width: 720px){ .form{grid-template-columns:1fr;} }
+    label{font-size:12px;color:var(--muted);font-weight:800}
+    input, select, textarea{
+      width:100%;
+      border-radius: 12px;
+      border:1px solid rgba(35,54,95,.6);
+      background: rgba(7,10,18,.35);
+      color: var(--text);
+      padding:10px 10px;
+      outline:none;
+    }
+    textarea{min-height:84px; resize:vertical}
+    .hint{font-size:12px;color:var(--muted);margin-top:6px}
+    .hr{height:1px;background: rgba(35,54,95,.5); margin:12px 0}
+    .admin-list{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:8px;
+      max-height: 320px;
+      overflow:auto;
+      padding-right:6px;
+    }
+    .admin-item{
+      display:flex; gap:10px; align-items:center;
+      padding:10px;
+      border:1px solid rgba(35,54,95,.6);
+      border-radius: 14px;
+      background: rgba(7,10,18,.28);
+    }
+    .thumb{width:54px;height:54px;border-radius:12px;overflow:hidden;background: rgba(255,255,255,.06); flex:0 0 auto}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .admin-item .info{flex:1; min-width:0}
+    .admin-item .info b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .admin-item .info small{display:block;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .admin-item .actions{display:flex; gap:8px; align-items:center}
+    .mini{padding:8px 10px; font-size:12px}
+
+    /* ====== CONFIGURATORE (UTENTE) ====== */
+    .builder-grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:12px;
+    }
+    @media (max-width: 860px){ .builder-grid{grid-template-columns:1fr;} }
+
+    .box{
+      border:1px solid rgba(35,54,95,.6);
+      background: rgba(7,10,18,.28);
+      border-radius: 14px;
+      padding:12px;
+    }
+    .box h3{margin:0 0 10px 0;font-size:13px}
+    .small{font-size:12px;color:rgba(185,198,255,.85)}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width: 520px){ .row2{grid-template-columns:1fr;} }
+
+    .list{display:grid;gap:10px}
+    .item{
+      border:1px solid rgba(35,54,95,.55);
+      background: rgba(15,27,51,.55);
+      border-radius: 14px;
+      padding:10px;
+    }
+    .item-head{
+      display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+    .item-head b{font-size:12px}
+    .item-actions{margin-left:auto;display:flex;gap:8px}
+
+    .preview{
+      width:100%;
+      border-radius:14px;
+      border:1px solid rgba(35,54,95,.55);
+      background: rgba(255,255,255,.04);
+      overflow:hidden;
+    }
+    .preview-inner{padding:12px}
+    .preview-img{
+      width:100%;
+      max-height:220px;
+      object-fit:contain;
+      display:none;
+      border-radius:12px;
+      border:1px solid rgba(35,54,95,.5);
+      background: rgba(0,0,0,.15);
+    }
+    .hr2{height:1px;background: rgba(35,54,95,.5); margin:10px 0}
+    .badge2{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(35,54,95,.55);
+      background: rgba(15,27,51,.45);
+      color: rgba(185,198,255,.95);
+      font-size:12px;font-weight:800;
+    }
   </style>
 </head>
 
 <body>
-<header>
-  <div class="top">
-    <div class="brand">
-      <h1>Acchiappasogni di Erika</h1>
-      <div class="sub">
-        <span>Catalogo • Ordina su WhatsApp</span>
-        <span class="small" id="proBadge"></span>
-      </div>
-    </div>
-
-    <div class="row" style="justify-content:flex-end">
-      <button class="btn primary" id="goCustomizer">✨ CREA IL TUO ACCHIAPPASOGNI</button>
-      <button class="btn ghost" id="goCart">🛒 Carrello <span class="badge" id="cartBadge">0</span></button>
-      <button class="btn" id="openSettings">⚙️ Impostazioni</button>
-    </div>
-  </div>
-
-  <div class="row" style="margin-top:10px">
-    <input id="search" type="search" placeholder="Cerca (nome o descrizione)…" />
-    <div class="chips" id="chips"></div>
-  </div>
-</header>
-
-<main>
-  <!-- CATALOGO -->
-  <section class="section">
-    <div class="shead">
-      <h2>Catalogo</h2>
-      <div class="small">Suggerimento: aggiungi prodotti da Impostazioni (admin)</div>
-    </div>
-    <div class="sbody">
-      <div class="grid" id="grid"></div>
-    </div>
-  </section>
-
-  <!-- I MIEI PROGETTI -->
-  <section class="section">
-    <div class="shead">
-      <h2>I miei progetti (personalizzati)</h2>
-      <div class="tools">
-        <button class="btn" id="btnExportAll">📤 Export</button>
-        <label class="btn" style="cursor:pointer">
-          📥 Import
-          <input type="file" id="importFile" accept="application/json" style="display:none">
-        </label>
-      </div>
-    </div>
-    <div class="sbody">
-      <div class="grid" id="projGrid"></div>
-      <div class="small" id="projHint"></div>
-    </div>
-  </section>
-</main>
-
-<div class="footerBar">
-  <div class="small">Totale carrello: <span style="font-weight:1000" id="cartTotal">0,00€</span></div>
-  <div class="row">
-    <button class="btn" id="btnClear">🧹 Svuota</button>
-    <button class="btn primary" id="btnWhatsApp">💬 Ordina su WhatsApp</button>
-  </div>
-</div>
-
-<!-- MODAL IMPOSTAZIONI -->
-<div class="modal" id="settingsModal">
-  <div class="box">
-    <div class="mhead">
-      <div style="font-weight:1000">⚙️ Impostazioni / Admin</div>
-      <div class="row">
-        <button class="btn" id="closeSettings">✖ Chiudi</button>
-      </div>
-    </div>
-
-    <div class="split" style="margin-top:12px">
-
-      <!-- GENERALI -->
-      <div class="panel">
-        <div style="font-weight:1000">Generali</div>
-        <div class="label">Numero WhatsApp (riceve ordini)</div>
-        <input id="waNumber" type="text" placeholder="Es: 393440260906">
-
-        <div class="hr"></div>
-
-        <div style="font-weight:1000">Password PRO (sblocca funzioni)</div>
-        <div class="label">Metti la password PRO qui e rimane salvata.</div>
-        <input id="proPass" type="password" placeholder="Password PRO">
-        <button class="btn ok" id="savePro">Salva password PRO</button>
-        <div class="small" id="proStatus"></div>
-
-        <div class="hr"></div>
-
-        <div style="font-weight:1000">Admin</div>
-        <div class="label">Password admin (per aggiungere/eliminare catalogo e progetti)</div>
-        <input id="adminPass" type="password" placeholder="Password admin">
-        <button class="btn ok" id="loginAdmin">Entra come admin</button>
-        <div class="small" id="adminStatus"></div>
-      </div>
-
-      <!-- ADMIN TOOLS -->
-      <div class="panel">
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
-          <div style="font-weight:1000">Strumenti Admin</div>
-          <div class="small" id="adminOnlyBadge"></div>
-        </div>
-
-        <div class="hr"></div>
-
-        <div style="font-weight:1000">➕ Inserisci prodotto (Catalogo)</div>
-        <div class="label">Foto prodotto (carica dal telefono)</div>
-        <input type="file" id="prodImg" accept="image/*">
-        <div class="label">Nome</div>
-        <input id="prodName" type="text" placeholder="Es: Modello 12">
-        <div class="label">Categoria</div>
-        <input id="prodCat" type="text" placeholder="Es: Acchiappasogni Classici">
-        <div class="label">Prezzo (€)</div>
-        <input id="prodPrice" type="number" step="0.01" min="0" placeholder="5.00">
-        <div class="label">Descrizione</div>
-        <textarea id="prodDesc" placeholder="Descrizione..."></textarea>
-        <button class="btn ok" id="addProduct">Aggiungi prodotto</button>
-
-        <div class="hr"></div>
-
-        <div style="font-weight:1000">➕ Inserisci progetto (Home)</div>
-        <div class="label">Foto progetto (screenshot o foto)</div>
-        <input type="file" id="projImg" accept="image/*">
-        <div class="label">Titolo</div>
-        <input id="projTitle" type="text" placeholder="Es: Natale Rosso">
-        <div class="label">Descrizione</div>
-        <textarea id="projDesc" placeholder="Descrizione..."></textarea>
-        <button class="btn ok" id="addProject">Aggiungi progetto</button>
-
-        <div class="hr"></div>
-
-        <div class="row">
-          <button class="btn danger" id="wipeCatalog">🗑️ Elimina TUTTO catalogo</button>
-          <button class="btn danger" id="wipeProjects">🗑️ Elimina TUTTI progetti</button>
-        </div>
-
-        <div class="row">
-          <button class="btn" id="exportCatalog">📤 Export catalogo</button>
-          <label class="btn" style="cursor:pointer">
-            📥 Import catalogo
-            <input type="file" id="importCatalogFile" accept="application/json" style="display:none">
-          </label>
-        </div>
-
-        <div class="small">⚠️ Gli strumenti admin funzionano solo dopo login admin.</div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<script>
-/* =======================
-   STORAGE KEYS (RECUPERO)
-   ======================= */
-const K = {
-  wa: "ae_wa_number_v1",
-  pro: "ae_pro_password_v1",
-  admin: "ae_admin_logged_v1",
-  adminPass: "ae_admin_password_v1",
-  catalog: "ae_catalog_v1",
-  cart: "ae_cart_v1",
-  // IMPORTANT: questa key è fatta apposta per recuperare progetti vecchi
-  projects: "ae_builder_projects_v1"
-};
-
-// Cambia qui le password di default
-const DEFAULT_ADMIN_PASS = localStorage.getItem(K.adminPass) || "1234";
-const PRO_SECRET = "PRO2026"; // se vuoi cambiare password PRO, cambiala qui
-
-/* =======================
-   UTILS
-   ======================= */
-const euro = (n) => (Number(n||0)).toLocaleString("it-IT",{style:"currency",currency:"EUR"});
-
-function loadJSON(key, fallback){
-  try{ return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
-  catch(e){ return fallback; }
-}
-function saveJSON(key, obj){ localStorage.setItem(key, JSON.stringify(obj)); }
-
-function cartCount(cart){ return Object.values(cart).reduce((a,b)=>a+(b||0),0); }
-function cartTotal(cart, products){
-  let t=0;
-  for(const [id, qty] of Object.entries(cart)){
-    const p = products.find(x=>x.id===id);
-    if(p) t += (Number(p.price)||0) * (qty||0);
-  }
-  return t;
-}
-
-function uid(prefix="id"){
-  return prefix+"_"+Math.random().toString(16).slice(2)+"_"+Date.now().toString(16);
-}
-
-/* =======================
-   IMG COMPRESS (PER FOTO)
-   ======================= */
-const IMG_OPT = { maxSide: 1200, quality: 0.75, mime:"image/jpeg" };
-
-function fileToDataURL(file){
-  return new Promise((resolve,reject)=>{
-    const r = new FileReader();
-    r.onload = ()=>resolve(r.result);
-    r.onerror = reject;
-    r.readAsDataURL(file);
-  });
-}
-function loadImg(src){
-  return new Promise((resolve,reject)=>{
-    const img = new Image();
-    img.onload = ()=>resolve(img);
-    img.onerror = reject;
-    img.src = src;
-  });
-}
-async function compressImageFile(file){
-  const src = await fileToDataURL(file);
-  const img = await loadImg(src);
-
-  const max = IMG_OPT.maxSide;
-  let w = img.naturalWidth, h = img.naturalHeight;
-  if(w>max || h>max){
-    const r = Math.min(max/w, max/h);
-    w = Math.round(w*r);
-    h = Math.round(h*r);
-  }
-
-  const c = document.createElement("canvas");
-  c.width = w; c.height = h;
-  const ctx = c.getContext("2d");
-  ctx.drawImage(img, 0, 0, w, h);
-  return c.toDataURL(IMG_OPT.mime, IMG_OPT.quality);
-}
-
-/* =======================
-   DATA LOAD
-   ======================= */
-let products = loadJSON(K.catalog, []);
-let projects = loadJSON(K.projects, []); // recupera i vecchi progetti se ci sono
-let cart = loadJSON(K.cart, {});
-let currentCat = "Tutti";
-let q = "";
-
-/* Se catalogo vuoto, metto un esempio minimo */
-if(!Array.isArray(products) || products.length===0){
-  products = [
-    {id:"m3", name:"Acchiappasogni - Modello 3", cat:"Acchiappasogni Classici", price:5.00, desc:"", img:""},
-    {id:"m4", name:"Acchiappasogni - Modello 4", cat:"Acchiappasogni Classici", price:5.00, desc:"", img:""},
-    {id:"m5", name:"Acchiappasogni - Modello 5", cat:"Acchiappasogni Classici", price:5.00, desc:"", img:""}
-  ];
-  saveJSON(K.catalog, products);
-}
-
-/* =======================
-   UI RENDER
-   ======================= */
-const chipsEl = document.getElementById("chips");
-const gridEl = document.getElementById("grid");
-const projGrid = document.getElementById("projGrid");
-const projHint = document.getElementById("projHint");
-
-function categories(){
-  const set = new Set(products.map(p=>p.cat||"Altro"));
-  return ["Tutti", ...Array.from(set)];
-}
-
-function renderChips(){
-  chipsEl.innerHTML = "";
-  categories().forEach(cat=>{
-    const d = document.createElement("div");
-    d.className = "chip" + (cat===currentCat ? " on" : "");
-    d.textContent = cat;
-    d.onclick = ()=>{ currentCat = cat; renderGrid(); };
-    chipsEl.appendChild(d);
-  });
-}
-
-function filteredProducts(){
-  return products.filter(p=>{
-    const okCat = (currentCat==="Tutti") || ((p.cat||"Altro")===currentCat);
-    const text = ((p.name||"") + " " + (p.desc||"") + " " + (p.cat||"")).toLowerCase();
-    const okQ = !q || text.includes(q);
-    return okCat && okQ;
-  });
-}
-
-function updateCartUI(){
-  document.getElementById("cartBadge").textContent = cartCount(cart);
-  document.getElementById("cartTotal").textContent = euro(cartTotal(cart, products));
-}
-
-function renderGrid(){
-  const items = filteredProducts();
-  gridEl.innerHTML = "";
-
-  items.forEach(p=>{
-    const qty = cart[p.id] || 0;
-
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <div class="img">
-        ${
-          p.img
-            ? `<img src="${p.img}" alt="${(p.name||"").replace(/"/g,"&quot;")}">`
-            : `<div class="ph">Immagine non trovata</div>`
-        }
-      </div>
-      <div class="cbody">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="logo">✦</div>
         <div>
-          <p class="title">${p.name||""}</p>
-          <p class="meta">${p.cat||"Altro"}${p.desc ? " • " + p.desc : ""}</p>
+          <h1>Acchiappasogni di Erika</h1>
+          <small>Catalogo • Ordina su WhatsApp</small>
         </div>
-        <div class="qtyRow">
-          <div class="price">${euro(p.price||0)}</div>
-          <div class="qty">
-            <button class="qbtn" data-a="minus" data-id="${p.id}">-</button>
-            <div class="qnum" id="q_${p.id}">${qty}</div>
-            <button class="qbtn" data-a="plus" data-id="${p.id}">+</button>
+      </div>
+
+      <button class="btn primary" id="btnCustomizer">🪄 CREA IL TUO ACCHIAPPASOGNI</button>
+
+      <div class="spacer"></div>
+
+      <button class="btn" id="btnSettings">⚙️ Impostazioni</button>
+      <button class="btn" id="btnCart">🛒 Carrello <span class="pill" id="cartCount">0</span></button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="search-row">
+      <input class="search" id="search" placeholder="Cerca (nome o categoria)..." />
+      <div class="filters" id="filters"></div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="footerbar">
+    <div class="footerbar-inner">
+      <div class="pill">Totale: <b id="cartTotal">€ 0,00</b></div>
+      <div class="spacer"></div>
+      <button class="btn primary" id="btnWhatsApp">📲 Ordina su WhatsApp</button>
+    </div>
+  </div>
+
+  <!-- MODAL: CARRELLO -->
+  <div class="modal-back" id="cartModalBack">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>🛒 Carrello</h2>
+        <div class="spacer"></div>
+        <button class="btn" id="btnCloseCart">✖ Chiudi</button>
+      </div>
+      <div class="modal-body">
+        <div id="cartList" class="admin-list"></div>
+        <div class="hr"></div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <div class="pill">Totale: <b id="cartTotal2">€ 0,00</b></div>
+          <div class="spacer"></div>
+          <button class="btn danger" id="btnClearCart">🗑 Svuota</button>
+          <button class="btn primary" id="btnWhatsApp2">📲 Ordina su WhatsApp</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SETTINGS / ADMIN -->
+  <div class="modal-back" id="adminModalBack">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>⚙️ Impostazioni (Admin)</h2>
+        <div class="spacer"></div>
+        <button class="btn" id="btnCloseAdmin">✖ Chiudi</button>
+      </div>
+
+      <div class="modal-body" id="adminBody">
+        <!-- login -->
+        <div id="adminLogin">
+          <div class="hint" style="margin-bottom:10px">
+            Inserisci password per accedere alle impostazioni (default: <b>1234</b>)
+          </div>
+          <div class="form">
+            <div>
+              <label>Password</label>
+              <input id="adminPass" type="password" placeholder="1234" />
+              <div class="hint">Suggerimento: puoi cambiarla dopo l’accesso.</div>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:10px">
+              <button class="btn primary" id="btnAdminLogin">🔓 Entra</button>
+              <button class="btn" id="btnAdminCancel">Annulla</button>
+            </div>
           </div>
         </div>
 
-        <div class="tools">
-          <button class="btn primary" data-a="add" data-id="${p.id}">Aggiungi</button>
-          <button class="btn danger" data-a="delprod" data-id="${p.id}" style="display:none">Elimina</button>
+        <!-- panel -->
+        <div id="adminPanel" style="display:none">
+          <div class="form">
+            <div>
+              <label>Password Admin (cambia)</label>
+              <input id="newAdminPass" type="password" placeholder="Nuova password" />
+              <div class="hint">Se lasci vuoto, non cambia.</div>
+            </div>
+
+            <div>
+              <label>WhatsApp numero (formato +39...)</label>
+              <input id="waNumber" placeholder="+39XXXXXXXXXX" />
+              <div class="hint">Serve per inviare l’ordine su WhatsApp.</div>
+            </div>
+
+            <div>
+              <label>Prezzo rapido per TUTTI</label>
+              <div style="display:flex; gap:8px">
+                <input id="bulkPrice" type="number" step="0.01" placeholder="5" />
+                <button class="btn primary" id="btnBulkApply">✅ Applica</button>
+              </div>
+              <div class="hint">Esempio: 5 → tutti i prodotti diventano € 5.</div>
+            </div>
+
+            <div>
+              <label>Backup / Import configurazione (per aggiornare tutti via GitHub)</label>
+              <div style="display:flex; gap:8px; flex-wrap:wrap">
+                <button class="btn primary" id="btnExportConfig">📤 Esporta JSON</button>
+                <label class="btn" style="cursor:pointer">
+                  📥 Importa JSON
+                  <input id="importConfigFile" type="file" accept="application/json" style="display:none" />
+                </label>
+              </div>
+              <div class="hint">
+                • <b>Esporta JSON</b> ti scarica un file pronto da caricare su GitHub come <code>data/products.json</code>.<br/>
+                • <b>Importa JSON</b> carica sul tuo telefono una configurazione (override) senza toccare GitHub.
+              </div>
+            </div>
+
+            <div>
+              <label>Ripristina catalogo originale</label>
+              <button class="btn danger" id="btnResetAll">♻️ Reset completo</button>
+              <div class="hint">Cancella le modifiche salvate nel telefono.</div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <h3 style="margin:0 0 10px 0;font-size:13px">📦 Prodotti (aggiungi / modifica / elimina)</h3>
+
+          <div class="form">
+            <div>
+              <label>Seleziona prodotto da modificare</label>
+              <select id="editSelect"></select>
+              <div class="hint">Oppure crea un nuovo prodotto qui sotto.</div>
+            </div>
+
+            <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+              <button class="btn" id="btnLoadToForm">✍️ Carica in form</button>
+              <button class="btn danger" id="btnDeleteSelected">🗑 Elimina prodotto</button>
+              <button class="btn danger" id="btnDeleteCategory">🗑 Elimina categoria</button>
+            </div>
+
+            <div>
+              <label>Titolo</label>
+              <input id="fTitle" placeholder="Acchiappasogni - Modello X" />
+            </div>
+
+            <div>
+              <label>Categoria</label>
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+                <input id="fCategory" list="catDatalist" placeholder="Acchiappasogni Classici" />
+                <button class="btn" id="btnCreateCategory" type="button">➕ Crea categoria</button>
+              </div>
+              <datalist id="catDatalist"></datalist>
+            </div>
+
+            <div style="grid-column:1 / -1">
+              <label>Descrizione (testo sotto al titolo)</label>
+              <textarea id="fDesc" placeholder="Esempio: Fatto a mano, diametro 30 cm, colori personalizzabili..."></textarea>
+            </div>
+
+            <div>
+              <label>Prezzo (€)</label>
+              <input id="fPrice" type="number" step="0.01" placeholder="5" />
+            </div>
+
+            <div>
+              <label>Pubblicazione</label>
+              <div style="display:flex;align-items:center;gap:10px">
+                <input id="fPublished" type="checkbox" style="width:auto" />
+                <div class="hint" style="margin:0">Se attivo, il prodotto si vede nella Home.</div>
+              </div>
+            </div>
+
+            <div>
+              <label>Foto (dal telefono / galleria)</label>
+              <input id="fImageFile" type="file" accept="image/*" />
+              <div class="hint">
+                Se carichi da galleria: viene salvata nel telefono (localStorage).<br/>
+                Se vuoi che si veda su TUTTI i telefoni, carica la foto nel repo e poi metti il percorso nel campo sotto.
+              </div>
+            </div>
+
+            <div style="grid-column:1 / -1">
+              <label>Oppure percorso immagine (GitHub)</label>
+              <input id="fImagePath" placeholder="foto.jpg oppure cartella/foto.jpg" />
+              <div class="hint">Se scrivi solo il nome file (es: foto.jpg) la cerca nella cartella base configurata.</div>
+            </div>
+
+            <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+              <button class="btn primary" id="btnSaveProduct">💾 Salva (aggiungi/modifica)</button>
+              <button class="btn" id="btnNewProduct">➕ Nuovo</button>
+              <button class="btn primary" id="btnPublishNow">📣 Pubblica in Home</button>
+              <button class="btn" id="btnHideNow">🙈 Nascondi dalla Home</button>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+          <div class="hint">
+            ✅ Le immagini che non si aprono NON vengono mostrate (spariscono).<br/>
+            ✅ Le foto da galleria vengono ottimizzate (più leggere) prima di salvarle.
+          </div>
         </div>
       </div>
-    `;
+    </div>
+  </div>
 
-    // Admin button show/hide
-    const isAdmin = localStorage.getItem(K.admin)==="1";
-    if(isAdmin) card.querySelector('[data-a="delprod"]').style.display = "inline-flex";
+  <!-- MODAL: CONFIGURATORE ACCHIAPPASOGNI (UTENTE) -->
+  <div class="modal-back" id="builderModalBack">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>🪄 Crea il tuo Acchiappasogni</h2>
+        <div class="spacer"></div>
+        <button class="btn" id="btnCloseBuilder">✖ Chiudi</button>
+      </div>
 
-    card.addEventListener("click", (e)=>{
-      const btn = e.target.closest("[data-a]");
-      if(!btn) return;
-      const id = btn.dataset.id;
-      const a = btn.dataset.a;
+      <div class="modal-body">
+        <div class="builder-grid">
 
-      if(a==="minus"){
-        cart[id] = Math.max(0, (cart[id]||0)-1);
-        if(cart[id]===0) delete cart[id];
-        saveJSON(K.cart, cart);
+          <!-- SINISTRA: FORM -->
+          <div class="box">
+            <h3>1) Base</h3>
+
+            <div class="row2">
+              <div>
+                <label>Modello</label>
+                <select id="bModel">
+                  <option value="Classico (1)">Classico (1)</option>
+                  <option value="Cerchio (2)">Cerchio (2)</option>
+                  <option value="Luna (3)">Luna (3)</option>
+                  <option value="Cuore (4)">Cuore (4)</option>
+                  <option value="Stella (5)">Stella (5)</option>
+                  <option value="Chakra (6)">Chakra (6)</option>
+                  <option value="Yin & Yang (7)">Yin & Yang (7)</option>
+                  <option value="Personalizzato (8)">Personalizzato (8)</option>
+                  <option value="Tema speciale (es. REAL HASTA LA MUERTE)">Tema speciale</option>
+                </select>
+              </div>
+
+              <div>
+                <label>Diametro (cm)</label>
+                <select id="bDiameter">
+                  <option>15</option><option>20</option><option>25</option>
+                  <option selected>30</option><option>35</option><option>40</option><option>50</option>
+                </select>
+              </div>
+
+              <div>
+                <label>Colore cerchio</label>
+                <input id="bRingColor" placeholder="Es: bianco / nero / oro / legno..." />
+              </div>
+
+              <div>
+                <label>Colore piume</label>
+                <input id="bFeatherColor" placeholder="Es: bianco / rosso e nero / azzurro..." />
+              </div>
+            </div>
+
+            <div class="hr2"></div>
+
+            <h3>2) Cerchi (aggiungine quanti vuoi)</h3>
+            <div class="small">Usa “Aggiungi cerchio” per aggiungere cerchi extra (diametro/colore/intreccio/decorazioni).</div>
+            <div class="list" id="bRingsList"></div>
+            <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn" id="btnAddRing" type="button">➕ Aggiungi cerchio</button>
+            </div>
+
+            <div class="hr2"></div>
+
+            <h3>3) Piume (gruppi: sinistra/centro/destra)</h3>
+            <div class="list" id="bFeathersList"></div>
+            <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn" id="btnAddFeathers" type="button">➕ Aggiungi gruppo piume</button>
+            </div>
+
+            <div class="hr2"></div>
+
+            <h3>4) Accessori (aggiungine quanti vuoi)</h3>
+            <div class="list" id="bAccList"></div>
+            <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn" id="btnAddAcc" type="button">➕ Aggiungi accessorio</button>
+            </div>
+
+            <div class="hr2"></div>
+
+            <h3>5) Foto e Note</h3>
+            <div class="row2">
+              <div>
+                <label>Vuoi inserire una foto?</label>
+                <select id="bHasPhoto">
+                  <option value="no" selected>No</option>
+                  <option value="si">Sì</option>
+                </select>
+                <div class="small">Se sì, puoi caricarla qui e vedere l’anteprima.</div>
+              </div>
+              <div>
+                <label>Carica foto (opzionale)</label>
+                <input id="bPhotoFile" type="file" accept="image/*" />
+              </div>
+            </div>
+
+            <div style="margin-top:10px">
+              <label>Scritta (opzionale)</label>
+              <input id="bText" placeholder="Es: Nome, frase, data..." />
+            </div>
+
+            <div style="margin-top:10px">
+              <label>Note extra</label>
+              <textarea id="bNotes" placeholder="Es: perle rosse e nere, brillanti, charm, emoji, ecc..."></textarea>
+            </div>
+
+            <div class="hr2"></div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn" id="btnResumeProject" type="button">↩️ Riprendi ultimo progetto</button>
+              <button class="btn" id="btnSaveProject" type="button">💾 Salva progetto</button>
+              <button class="btn primary" id="btnSendProject" type="button">📲 Invia su WhatsApp</button>
+              <button class="btn primary" id="btnSaveAndSend" type="button">✅ Salva & Invia</button>
+            </div>
+
+            <div class="small" style="margin-top:8px">
+              Nota: WhatsApp non permette di allegare automaticamente la foto dal link, ma nel messaggio ti ricorda di inviarla in chat.
+            </div>
+          </div>
+
+          <!-- DESTRA: ANTEPRIMA + STIMA -->
+          <div class="box">
+            <h3>Anteprima & riepilogo</h3>
+
+            <div class="preview">
+              <div class="preview-inner">
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+                  <span class="badge2" id="bEstimate">Totale stimato: € 0,00</span>
+                  <span class="badge2" id="bCode">Codice: —</span>
+                </div>
+
+                <img id="bPhotoPreview" class="preview-img" alt="Anteprima foto" />
+
+                <div class="hr2"></div>
+
+                <div id="bSummary" class="small"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_WA = "+393440260906";
+    const ADMIN_PASS_DEFAULT = "1234";
+    const PRODUCTS_URL = "data/products.json";
+
+    const IMAGE_BASE_PATH = "assets/assets/images/assets/images/acchiappasogni_hd/";
+
+    const K = {
+      adminPass: "ae_admin_pass",
+      wa: "ae_wa_number",
+      productsOverride: "ae_products_override",
+      cart: "ae_cart_v1",
+      broken: "ae_broken_images_v1",
+      deleted: "ae_deleted_ids",
+      prices: "ae_builder_prices_v1",
+      projects: "ae_builder_projects_v1",
+      categories: "ae_categories_v1"
+    };
+
+    const IMG_OPT = { maxSide: 1200, quality: 0.72, mime: "image/jpeg" };
+
+    const euro = (n) => {
+      const v = Number(n || 0);
+      return v.toLocaleString("it-IT", { style: "currency", currency: "EUR" });
+    };
+
+    const uid = () => "P-" + Math.random().toString(16).slice(2) + "-" + Date.now().toString(16);
+
+    function getAdminPass(){ return localStorage.getItem(K.adminPass) || ADMIN_PASS_DEFAULT; }
+    function setAdminPass(p){ localStorage.setItem(K.adminPass, p); }
+
+    function getWa(){ return localStorage.getItem(K.wa) || DEFAULT_WA; }
+    function setWa(v){ localStorage.setItem(K.wa, v); }
+
+    function loadCart(){ try { return JSON.parse(localStorage.getItem(K.cart) || "{}"); } catch { return {}; } }
+    function saveCart(c){ localStorage.setItem(K.cart, JSON.stringify(c)); }
+
+    function loadBrokenSet(){
+      try{
+        const arr = JSON.parse(localStorage.getItem(K.broken) || "[]");
+        return new Set(Array.isArray(arr) ? arr : []);
+      }catch{ return new Set(); }
+    }
+    function saveBrokenSet(set){ localStorage.setItem(K.broken, JSON.stringify(Array.from(set))); }
+    let brokenImages = loadBrokenSet();
+
+    function loadDeleted(){
+      try{
+        const arr = JSON.parse(localStorage.getItem(K.deleted) || "[]");
+        return Array.isArray(arr) ? arr : [];
+      }catch{ return []; }
+    }
+    function saveDeleted(arr){ localStorage.setItem(K.deleted, JSON.stringify(arr)); }
+
+    async function fetchBaseProducts(){
+      const r = await fetch(PRODUCTS_URL, { cache: "no-store" });
+      if(!r.ok) throw new Error("Impossibile caricare " + PRODUCTS_URL);
+      const data = await r.json();
+      return Array.isArray(data) ? data : [];
+    }
+
+    function loadOverride(){
+      try { return JSON.parse(localStorage.getItem(K.productsOverride) || "[]"); } catch { return []; }
+    }
+    function saveOverride(list){
+      localStorage.setItem(K.productsOverride, JSON.stringify(list));
+    }
+
+    async function fetchProductsWithLocalOverride(){
+      const base = await fetchBaseProducts();
+      const over = loadOverride();
+      const map = new Map(base.map(p => [p.id, p]));
+      for(const p of over) map.set(p.id, p);
+      return Array.from(map.values());
+    }
+
+    let allProducts = [];
+    let visibleProducts = [];
+    let categories = [];
+    let activeCategory = "Tutti";
+    let q = "";
+    let cart = loadCart();
+
+    const grid = document.getElementById("grid");
+    const search = document.getElementById("search");
+    const filters = document.getElementById("filters");
+    const cartCount = document.getElementById("cartCount");
+    const cartTotal = document.getElementById("cartTotal");
+    const cartTotal2 = document.getElementById("cartTotal2");
+
+    const cartModalBack = document.getElementById("cartModalBack");
+    const adminModalBack = document.getElementById("adminModalBack");
+
+    function rebuildCategories(){
+      const set = new Set(allProducts.map(p => p.category || "Altro"));
+      let saved = [];
+      try{ saved = JSON.parse(localStorage.getItem(K.categories) || "[]"); }catch{}
+      if(!Array.isArray(saved)) saved = [];
+      for(const c of saved){ if(c && typeof c === "string") set.add(c); }
+      categories = ["Tutti", ...Array.from(set).sort((a,b)=>a.localeCompare(b,"it"))];
+      refreshCategoryDatalist();
+    }
+
+    function renderFilters(){
+      filters.innerHTML = "";
+      for(const c of categories){
+        const b = document.createElement("div");
+        b.className = "chip" + (c === activeCategory ? " active" : "");
+        b.textContent = c;
+        b.onclick = () => { activeCategory = c; applyFilters(); };
+        filters.appendChild(b);
+      }
+    }
+
+    function applyFilters(){
+      const s = (q || "").trim().toLowerCase();
+      visibleProducts = allProducts.filter(p => {
+        const catOk = (activeCategory === "Tutti") || ((p.category || "Altro") === activeCategory);
+        const text = ((p.title || "") + " " + (p.category || "") + " " + (p.description || "")).toLowerCase();
+        const searchOk = !s || text.includes(s);
+        const pubOk = (p.published !== false);
+        const imgOk = !brokenImages.has(p.id);
+        return catOk && searchOk && pubOk && imgOk;
+      });
+      renderGrid();
+    }
+
+    function renderGrid(){
+      grid.innerHTML = "";
+      for(const p of visibleProducts){
+        const cardEl = document.createElement("div");
+        cardEl.className = "card";
+
+        const imgWrap = document.createElement("div");
+        imgWrap.className = "img";
+
+        const img = document.createElement("img");
+        img.alt = p.title || "";
+        img.loading = "lazy";
+        img.decoding = "async";
+        img.src = (p.image || "");
+
+        img.onerror = () => {
+          img.onerror = null;
+          brokenImages.add(p.id);
+          saveBrokenSet(brokenImages);
+          try { cardEl.remove(); } catch {}
+          visibleProducts = visibleProducts.filter(x => x.id !== p.id);
+        };
+
+        const badge = document.createElement("div");
+        badge.className = "badge";
+        badge.textContent = (p.category || "Altro");
+
+        imgWrap.appendChild(img);
+        imgWrap.appendChild(badge);
+
+        const content = document.createElement("div");
+        content.className = "content";
+
+        const title = document.createElement("div");
+        title.className = "title";
+        title.textContent = p.title || "";
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+
+        const price = document.createElement("div");
+        price.className = "price";
+        price.textContent = euro(p.price_from ?? 0);
+
+        meta.appendChild(price);
+
+        content.appendChild(title);
+
+        if (p.description) {
+          const desc = document.createElement("div");
+          desc.style.color = "rgba(185,198,255,.85)";
+          desc.style.fontSize = "12px";
+          desc.style.lineHeight = "1.25";
+          desc.textContent = p.description;
+          content.appendChild(desc);
+        }
+
+        content.appendChild(meta);
+
+        const row = document.createElement("div");
+        row.className = "row";
+
+        const qtyWrap = document.createElement("div");
+        qtyWrap.className = "qty";
+
+        const minus = document.createElement("div");
+        minus.className = "qbtn";
+        minus.textContent = "−";
+
+        const count = document.createElement("div");
+        count.textContent = String(cart[p.id] || 0);
+
+        const plus = document.createElement("div");
+        plus.className = "qbtn";
+        plus.textContent = "+";
+
+        minus.onclick = () => {
+          const cur = cart[p.id] || 0;
+          if(cur <= 0) return;
+          cart[p.id] = cur - 1;
+          if(cart[p.id] <= 0) delete cart[p.id];
+          saveCart(cart);
+          count.textContent = String(cart[p.id] || 0);
+          updateCartUI();
+        };
+
+        plus.onclick = () => {
+          const cur = cart[p.id] || 0;
+          cart[p.id] = cur + 1;
+          saveCart(cart);
+          count.textContent = String(cart[p.id] || 0);
+          updateCartUI();
+        };
+
+        qtyWrap.appendChild(minus);
+        qtyWrap.appendChild(count);
+        qtyWrap.appendChild(plus);
+
+        const add = document.createElement("button");
+        add.className = "btn primary add";
+        add.textContent = "Aggiungi";
+        add.onclick = () => {
+          const cur = cart[p.id] || 0;
+          cart[p.id] = cur + 1;
+          saveCart(cart);
+          count.textContent = String(cart[p.id] || 0);
+          updateCartUI();
+        };
+
+        row.appendChild(qtyWrap);
+        row.appendChild(add);
+
+        content.appendChild(row);
+
+        cardEl.appendChild(imgWrap);
+        cardEl.appendChild(content);
+
+        grid.appendChild(cardEl);
+      }
+    }
+
+    function cartTotals(){
+      let items = 0;
+      let tot = 0;
+      const byId = new Map(allProducts.map(p => [p.id, p]));
+      for(const [id, qty] of Object.entries(cart)){
+        const p = byId.get(id);
+        if(!p) continue;
+        items += qty;
+        tot += (Number(p.price_from || 0) * qty);
+      }
+      return { items, tot };
+    }
+
+    function updateCartUI(){
+      const { items, tot } = cartTotals();
+      cartCount.textContent = String(items);
+      cartTotal.textContent = euro(tot);
+      cartTotal2.textContent = euro(tot);
+    }
+
+    function renderCartModal(){
+      const list = document.getElementById("cartList");
+      list.innerHTML = "";
+      const byId = new Map(allProducts.map(p => [p.id, p]));
+      const ids = Object.keys(cart);
+
+      if(ids.length === 0){
+        const empty = document.createElement("div");
+        empty.className = "hint";
+        empty.textContent = "Carrello vuoto.";
+        list.appendChild(empty);
         updateCartUI();
-        const qn = document.getElementById("q_"+id);
-        if(qn) qn.textContent = cart[id] || 0;
-        e.stopPropagation();
         return;
       }
-      if(a==="plus" || a==="add"){
-        cart[id] = (cart[id]||0) + 1;
-        saveJSON(K.cart, cart);
-        updateCartUI();
-        const qn = document.getElementById("q_"+id);
-        if(qn) qn.textContent = cart[id] || 0;
-        e.stopPropagation();
+
+      for(const id of ids){
+        const p = byId.get(id);
+        if(!p) continue;
+        const qty = cart[id];
+
+        const item = document.createElement("div");
+        item.className = "admin-item";
+
+        const th = document.createElement("div");
+        th.className = "thumb";
+        const im = document.createElement("img");
+        im.src = (p.image || "");
+        im.onerror = () => { im.onerror=null; brokenImages.add(p.id); saveBrokenSet(brokenImages); };
+        th.appendChild(im);
+
+        const info = document.createElement("div");
+        info.className = "info";
+        info.innerHTML = `<b>${escapeHtml(p.title||"")}</b><small>${escapeHtml(p.category||"")} • ${euro(p.price_from||0)} × ${qty}</small>`;
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const m = document.createElement("button");
+        m.className = "btn mini";
+        m.textContent = "−";
+        m.onclick = () => {
+          const cur = cart[id] || 0;
+          if(cur <= 1) delete cart[id];
+          else cart[id] = cur - 1;
+          saveCart(cart);
+          renderCartModal();
+          updateCartUI();
+          applyFilters();
+        };
+
+        const pbtn = document.createElement("button");
+        pbtn.className = "btn mini";
+        pbtn.textContent = "+";
+        pbtn.onclick = () => {
+          cart[id] = (cart[id] || 0) + 1;
+          saveCart(cart);
+          renderCartModal();
+          updateCartUI();
+          applyFilters();
+        };
+
+        const del = document.createElement("button");
+        del.className = "btn danger mini";
+        del.textContent = "Rimuovi";
+        del.onclick = () => {
+          delete cart[id];
+          saveCart(cart);
+          renderCartModal();
+          updateCartUI();
+          applyFilters();
+        };
+
+        actions.appendChild(m);
+        actions.appendChild(pbtn);
+        actions.appendChild(del);
+
+        item.appendChild(th);
+        item.appendChild(info);
+        item.appendChild(actions);
+
+        list.appendChild(item);
+      }
+      updateCartUI();
+    }
+
+    function openCart(){ renderCartModal(); cartModalBack.style.display = "flex"; }
+    function closeCart(){ cartModalBack.style.display = "none"; }
+
+    function buildWhatsAppMessage(){
+      const byId = new Map(allProducts.map(p => [p.id, p]));
+      let lines = [];
+      lines.push("Ciao! Vorrei ordinare:");
+      let tot = 0;
+
+      for(const [id, qty] of Object.entries(cart)){
+        const p = byId.get(id);
+        if(!p) continue;
+        const price = Number(p.price_from || 0);
+        const sub = price * qty;
+        tot += sub;
+        lines.push(`- ${p.title} × ${qty} = ${euro(sub)}`);
+      }
+      lines.push("");
+      lines.push(`Totale: ${euro(tot)}`);
+      lines.push("Grazie!");
+      return lines.join("\n");
+    }
+
+    function openWhatsApp(){
+      const { items } = cartTotals();
+      if(items <= 0){ alert("Il carrello è vuoto."); return; }
+      const number = getWa();
+      const msg = buildWhatsAppMessage();
+      const url = `https://wa.me/${encodeURIComponent(number.replace(/\s+/g,""))}?text=${encodeURIComponent(msg)}`;
+      window.open(url, "_blank");
+    }
+
+    function openAdmin(){
+      document.getElementById("adminLogin").style.display = "block";
+      document.getElementById("adminPanel").style.display = "none";
+      document.getElementById("adminPass").value = "";
+      adminModalBack.style.display = "flex";
+    }
+    function closeAdmin(){ adminModalBack.style.display = "none"; }
+
+    function adminLogin(){
+      const pass = document.getElementById("adminPass").value || "";
+      if(pass !== getAdminPass()){ alert("Password errata."); return; }
+      document.getElementById("adminLogin").style.display = "none";
+      document.getElementById("adminPanel").style.display = "block";
+      document.getElementById("waNumber").value = getWa();
+      document.getElementById("newAdminPass").value = "";
+      rebuildEditSelect();
+      injectAdminPricesUI();
+    }
+
+    function rebuildEditSelect(){
+      const sel = document.getElementById("editSelect");
+      sel.innerHTML = "";
+      const sorted = [...allProducts].sort((a,b)=>(a.title||"").localeCompare(b.title||"","it"));
+      for(const p of sorted){
+        const o = document.createElement("option");
+        o.value = p.id;
+        o.textContent = `${p.title || p.id}`;
+        sel.appendChild(o);
+      }
+    }
+
+    function loadSelectedToForm(){
+      const id = document.getElementById("editSelect").value;
+      const p = allProducts.find(x => x.id === id);
+      if(!p){ alert("Prodotto non trovato"); return; }
+      document.getElementById("fTitle").value = p.title || "";
+      document.getElementById("fCategory").value = p.category || "";
+      document.getElementById("fDesc").value = p.description || "";
+      document.getElementById("fPrice").value = Number(p.price_from || 0);
+      document.getElementById("fPublished").checked = (p.published !== false);
+      document.getElementById("fImagePath").value = (p.image && !p.image.startsWith("data:")) ? p.image : "";
+      document.getElementById("fImageFile").value = "";
+    }
+
+    function clearFormForNew(){
+      document.getElementById("editSelect").value = "";
+      document.getElementById("fTitle").value = "";
+      document.getElementById("fCategory").value = "Acchiappasogni Classici";
+      document.getElementById("fDesc").value = "";
+      document.getElementById("fPrice").value = 5;
+      document.getElementById("fPublished").checked = false;
+      document.getElementById("fImagePath").value = "";
+      document.getElementById("fImageFile").value = "";
+    }
+
+    async function fileToDataUrl(file){
+      return new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(String(r.result || ""));
+        r.onerror = reject;
+        r.readAsDataURL(file);
+      });
+    }
+
+    function loadImg(src){
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
+
+    async function optimizeImageFile(file){
+      const dataUrl = await fileToDataUrl(file);
+      const img = await loadImg(dataUrl);
+
+      const w = img.naturalWidth || img.width;
+      const h = img.naturalHeight || img.height;
+      const longSide = Math.max(w, h);
+      const scale = longSide > IMG_OPT.maxSide ? (IMG_OPT.maxSide / longSide) : 1;
+
+      const nw = Math.max(1, Math.round(w * scale));
+      const nh = Math.max(1, Math.round(h * scale));
+
+      const canvas = document.createElement("canvas");
+      canvas.width = nw; canvas.height = nh;
+      const ctx = canvas.getContext("2d", { alpha: false });
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, nw, nh);
+      ctx.drawImage(img, 0, 0, nw, nh);
+
+      return canvas.toDataURL(IMG_OPT.mime, IMG_OPT.quality);
+    }
+
+    async function saveProduct(){
+      const title = document.getElementById("fTitle").value.trim();
+      const category = document.getElementById("fCategory").value.trim() || "Altro";
+      const description = (document.getElementById("fDesc").value || "").trim();
+      const price = Number(document.getElementById("fPrice").value || 0);
+      const published = !!document.getElementById("fPublished").checked;
+
+      let path = document.getElementById("fImagePath").value.trim();
+      const file = document.getElementById("fImageFile").files?.[0] || null;
+
+      if(!title){ alert("Metti un titolo."); return; }
+
+      if (path && !path.includes("/") && !path.startsWith("http") && !path.startsWith("data:")) {
+        path = IMAGE_BASE_PATH + path;
+      }
+
+      let id = document.getElementById("editSelect").value;
+      const isNew = !id;
+      if(!id) id = uid();
+
+      const existing = allProducts.find(x => x.id === id) || null;
+
+      let image = path || "";
+      if(file){
+        try{
+          image = await optimizeImageFile(file);
+        }catch(e){
+          console.error(e);
+          alert("Errore: impossibile leggere/ottimizzare la foto scelta.");
+          return;
+        }
+      }
+      if(!image && existing) image = existing.image || "";
+      if(!image){ alert("Seleziona una foto (galleria) oppure inserisci il percorso GitHub."); return; }
+
+      if (brokenImages.has(id)) {
+        brokenImages.delete(id);
+        saveBrokenSet(brokenImages);
+      }
+
+      const newP = {
+        id,
+        title,
+        category,
+        description,
+        price_from: price,
+        image,
+        featured: !!(existing?.featured),
+        published
+      };
+
+      const over = loadOverride();
+      const idx = over.findIndex(x => x.id === id);
+      if(idx >= 0) over[idx] = newP;
+      else over.push(newP);
+      saveOverride(over);
+
+      await reloadProducts();
+      rebuildEditSelect();
+      injectAdminPricesUI();
+      document.getElementById("editSelect").value = id;
+      document.getElementById("fImageFile").value = "";
+
+      alert(isNew ? "Salvato (bozza)!" : "Salvato!");
+    }
+
+    function ensureSelectedForPublish(){
+      const id = document.getElementById("editSelect").value;
+      if(!id){ alert("Prima salva il prodotto (bozza), poi pubblichi."); return null; }
+      return id;
+    }
+
+    async function publishNow(){
+      const id = ensureSelectedForPublish();
+      if(!id) return;
+      document.getElementById("fPublished").checked = true;
+      await saveProduct();
+    }
+
+    async function hideNow(){
+      const id = ensureSelectedForPublish();
+      if(!id) return;
+      document.getElementById("fPublished").checked = false;
+      await saveProduct();
+    }
+
+    async function deleteSelected(){
+      const id = document.getElementById("editSelect").value;
+      if(!id){ alert("Seleziona un prodotto"); return; }
+      if(!confirm("Eliminare questo prodotto?")) return;
+
+      const dels = loadDeleted();
+      if(!dels.includes(id)) dels.push(id);
+      saveDeleted(dels);
+
+      const over = loadOverride();
+      const nextOver = over.filter(p => p.id !== id);
+      saveOverride(nextOver);
+
+      delete cart[id];
+      saveCart(cart);
+
+      await reloadProducts();
+      rebuildEditSelect();
+      injectAdminPricesUI();
+      alert("Eliminato!");
+    }
+
+    async function deleteCategory(){
+      const cat = (document.getElementById("fCategory").value || "").trim();
+      if(!cat){ alert("Scrivi/Seleziona una categoria nel campo Categoria."); return; }
+
+      const count = allProducts.filter(p => (p.category || "Altro") === cat).length;
+      if(count === 0){
+        alert("Nessun prodotto trovato in questa categoria.");
         return;
       }
-      if(a==="delprod"){
-        if(localStorage.getItem(K.admin)!=="1"){ alert("Solo admin"); return; }
-        if(!confirm("Eliminare questo prodotto dal catalogo?")) return;
-        products = products.filter(x=>x.id!==id);
-        saveJSON(K.catalog, products);
-        renderChips();
-        renderGrid();
-        e.stopPropagation();
-        return;
+
+      if(!confirm(`Eliminare la categoria "${cat}"?\nVerranno eliminati anche ${count} prodotti.`)) return;
+
+      const dels = loadDeleted();
+
+      for(const p of allProducts){
+        if((p.category || "Altro") === cat){
+          if(!dels.includes(p.id)) dels.push(p.id);
+          if(cart[p.id]) delete cart[p.id];
+        }
+      }
+      saveDeleted(dels);
+      saveCart(cart);
+
+      const over = loadOverride();
+      const nextOver = over.filter(p => (p.category || "Altro") !== cat);
+      saveOverride(nextOver);
+
+      await reloadProducts();
+      rebuildEditSelect();
+      injectAdminPricesUI();
+      alert("Categoria eliminata!");
+    }
+
+    async function applyBulkPrice(){
+      const v = Number(document.getElementById("bulkPrice").value || 0);
+      if(!v || v < 0){ alert("Inserisci un prezzo valido."); return; }
+
+      const over = loadOverride();
+      const overMap = new Map(over.map(p => [p.id, p]));
+      const nextOver = [];
+
+      for(const p of allProducts){
+        const base = overMap.get(p.id) || p;
+        nextOver.push({ ...base, price_from: v });
+      }
+      saveOverride(nextOver);
+      await reloadProducts();
+      alert("Prezzi aggiornati!");
+    }
+
+    async function resetAll(){
+      if(!confirm("Reset completo? Cancella modifiche e torna al catalogo originale.")) return;
+      localStorage.removeItem(K.productsOverride);
+      localStorage.removeItem(K.deleted);
+      localStorage.removeItem(K.broken);
+      brokenImages = new Set();
+      await reloadProducts();
+      alert("Ripristinato!");
+    }
+
+    function applyDeleted(products){
+      const dels = loadDeleted();
+      if(!dels.length) return products;
+      return products.filter(p => !dels.includes(p.id));
+    }
+
+    function downloadText(filename, text, mime="application/json"){
+      const blob = new Blob([text], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    async function exportConfig(){
+      try{
+        const merged = await fetchProductsWithLocalOverride();
+        const finalList = applyDeleted(merged).map(p => ({
+          id: String(p.id || uid()),
+          title: String(p.title || ""),
+          category: String(p.category || "Altro"),
+          description: String(p.description || ""),
+          price_from: Number(p.price_from ?? 0),
+          image: String(p.image || ""),
+          featured: !!p.featured,
+          published: (p.published === undefined ? true : !!p.published)
+        }));
+
+        finalList.sort((a,b) => (a.category||"").localeCompare(b.category||"","it") || (a.title||"").localeCompare(b.title||"","it"));
+
+        downloadText("products.json", JSON.stringify(finalList, null, 2));
+        alert("Scaricato products.json ✅\nOra caricalo su GitHub dentro la cartella data/ sostituendo il vecchio file.");
+      }catch(e){
+        console.error(e);
+        alert("Errore export: " + (e?.message || e));
+      }
+    }
+
+    async function importConfigFromFile(file){
+      try{
+        const text = await file.text();
+        const arr = JSON.parse(text);
+
+        if(!Array.isArray(arr)) {
+          alert("Il file JSON deve contenere una lista di prodotti (array).");
+          return;
+        }
+
+        const normalized = arr.map(p => ({
+          id: String(p.id || uid()),
+          title: String(p.title || ""),
+          category: String(p.category || "Altro"),
+          description: String(p.description || ""),
+          price_from: Number(p.price_from ?? 0),
+          image: String(p.image || ""),
+          featured: !!p.featured,
+          published: (p.published === undefined ? true : !!p.published)
+        }));
+
+        saveOverride(normalized);
+        await reloadProducts();
+        rebuildEditSelect();
+        injectAdminPricesUI();
+        alert("Configurazione importata nel telefono ✅");
+      }catch(e){
+        console.error(e);
+        alert("Errore import: " + (e?.message || e));
+      }
+    }
+
+    document.getElementById("btnCart").onclick = openCart;
+    document.getElementById("btnCloseCart").onclick = closeCart;
+    cartModalBack.addEventListener("click", (e)=>{ if(e.target === cartModalBack) closeCart(); });
+
+    document.getElementById("btnWhatsApp").onclick = openWhatsApp;
+    document.getElementById("btnWhatsApp2").onclick = openWhatsApp;
+
+    document.getElementById("btnClearCart").onclick = () => {
+      if(!confirm("Svuotare il carrello?")) return;
+      cart = {};
+      saveCart(cart);
+      renderCartModal();
+      updateCartUI();
+      applyFilters();
+    };
+
+    document.getElementById("btnSettings").onclick = openAdmin;
+    document.getElementById("btnCloseAdmin").onclick = closeAdmin;
+    adminModalBack.addEventListener("click", (e)=>{ if(e.target === adminModalBack) closeAdmin(); });
+
+    document.getElementById("btnAdminLogin").onclick = adminLogin;
+    document.getElementById("btnAdminCancel").onclick = closeAdmin;
+
+    document.getElementById("btnLoadToForm").onclick = loadSelectedToForm;
+    document.getElementById("btnNewProduct").onclick = clearFormForNew;
+    document.getElementById("btnSaveProduct").onclick = saveProduct;
+    document.getElementById("btnPublishNow").onclick = publishNow;
+    document.getElementById("btnHideNow").onclick = hideNow;
+    document.getElementById("btnDeleteSelected").onclick = deleteSelected;
+    document.getElementById("btnDeleteCategory").onclick = deleteCategory;
+
+    document.getElementById("btnBulkApply").onclick = applyBulkPrice;
+    document.getElementById("btnResetAll").onclick = resetAll;
+
+    document.getElementById("waNumber").addEventListener("change", (e)=> setWa(e.target.value.trim()));
+    document.getElementById("newAdminPass").addEventListener("change", (e)=>{
+      const v = e.target.value.trim();
+      if(v){
+        setAdminPass(v);
+        alert("Password aggiornata!");
+        e.target.value = "";
       }
     });
 
-    gridEl.appendChild(card);
-  });
+    document.getElementById("btnExportConfig").onclick = exportConfig;
+    document.getElementById("importConfigFile").addEventListener("change", (e) => {
+      const f = e.target.files?.[0];
+      if(!f) return;
+      importConfigFromFile(f);
+      e.target.value = "";
+    });
 
-  if(items.length===0){
-    gridEl.innerHTML = `<div class="small">Nessun prodotto trovato.</div>`;
-  }
-}
+    search.addEventListener("input", (e)=>{
+      q = e.target.value;
+      applyFilters();
+    });
 
-function renderProjects(){
-  if(!Array.isArray(projects)) projects = [];
-  projGrid.innerHTML = "";
+    async function reloadProducts(){
+      const products = await fetchProductsWithLocalOverride();
+      allProducts = applyDeleted(products);
 
-  if(projects.length===0){
-    projHint.textContent = "Nessun progetto salvato. Crea un personalizzato e salvalo dal configuratore.";
-    return;
-  }
-  projHint.textContent = "";
+      allProducts = allProducts.map(p => ({
+        id: String(p.id || uid()),
+        title: String(p.title || ""),
+        category: String(p.category || "Altro"),
+        description: String(p.description || ""),
+        price_from: Number(p.price_from ?? 0),
+        image: String(p.image || ""),
+        featured: !!p.featured,
+        published: (p.published === undefined ? true : !!p.published)
+      }));
 
-  projects.slice().reverse().forEach(pr=>{
-    const card = document.createElement("div");
-    card.className = "card";
-    const date = pr.ts ? new Date(pr.ts).toLocaleString("it-IT") : "";
-    card.innerHTML = `
-      <div class="img">
-        ${pr.img ? `<img src="${pr.img}" alt="progetto">` : `<div class="ph">Senza foto</div>`}
-      </div>
-      <div class="cbody">
-        <div>
-          <p class="title">${pr.title||"Progetto"}</p>
-          <p class="meta">${date}${pr.desc ? " • "+pr.desc : ""}</p>
+      rebuildCategories();
+      renderFilters();
+      applyFilters();
+      updateCartUI();
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    reloadProducts().catch(err=>{
+      console.error(err);
+      alert("Errore caricamento catalogo: " + err.message);
+    });
+
+    /* =========================================================
+       CONFIGURATORE UTENTE + PREZZI (ADMIN) + CATEGORIE SALVATE
+       ========================================================= */
+
+    const DEFAULT_PRICES = {
+      base_model: 12.00,
+      ring_extra: 3.00,
+      feathers_group: 2.50,
+      accessory_beads: 1.50,
+      accessory_glitter: 1.00,
+      accessory_charm: 2.00,
+      accessory_symbol: 1.50,
+      accessory_text: 2.00,
+      lights: 4.00,
+      photo: 0.00
+    };
+
+    function loadPrices(){
+      try{
+        const p = JSON.parse(localStorage.getItem(K.prices) || "null");
+        return p && typeof p === "object" ? { ...DEFAULT_PRICES, ...p } : { ...DEFAULT_PRICES };
+      }catch{
+        return { ...DEFAULT_PRICES };
+      }
+    }
+    function savePrices(p){ localStorage.setItem(K.prices, JSON.stringify(p)); }
+
+    function loadSavedCategories(){
+      try{
+        const arr = JSON.parse(localStorage.getItem(K.categories) || "[]");
+        return Array.isArray(arr) ? arr : [];
+      }catch{ return []; }
+    }
+    function saveSavedCategories(arr){ localStorage.setItem(K.categories, JSON.stringify(arr)); }
+
+    function refreshCategoryDatalist(){
+      const dl = document.getElementById("catDatalist");
+      if(!dl) return;
+      dl.innerHTML = "";
+      for(const c of categories.filter(x => x && x !== "Tutti")){
+        const o = document.createElement("option");
+        o.value = c;
+        dl.appendChild(o);
+      }
+    }
+
+    const btnCreateCategory = document.getElementById("btnCreateCategory");
+    if(btnCreateCategory){
+      btnCreateCategory.onclick = () => {
+        const name = prompt("Nome nuova categoria:");
+        if(!name) return;
+        const clean = name.trim();
+        if(!clean) return;
+
+        const norm = clean.toLowerCase();
+        const existing = new Set(categories.map(c => String(c).toLowerCase()));
+        if(existing.has(norm)){
+          alert("Questa categoria esiste già ✅");
+          document.getElementById("fCategory").value = categories.find(c => String(c).toLowerCase() === norm) || clean;
+          return;
+        }
+
+        const saved = loadSavedCategories();
+        const savedNorm = new Set(saved.map(c => String(c).toLowerCase()));
+        if(!savedNorm.has(norm)) saved.push(clean);
+        saveSavedCategories(saved);
+
+        document.getElementById("fCategory").value = clean;
+
+        rebuildCategories();
+        renderFilters();
+        refreshCategoryDatalist();
+        alert("Categoria creata ✅");
+      };
+    }
+
+    function injectAdminPricesUI(){
+      const panel = document.getElementById("adminPanel");
+      if(!panel) return;
+      if(document.getElementById("adminPricesBox")) return;
+
+      const box = document.createElement("div");
+      box.id = "adminPricesBox";
+      box.innerHTML = `
+        <div class="hr"></div>
+        <h3 style="margin:0 0 10px 0;font-size:13px">💶 Prezzi configuratore (privati)</h3>
+        <div class="form">
+          ${Object.keys(DEFAULT_PRICES).map(k => `
+            <div>
+              <label>${k.replaceAll("_"," ")}</label>
+              <input type="number" step="0.01" id="price_${k}" />
+            </div>
+          `).join("")}
+          <div style="grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+            <button class="btn primary" id="btnSavePrices" type="button">💾 Salva prezzi</button>
+            <button class="btn danger" id="btnResetPrices" type="button">♻️ Ripristina default</button>
+          </div>
+          <div class="hint" style="grid-column:1/-1">
+            Questi prezzi li vedi solo tu (Admin). Servono per la stima nel configuratore.
+          </div>
         </div>
-        <div class="tools">
-          <button class="btn" data-a="wa">💬 WhatsApp</button>
-          <button class="btn danger" data-a="del" style="display:none">🗑️ Elimina</button>
-        </div>
-      </div>
-    `;
-    const isAdmin = localStorage.getItem(K.admin)==="1";
-    if(isAdmin) card.querySelector('[data-a="del"]').style.display = "inline-flex";
+      `;
+      panel.appendChild(box);
 
-    card.addEventListener("click",(e)=>{
-      const b = e.target.closest("[data-a]");
-      if(!b) return;
-      const a = b.dataset.a;
+      const fill = () => {
+        const p = loadPrices();
+        for(const k of Object.keys(DEFAULT_PRICES)){
+          const el = document.getElementById(`price_${k}`);
+          if(el) el.value = Number(p[k] ?? DEFAULT_PRICES[k]);
+        }
+      };
+      fill();
 
-      if(a==="del"){
-        if(localStorage.getItem(K.admin)!=="1"){ alert("Solo admin"); return; }
-        if(!confirm("Eliminare questo progetto?")) return;
-        projects = projects.filter(x=>x.id!==pr.id);
-        saveJSON(K.projects, projects);
-        renderProjects();
-        e.stopPropagation();
+      document.getElementById("btnSavePrices").onclick = () => {
+        const p = loadPrices();
+        for(const k of Object.keys(DEFAULT_PRICES)){
+          const v = Number(document.getElementById(`price_${k}`).value || 0);
+          p[k] = v;
+        }
+        savePrices(p);
+        alert("Prezzi salvati ✅");
+        updateBuilderSummary();
+      };
+
+      document.getElementById("btnResetPrices").onclick = () => {
+        if(!confirm("Ripristinare i prezzi di default?")) return;
+        savePrices({ ...DEFAULT_PRICES });
+        fill();
+        updateBuilderSummary();
+      };
+    }
+
+    const builderModalBack = document.getElementById("builderModalBack");
+    const btnCloseBuilder = document.getElementById("btnCloseBuilder");
+
+    const bModel = document.getElementById("bModel");
+    const bDiameter = document.getElementById("bDiameter");
+    const bRingColor = document.getElementById("bRingColor");
+    const bFeatherColor = document.getElementById("bFeatherColor");
+
+    const bRingsList = document.getElementById("bRingsList");
+    const bFeathersList = document.getElementById("bFeathersList");
+    const bAccList = document.getElementById("bAccList");
+
+    const bHasPhoto = document.getElementById("bHasPhoto");
+    const bPhotoFile = document.getElementById("bPhotoFile");
+    const bPhotoPreview = document.getElementById("bPhotoPreview");
+
+    const bText = document.getElementById("bText");
+    const bNotes = document.getElementById("bNotes");
+
+    const bSummary = document.getElementById("bSummary");
+    const bEstimate = document.getElementById("bEstimate");
+    const bCode = document.getElementById("bCode");
+
+    let currentBuilder = null;
+
+    function builderCode(){
+      const n = Date.now().toString().slice(-6);
+      return `AE-${new Date().getFullYear()}-${n}`;
+    }
+
+    function loadProjects(){
+      try{
+        const arr = JSON.parse(localStorage.getItem(K.projects) || "[]");
+        return Array.isArray(arr) ? arr : [];
+      }catch{ return []; }
+    }
+    function saveProjects(arr){ localStorage.setItem(K.projects, JSON.stringify(arr)); }
+
+    function openBuilder(){
+      currentBuilder = {
+        id: uid(),
+        code: builderCode(),
+        created_at: new Date().toISOString(),
+        base: { model: bModel.value, diameter: bDiameter.value, ringColor:"", featherColor:"" },
+        rings: [],
+        feathers: [],
+        accessories: [],
+        hasPhoto: "no",
+        photoDataUrl: "",
+        text: "",
+        notes: ""
+      };
+
+      bRingColor.value = "";
+      bFeatherColor.value = "";
+      bText.value = "";
+      bNotes.value = "";
+      bHasPhoto.value = "no";
+      bPhotoFile.value = "";
+      bPhotoPreview.style.display = "none";
+      bPhotoPreview.src = "";
+
+      bRingsList.innerHTML = "";
+      bFeathersList.innerHTML = "";
+      bAccList.innerHTML = "";
+
+      addRing();
+      addFeathersGroup("centro");
+      addAccessory();
+
+      bCode.textContent = "Codice: " + currentBuilder.code;
+
+      builderModalBack.style.display = "flex";
+      updateBuilderSummary();
+    }
+
+    function closeBuilder(){ builderModalBack.style.display = "none"; }
+
+    btnCloseBuilder.onclick = closeBuilder;
+    builderModalBack.addEventListener("click",(e)=>{ if(e.target===builderModalBack) closeBuilder(); });
+
+    document.getElementById("btnCustomizer").onclick = openBuilder;
+
+    function loadIntoBuilder(project){
+      if(!project) return;
+      currentBuilder = JSON.parse(JSON.stringify(project));
+      const _rings = Array.isArray(currentBuilder.rings) ? currentBuilder.rings : [];
+      const _feathers = Array.isArray(currentBuilder.feathers) ? currentBuilder.feathers : [];
+      const _accessories = Array.isArray(currentBuilder.accessories) ? currentBuilder.accessories : [];
+      currentBuilder.rings = [];
+      currentBuilder.feathers = [];
+      currentBuilder.accessories = [];
+      currentBuilder.photoDataUrl = currentBuilder.photoDataUrl || "";
+
+      bModel.value = currentBuilder.base?.model || bModel.value;
+      bDiameter.value = currentBuilder.base?.diameter || bDiameter.value;
+      bRingColor.value = currentBuilder.base?.ringColor || "";
+      bFeatherColor.value = currentBuilder.base?.featherColor || "";
+
+      bHasPhoto.value = currentBuilder.hasPhoto || "no";
+      bText.value = currentBuilder.text || "";
+      bNotes.value = currentBuilder.notes || "";
+
+      if(currentBuilder.photoDataUrl){
+        bPhotoPreview.src = currentBuilder.photoDataUrl;
+        bPhotoPreview.style.display = "block";
+      } else {
+        bPhotoPreview.src = "";
+        bPhotoPreview.style.display = "none";
+      }
+      bPhotoFile.value = "";
+
+      bRingsList.innerHTML = "";
+      bFeathersList.innerHTML = "";
+      bAccList.innerHTML = "";
+
+      (_rings || []).forEach(r => addRing(r));
+      (_feathers || []).forEach(f => addFeathersGroup(null, f));
+      (_accessories || []).forEach(a => addAccessory(a));
+
+      bCode.textContent = "Codice: " + (currentBuilder.code || "—");
+      updateBuilderSummary();
+    }
+
+    function resumeLastProject(){
+      const all = loadProjects();
+      if(!all.length){
+        alert("Non ci sono progetti salvati da riprendere.");
         return;
       }
+      const last = all[all.length - 1];
+      if(builderModalBack.style.display !== "flex"){
+        builderModalBack.style.display = "flex";
+      }
+      loadIntoBuilder(last);
+      alert("Progetto ripristinato ✅");
+    }
 
-      if(a==="wa"){
-        const num = (localStorage.getItem(K.wa)||"").replace(/\D/g,"");
-        if(!num){ alert("Imposta il numero WhatsApp nelle impostazioni."); return; }
-        const msg = encodeURIComponent(
-          `Ciao! 😊\nProgetto personalizzato:\n- Titolo: ${pr.title||""}\n- Descrizione: ${pr.desc||""}\n- Data: ${date}\n`
-        );
-        window.open(`https://wa.me/${num}?text=${msg}`,"_blank");
-        e.stopPropagation();
+    document.getElementById("btnResumeProject").onclick = resumeLastProject;
+
+    document.getElementById("btnAddRing").onclick = () => addRing();
+    document.getElementById("btnAddFeathers").onclick = () => addFeathersGroup();
+    document.getElementById("btnAddAcc").onclick = () => addAccessory();
+
+    [bModel, bDiameter, bRingColor, bFeatherColor, bHasPhoto, bText, bNotes].forEach(el=>{
+      el.addEventListener("input", updateBuilderSummary);
+      el.addEventListener("change", updateBuilderSummary);
+    });
+
+    bPhotoFile.addEventListener("change", async (e)=>{
+      const f = e.target.files?.[0];
+      if(!f){
+        if(currentBuilder) currentBuilder.photoDataUrl="";
+        bPhotoPreview.style.display="none";
+        updateBuilderSummary();
         return;
+      }
+      try{
+        const dataUrl = await optimizeImageFile(f);
+        if(currentBuilder) currentBuilder.photoDataUrl = dataUrl;
+        bPhotoPreview.src = dataUrl;
+        bPhotoPreview.style.display = "block";
+        updateBuilderSummary();
+      }catch(err){
+        console.error(err);
+        alert("Errore nel caricamento foto.");
       }
     });
 
-    projGrid.appendChild(card);
-  });
-}
+    function addRing(init){
+      const id = uid();
+      const ring = { id, diameter:(init?.diameter||""), color:(init?.color||""), weave:(init?.weave||""), decor:(init?.decor||"") };
+      currentBuilder.rings.push(ring);
 
-/* =======================
-   SEARCH
-   ======================= */
-document.getElementById("search").addEventListener("input",(e)=>{
-  q = (e.target.value||"").trim().toLowerCase();
-  renderGrid();
-});
+      const el = document.createElement("div");
+      el.className = "item";
+      el.dataset.id = id;
+      el.innerHTML = `
+        <div class="item-head">
+          <b>🧿 Cerchio</b>
+          <div class="item-actions">
+            <button class="btn danger mini" data-del type="button">Elimina</button>
+          </div>
+        </div>
+        <div class="row2">
+          <div><label>Diametro (cm)</label><input data-k="diameter" placeholder="Es: 30" value="${escapeHtml(ring.diameter)}" /></div>
+          <div><label>Colore cerchio</label><input data-k="color" placeholder="Es: bianco/nero/oro" value="${escapeHtml(ring.color)}" /></div>
+          <div><label>Intreccio</label><input data-k="weave" placeholder="Es: pizzo / classico" value="${escapeHtml(ring.weave)}" /></div>
+          <div><label>Decorazioni</label><input data-k="decor" placeholder="Es: brillanti, perline, charm..." value="${escapeHtml(ring.decor)}" /></div>
+        </div>
+      `;
+      bRingsList.appendChild(el);
 
-/* =======================
-   WHATSAPP ORDER
-   ======================= */
-document.getElementById("btnWhatsApp").onclick = ()=>{
-  if(cartCount(cart)===0){ alert("Il carrello è vuoto."); return; }
+      el.querySelectorAll("input").forEach(inp=>{
+        inp.addEventListener("input", ()=>{
+          ring[inp.dataset.k] = inp.value.trim();
+          updateBuilderSummary();
+        });
+      });
 
-  const num = (localStorage.getItem(K.wa)||"").replace(/\D/g,"");
-  if(!num){ alert("Imposta il numero WhatsApp nelle impostazioni."); return; }
+      el.querySelector("[data-del]").onclick = () => {
+        currentBuilder.rings = currentBuilder.rings.filter(r=>r.id!==id);
+        el.remove();
+        updateBuilderSummary();
+      };
 
-  const lines = [];
-  lines.push("Ciao! 😊 Vorrei ordinare questi acchiappasogni:");
-  for(const [id, qty] of Object.entries(cart)){
-    const p = products.find(x=>x.id===id);
-    if(p) lines.push(`- ${p.name} x${qty} (${euro(p.price)})`);
-  }
-  lines.push(`Totale: ${euro(cartTotal(cart, products))}`);
-  lines.push("Grazie! 🙏");
-
-  const msg = encodeURIComponent(lines.join("\n"));
-  window.open(`https://wa.me/${num}?text=${msg}`,"_blank");
-};
-
-document.getElementById("btnClear").onclick = ()=>{
-  if(!confirm("Svuotare il carrello?")) return;
-  cart = {};
-  saveJSON(K.cart, cart);
-  renderGrid();
-  updateCartUI();
-};
-
-document.getElementById("goCart").onclick = ()=>{
-  window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
-};
-
-document.getElementById("goCustomizer").onclick = ()=>{
-  window.location.href = "configuratore.html";
-};
-
-/* =======================
-   SETTINGS MODAL
-   ======================= */
-const modal = document.getElementById("settingsModal");
-document.getElementById("openSettings").onclick = ()=>{
-  modal.style.display="block";
-  document.getElementById("waNumber").value = (localStorage.getItem(K.wa)||"").replace(/\D/g,"");
-  document.getElementById("proBadge").textContent = (isPro() ? "✅ PRO attivo" : "🔒 PRO non attivo");
-  refreshAdminUI();
-  refreshProUI();
-};
-document.getElementById("closeSettings").onclick = ()=> modal.style.display="none";
-
-/* PRO */
-function isPro(){
-  return (localStorage.getItem(K.pro)||"") === PRO_SECRET;
-}
-function refreshProUI(){
-  const st = document.getElementById("proStatus");
-  st.textContent = isPro() ? "✅ PRO attivo" : "🔒 PRO non attivo";
-  document.getElementById("proBadge").textContent = isPro() ? "✅ PRO attivo" : "🔒 PRO non attivo";
-}
-document.getElementById("savePro").onclick = ()=>{
-  const v = (document.getElementById("proPass").value||"").trim();
-  localStorage.setItem(K.pro, v);
-  refreshProUI();
-  alert(isPro() ? "PRO attivo ✅" : "Password PRO errata ❌");
-};
-
-/* WA */
-document.getElementById("waNumber").addEventListener("input",(e)=>{
-  const v = (e.target.value||"").replace(/\D/g,"");
-  localStorage.setItem(K.wa, v);
-});
-
-/* ADMIN */
-function isAdmin(){ return localStorage.getItem(K.admin)==="1"; }
-
-function refreshAdminUI(){
-  const st = document.getElementById("adminStatus");
-  const badge = document.getElementById("adminOnlyBadge");
-  if(isAdmin()){
-    st.textContent = "✅ Admin attivo (puoi eliminare/aggiungere)";
-    badge.textContent = "✅ Admin attivo";
-  }else{
-    st.textContent = "🔒 Non sei admin";
-    badge.textContent = "🔒 Solo admin";
-  }
-  // aggiorna bottoni elimina
-  renderGrid();
-  renderProjects();
-}
-
-document.getElementById("loginAdmin").onclick = ()=>{
-  const v = (document.getElementById("adminPass").value||"").trim();
-  const pass = localStorage.getItem(K.adminPass) || DEFAULT_ADMIN_PASS;
-  if(v===pass){
-    localStorage.setItem(K.admin,"1");
-    refreshAdminUI();
-    alert("Admin attivo ✅");
-  }else{
-    alert("Password admin errata ❌");
-  }
-};
-
-/* =======================
-   ADMIN: ADD PRODUCT
-   ======================= */
-document.getElementById("addProduct").onclick = async ()=>{
-  if(!isAdmin()){ alert("Solo admin"); return; }
-
-  const name = (document.getElementById("prodName").value||"").trim();
-  const cat = (document.getElementById("prodCat").value||"Altro").trim();
-  const price = Number(document.getElementById("prodPrice").value||0);
-  const desc = (document.getElementById("prodDesc").value||"").trim();
-
-  if(!name){ alert("Inserisci il nome prodotto"); return; }
-
-  let img = "";
-  const f = document.getElementById("prodImg").files?.[0];
-  if(f){
-    img = await compressImageFile(f);
-  }
-
-  const p = { id: uid("p"), name, cat, price, desc, img };
-  products.push(p);
-  saveJSON(K.catalog, products);
-
-  // pulisci
-  document.getElementById("prodName").value="";
-  document.getElementById("prodCat").value="";
-  document.getElementById("prodPrice").value="";
-  document.getElementById("prodDesc").value="";
-  document.getElementById("prodImg").value="";
-
-  renderChips();
-  renderGrid();
-  alert("Prodotto aggiunto ✅");
-};
-
-/* =======================
-   ADMIN: ADD PROJECT
-   ======================= */
-document.getElementById("addProject").onclick = async ()=>{
-  if(!isAdmin()){ alert("Solo admin"); return; }
-
-  const title = (document.getElementById("projTitle").value||"").trim();
-  const desc = (document.getElementById("projDesc").value||"").trim();
-  if(!title){ alert("Inserisci titolo progetto"); return; }
-
-  let img = "";
-  const f = document.getElementById("projImg").files?.[0];
-  if(f) img = await compressImageFile(f);
-
-  const pr = { id: uid("pr"), title, desc, img, ts: Date.now() };
-  projects.push(pr);
-  saveJSON(K.projects, projects);
-
-  document.getElementById("projTitle").value="";
-  document.getElementById("projDesc").value="";
-  document.getElementById("projImg").value="";
-
-  renderProjects();
-  alert("Progetto aggiunto ✅");
-};
-
-/* =======================
-   ADMIN: WIPE
-   ======================= */
-document.getElementById("wipeCatalog").onclick = ()=>{
-  if(!isAdmin()){ alert("Solo admin"); return; }
-  if(!confirm("Eliminare TUTTO il catalogo?")) return;
-  products = [];
-  saveJSON(K.catalog, products);
-  renderChips();
-  renderGrid();
-};
-
-document.getElementById("wipeProjects").onclick = ()=>{
-  if(!isAdmin()){ alert("Solo admin"); return; }
-  if(!confirm("Eliminare TUTTI i progetti?")) return;
-  projects = [];
-  saveJSON(K.projects, projects);
-  renderProjects();
-};
-
-/* =======================
-   EXPORT / IMPORT (ALL)
-   ======================= */
-function downloadJSON(filename, obj){
-  const blob = new Blob([JSON.stringify(obj,null,2)], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-}
-document.getElementById("btnExportAll").onclick = ()=>{
-  const payload = {
-    wa: localStorage.getItem(K.wa)||"",
-    pro: localStorage.getItem(K.pro)||"",
-    catalog: products,
-    projects: projects
-  };
-  downloadJSON("acchiappasogni_backup.json", payload);
-};
-
-document.getElementById("importFile").addEventListener("change",(e)=>{
-  const file = e.target.files?.[0];
-  if(!file) return;
-  const r = new FileReader();
-  r.onload = ()=>{
-    try{
-      const obj = JSON.parse(r.result);
-      if(obj.wa) localStorage.setItem(K.wa, String(obj.wa));
-      if(obj.pro) localStorage.setItem(K.pro, String(obj.pro));
-      if(Array.isArray(obj.catalog)){ products = obj.catalog; saveJSON(K.catalog, products); }
-      if(Array.isArray(obj.projects)){ projects = obj.projects; saveJSON(K.projects, projects); }
-      renderChips(); renderGrid(); renderProjects(); updateCartUI();
-      alert("Import completato ✅");
-    }catch(err){
-      alert("File non valido ❌");
+      updateBuilderSummary();
     }
-  };
-  r.readAsText(file);
-  e.target.value="";
-});
 
-/* =======================
-   EXPORT/IMPORT CATALOGO
-   ======================= */
-document.getElementById("exportCatalog").onclick = ()=>{
-  if(!isAdmin()){ alert("Solo admin"); return; }
-  downloadJSON("catalogo.json", products);
-};
+    function addFeathersGroup(pos, init){
+      const id = uid();
+      const fg = {
+        id,
+        position: init?.position || pos || "sinistra",
+        color: init?.color || "",
+        qty: init?.qty || "",
+        length: init?.length || ""
+      };
+      currentBuilder.feathers.push(fg);
 
-document.getElementById("importCatalogFile").addEventListener("change",(e)=>{
-  if(!isAdmin()){ alert("Solo admin"); e.target.value=""; return; }
-  const file = e.target.files?.[0];
-  if(!file) return;
-  const r = new FileReader();
-  r.onload = ()=>{
-    try{
-      const arr = JSON.parse(r.result);
-      if(!Array.isArray(arr)) throw new Error("not array");
-      products = arr;
-      saveJSON(K.catalog, products);
-      renderChips(); renderGrid();
-      alert("Catalogo importato ✅");
-    }catch(err){
-      alert("Catalogo non valido ❌");
+      const el = document.createElement("div");
+      el.className = "item";
+      el.dataset.id = id;
+      el.innerHTML = `
+        <div class="item-head">
+          <b>🪶 Gruppo piume</b>
+          <div class="item-actions">
+            <button class="btn danger mini" data-del type="button">Elimina</button>
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label>Posizione</label>
+            <select data-k="position">
+              <option ${fg.position==="sinistra"?"selected":""}>sinistra</option>
+              <option ${fg.position==="centro"?"selected":""}>centro</option>
+              <option ${fg.position==="destra"?"selected":""}>destra</option>
+            </select>
+          </div>
+          <div><label>Colore</label><input data-k="color" placeholder="Es: rosso e nero" value="${escapeHtml(fg.color)}" /></div>
+          <div><label>Quantità</label><input data-k="qty" placeholder="Es: 3, 5, 7..." value="${escapeHtml(fg.qty)}" /></div>
+          <div><label>Lunghezza</label><input data-k="length" placeholder="corta / media / lunga" value="${escapeHtml(fg.length)}" /></div>
+        </div>
+      `;
+      bFeathersList.appendChild(el);
+
+      el.querySelectorAll("input,select").forEach(inp=>{
+        const onAny = ()=>{
+          fg[inp.dataset.k] = (inp.value || "").trim();
+          updateBuilderSummary();
+        };
+        inp.addEventListener("input", onAny);
+        inp.addEventListener("change", onAny);
+      });
+
+      el.querySelector("[data-del]").onclick = () => {
+        currentBuilder.feathers = currentBuilder.feathers.filter(x=>x.id!==id);
+        el.remove();
+        updateBuilderSummary();
+      };
+
+      updateBuilderSummary();
     }
-  };
-  r.readAsText(file);
-  e.target.value="";
-});
 
-/* =======================
-   INIT
-   ======================= */
-function init(){
-  // se prima avevi whatsapp nel formato +39..., lo normalizzo
-  if(!localStorage.getItem(K.wa)) localStorage.setItem(K.wa, "393440260906");
+    function addAccessory(init){
+      const id = uid();
+      const acc = {
+        id,
+        type: init?.type || "Perline",
+        color: init?.color || "",
+        details: init?.details || "",
+        qty: init?.qty || ""
+      };
+      currentBuilder.accessories.push(acc);
 
-  renderChips();
-  renderGrid();
-  renderProjects();
-  updateCartUI();
+      const el = document.createElement("div");
+      el.className = "item";
+      el.dataset.id = id;
+      el.innerHTML = `
+        <div class="item-head">
+          <b>✨ Accessorio</b>
+          <div class="item-actions">
+            <button class="btn danger mini" data-del type="button">Elimina</button>
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label>Tipo</label>
+            <select data-k="type">
+              <option ${acc.type==="Perline"?"selected":""}>Perline</option>
+              <option ${acc.type==="Brillanti"?"selected":""}>Brillanti</option>
+              <option ${acc.type==="Charm"?"selected":""}>Charm</option>
+              <option ${acc.type==="Simbolo"?"selected":""}>Simbolo</option>
+              <option ${acc.type==="Scritta"?"selected":""}>Scritta</option>
+              <option ${acc.type==="Luci"?"selected":""}>Luci</option>
+            </select>
+          </div>
+          <div><label>Colore</label><input data-k="color" placeholder="Es: oro / nero / rosso..." value="${escapeHtml(acc.color)}" /></div>
+          <div><label>Quantità</label><input data-k="qty" placeholder="Es: 5" value="${escapeHtml(acc.qty)}" /></div>
+          <div><label>Dettagli</label><input data-k="details" placeholder="Es: emoji, perle rosse/nere..." value="${escapeHtml(acc.details)}" /></div>
+        </div>
+      `;
+      bAccList.appendChild(el);
 
-  refreshProUI();
-  refreshAdminUI();
-}
-init();
-</script>
+      el.querySelectorAll("input,select").forEach(inp=>{
+        const onAny = ()=>{
+          acc[inp.dataset.k] = (inp.value || "").trim();
+          updateBuilderSummary();
+        };
+        inp.addEventListener("input", onAny);
+        inp.addEventListener("change", onAny);
+      });
+
+      el.querySelector("[data-del]").onclick = () => {
+        currentBuilder.accessories = currentBuilder.accessories.filter(x=>x.id!==id);
+        el.remove();
+        updateBuilderSummary();
+      };
+
+      updateBuilderSummary();
+    }
+
+    function estimatePrice(project){
+      const P = loadPrices();
+      let total = 0;
+      total += Number(P.base_model || 0);
+      total += (project.rings?.length || 0) * Number(P.ring_extra || 0);
+      total += (project.feathers?.length || 0) * Number(P.feathers_group || 0);
+
+      for(const a of (project.accessories || [])){
+        const t = (a.type || "").toLowerCase();
+        if(t.includes("perl")) total += Number(P.accessory_beads || 0);
+        else if(t.includes("brill")) total += Number(P.accessory_glitter || 0);
+        else if(t.includes("charm")) total += Number(P.accessory_charm || 0);
+        else if(t.includes("simbol")) total += Number(P.accessory_symbol || 0);
+        else if(t.includes("scritt")) total += Number(P.accessory_text || 0);
+        else if(t.includes("luci")) total += Number(P.lights || 0);
+      }
+
+      if((project.hasPhoto || "no") === "si") total += Number(P.photo || 0);
+      return total;
+    }
+
+    function updateBuilderSummary(){
+      if(!currentBuilder) return;
+
+      currentBuilder.base = currentBuilder.base || { model:"", diameter:"", ringColor:"", featherColor:"" };
+      currentBuilder.base.model = bModel.value;
+      currentBuilder.base.diameter = bDiameter.value;
+      currentBuilder.base.ringColor = bRingColor.value.trim();
+      currentBuilder.base.featherColor = bFeatherColor.value.trim();
+
+      currentBuilder.hasPhoto = bHasPhoto.value;
+      currentBuilder.text = bText.value.trim();
+      currentBuilder.notes = (bNotes.value || "").trim();
+
+      const total = estimatePrice(currentBuilder);
+      bEstimate.textContent = "Totale stimato: " + euro(total);
+
+      const lines = [];
+      lines.push(`<b>Modello:</b> ${escapeHtml(currentBuilder.base.model)}`);
+      lines.push(`<b>Diametro:</b> ${escapeHtml(currentBuilder.base.diameter)} cm`);
+      if(currentBuilder.base.ringColor) lines.push(`<b>Colore del cerchio principale:</b> ${escapeHtml(currentBuilder.base.ringColor)}`);
+      if(currentBuilder.base.featherColor) lines.push(`<b>Colore delle piume principali:</b> ${escapeHtml(currentBuilder.base.featherColor)}`);
+
+      if((currentBuilder.rings||[]).length){
+        lines.push(`<br><b>Cerchi aggiuntivi:</b>`);
+        currentBuilder.rings.forEach((r,i)=>{
+          const parts = [];
+          if(r.diameter) parts.push(`${escapeHtml(r.diameter)} cm`);
+          if(r.color) parts.push(`${escapeHtml(r.color)}`);
+          if(r.weave) parts.push(`intreccio ${escapeHtml(r.weave)}`);
+          if(r.decor) parts.push(`decorazioni ${escapeHtml(r.decor)}`);
+          lines.push(`• Cerchio ${i+1}: ${parts.join(", ") || "dettagli da definire"}`);
+        });
+      }
+
+      if((currentBuilder.feathers||[]).length){
+        lines.push(`<br><b>Piume:</b>`);
+        currentBuilder.feathers.forEach((f,i)=>{
+          const parts = [];
+          if(f.position) parts.push(`posizione ${escapeHtml(f.position)}`);
+          if(f.color) parts.push(`colore ${escapeHtml(f.color)}`);
+          if(f.qty) parts.push(`quantità ${escapeHtml(f.qty)}`);
+          if(f.length) parts.push(`lunghezza ${escapeHtml(f.length)}`);
+          lines.push(`• Gruppo ${i+1}: ${parts.join(", ") || "dettagli da definire"}`);
+        });
+      }
+
+      if((currentBuilder.accessories||[]).length){
+        lines.push(`<br><b>Accessori:</b>`);
+        currentBuilder.accessories.forEach((a,i)=>{
+          const parts = [];
+          if(a.type) parts.push(`${escapeHtml(a.type)}`);
+          if(a.color) parts.push(`colore ${escapeHtml(a.color)}`);
+          if(a.qty) parts.push(`quantità ${escapeHtml(a.qty)}`);
+          if(a.details) parts.push(`dettagli ${escapeHtml(a.details)}`);
+          lines.push(`• ${i+1}) ${parts.join(", ") || "dettagli da definire"}`);
+        });
+      }
+
+      if((currentBuilder.hasPhoto||"no")==="si"){
+        lines.push(`<br><b>Foto:</b> Sì (anteprima caricata) — la invio in chat su WhatsApp dopo il messaggio.`);
+      } else {
+        lines.push(`<br><b>Foto:</b> No`);
+      }
+
+      if(currentBuilder.text) lines.push(`<br><b>Scritta:</b> ${escapeHtml(currentBuilder.text)}`);
+      if(currentBuilder.notes) lines.push(`<br><b>Note:</b> ${escapeHtml(currentBuilder.notes)}`);
+
+      bSummary.innerHTML = lines.join("<br>");
+    }
+
+    function buildWhatsAppBuilderMessage(project){
+      const total = estimatePrice(project);
+      const lines = [];
+      lines.push("Ciao! Vorrei un acchiappasogni personalizzato con queste caratteristiche:");
+
+      lines.push(`• Modello: ${project.base.model}`);
+      lines.push(`• Diametro: ${project.base.diameter} cm`);
+      if(project.base.ringColor) lines.push(`• Colore del cerchio principale: ${project.base.ringColor}`);
+      if(project.base.featherColor) lines.push(`• Colore delle piume principali: ${project.base.featherColor}`);
+
+      if(project.rings?.length){
+        lines.push("");
+        lines.push("CERCHI AGGIUNTIVI:");
+        project.rings.forEach((r,i)=>{
+          const parts = [];
+          if(r.diameter) parts.push(`${r.diameter} cm`);
+          if(r.color) parts.push(`${r.color}`);
+          if(r.weave) parts.push(`intreccio ${r.weave}`);
+          if(r.decor) parts.push(`decorazioni ${r.decor}`);
+          lines.push(`- Cerchio ${i+1}: ${parts.join(", ") || "dettagli da definire"}`);
+        });
+      }
+
+      if(project.feathers?.length){
+        lines.push("");
+        lines.push("PIUME:");
+        project.feathers.forEach((f,i)=>{
+          const parts = [];
+          if(f.position) parts.push(`posizione ${f.position}`);
+          if(f.color) parts.push(`colore ${f.color}`);
+          if(f.qty) parts.push(`quantità ${f.qty}`);
+          if(f.length) parts.push(`lunghezza ${f.length}`);
+          lines.push(`- Gruppo piume ${i+1}: ${parts.join(", ") || "dettagli da definire"}`);
+        });
+      }
+
+      if(project.accessories?.length){
+        lines.push("");
+        lines.push("ACCESSORI:");
+        project.accessories.forEach((a,i)=>{
+          const parts = [];
+          if(a.type) parts.push(`${a.type}`);
+          if(a.color) parts.push(`colore ${a.color}`);
+          if(a.qty) parts.push(`quantità ${a.qty}`);
+          if(a.details) parts.push(`dettagli ${a.details}`);
+          lines.push(`- ${i+1}) ${parts.join(", ") || "dettagli da definire"}`);
+        });
+      }
+
+      lines.push("");
+      lines.push(`• Foto: ${project.hasPhoto === "si" ? "Sì (dopo l’invio, allego la foto in chat)" : "No"}`);
+      if(project.text) lines.push(`• Scritta: ${project.text}`);
+      if(project.notes) lines.push(`• Note: ${project.notes}`);
+
+      lines.push("");
+      lines.push(`Totale stimato: ${euro(total)} (da confermare)`);
+      lines.push("Grazie!");
+
+      return lines.join("\\n");
+    }
+
+    function saveCurrentProject(){
+      if(!currentBuilder) return null;
+      const project = {
+        ...currentBuilder,
+        hasPhoto: bHasPhoto.value,
+        photoDataUrl: currentBuilder.photoDataUrl || ""
+      };
+
+      const all = loadProjects();
+      const idx = all.findIndex(p => p.id === project.id);
+      if(idx >= 0) all[idx] = project;
+      else all.push(project);
+      saveProjects(all);
+      return project;
+    }
+
+    function sendProject(project){
+      const number = getWa();
+      const msg = buildWhatsAppBuilderMessage(project);
+      const url = `https://wa.me/${encodeURIComponent(number.replace(/\\s+/g,""))}?text=${encodeURIComponent(msg)}`;
+      window.open(url, "_blank");
+    }
+
+    document.getElementById("btnSaveProject").onclick = () => {
+      const p = saveCurrentProject();
+      if(!p) return;
+      alert("Progetto salvato ✅");
+    };
+
+    document.getElementById("btnSendProject").onclick = () => {
+      if(!currentBuilder) return;
+      sendProject(currentBuilder);
+    };
+
+    document.getElementById("btnSaveAndSend").onclick = () => {
+      const p = saveCurrentProject();
+      if(!p) return;
+      sendProject(p);
+    };
+  </script>
 </body>
 </html>
