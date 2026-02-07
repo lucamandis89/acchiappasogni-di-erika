@@ -571,6 +571,28 @@
       .dl-el .emoji{ font-size: 28px !important; }
     }
 
+    /* ===== Fullscreen stage (mobile friendly) ===== */
+    .stage-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .stage-head h3{margin:0}
+    .btn.small{padding:8px 10px;font-size:14px;border-radius:14px}
+
+    body.builder-fs{overflow:hidden}
+    body.builder-fs #builderLiteBack{padding:0}
+    body.builder-fs #builderLiteBack .modal{
+      width:100vw;height:100vh;max-width:none;max-height:none;border-radius:0;
+      margin:0;
+    }
+    body.builder-fs #builderLiteBack .modal-body{
+      height:calc(100vh - 62px);
+      overflow:auto;
+    }
+    body.builder-fs #builderLiteBack .lite-grid{
+      grid-template-columns: 1fr !important;
+    }
+    body.builder-fs #builderLiteBack #dlStage{
+      height: clamp(420px, 72vh, 820px) !important;
+    }
+
   </style>
  </head>
  <body>
@@ -857,7 +879,10 @@
      <div class="lite-grid">
       <!-- SINISTRA: STAGE -->
       <div class="box">
-       <h3>Anteprima (trascina gli accessori)</h3>
+       <div class="stage-head">
+        <h3>Anteprima (trascina gli accessori)</h3>
+        <button class="btn small" id="btnStageFullscreen">⛶ Schermo intero</button>
+       </div>
        <div class="stage" id="dlStage">
         <div class="base-ring" id="dlBaseRing"></div>
         <svg class="base-shape" id="dlBaseSvg" viewBox="0 0 100 100" aria-hidden="true"></svg>
@@ -1201,8 +1226,8 @@ adminPass: "ae_admin_pass",
         badge.className = "badge";
         badge.textContent = (p.category || "Altro");
 
-        imgWrap\.appendChild\(img\);
-        imgWrap\.appendChild\(badge\);
+        imgWrap.appendChild(img);
+        imgWrap.appendChild(badge);
 
         imgWrap.onclick = () => openImgModal(p.image || "", p.title || "");
 
@@ -1793,7 +1818,7 @@ adminPass: "ae_admin_pass",
 
     document.getElementById("btnCart").onclick = openCart;
     document.getElementById("btnCloseCart").onclick = closeCart;
-    cartModalBack\.addEventListener\("click", \(e\)=>\{ if\(e\.target === cartModalBack\) closeCart\(\); \}\);
+    cartModalBack.addEventListener("click", (e)=>{ if(e.target === cartModalBack) closeCart(); });
 
     // Modal foto prodotto
     document.getElementById("btnCloseImgModal").onclick = closeImgModal;
@@ -2104,9 +2129,22 @@ adminPass: "ae_admin_pass",
     function closeBuilderLite(){
       builderLiteBack.style.display = "none";
       liteSelectedId = null;
+      // esci sempre dalla modalità schermo intero
+      document.body.classList.remove("builder-fs");
+      const fsBtn = document.getElementById("btnStageFullscreen");
+      if(fsBtn) fsBtn.textContent = "⛶ Schermo intero";
     }
 
     document.getElementById("btnCloseBuilderLite").onclick = closeBuilderLite;
+    // fullscreen per l'anteprima (solo UI, non tocca le funzioni)
+    const btnStageFullscreen = document.getElementById("btnStageFullscreen");
+    if(btnStageFullscreen){
+      btnStageFullscreen.addEventListener("click", ()=>{
+        const on = document.body.classList.toggle("builder-fs");
+        btnStageFullscreen.textContent = on ? "⤓ Esci" : "⛶ Schermo intero";
+      });
+    }
+
     builderLiteBack.addEventListener("click",(e)=>{ if(e.target===builderLiteBack) closeBuilderLite(); });
 
     // aggiornamenti live (solo configuratore clienti)
