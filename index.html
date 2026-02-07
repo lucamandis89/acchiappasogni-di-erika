@@ -250,6 +250,66 @@
     .admin-item .info small{display:block;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .admin-item .actions{display:flex; gap:8px; align-items:center}
     .mini{padding:8px 10px; font-size:12px}
+
+    /* ====== CONFIGURATORE (UTENTE) ====== */
+    .builder-grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:12px;
+    }
+    @media (max-width: 860px){ .builder-grid{grid-template-columns:1fr;} }
+
+    .box{
+      border:1px solid rgba(35,54,95,.6);
+      background: rgba(7,10,18,.28);
+      border-radius: 14px;
+      padding:12px;
+    }
+    .box h3{margin:0 0 10px 0;font-size:13px}
+    .small{font-size:12px;color:rgba(185,198,255,.85)}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width: 520px){ .row2{grid-template-columns:1fr;} }
+
+    .list{display:grid;gap:10px}
+    .item{
+      border:1px solid rgba(35,54,95,.55);
+      background: rgba(15,27,51,.55);
+      border-radius: 14px;
+      padding:10px;
+    }
+    .item-head{
+      display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+    .item-head b{font-size:12px}
+    .item-actions{margin-left:auto;display:flex;gap:8px}
+
+    .preview{
+      width:100%;
+      border-radius:14px;
+      border:1px solid rgba(35,54,95,.55);
+      background: rgba(255,255,255,.04);
+      overflow:hidden;
+    }
+    .preview-inner{padding:12px}
+    .preview-img{
+      width:100%;
+      max-height:220px;
+      object-fit:contain;
+      display:none;
+      border-radius:12px;
+      border:1px solid rgba(35,54,95,.5);
+      background: rgba(0,0,0,.15);
+    }
+    .hr2{height:1px;background: rgba(35,54,95,.5); margin:10px 0}
+    .badge2{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(35,54,95,.55);
+      background: rgba(15,27,51,.45);
+      color: rgba(185,198,255,.95);
+      font-size:12px;font-weight:800;
+    }
   </style>
 </head>
 
@@ -409,7 +469,11 @@
 
             <div>
               <label>Categoria</label>
-              <input id="fCategory" placeholder="Acchiappasogni Classici" />
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+                <input id="fCategory" list="catDatalist" placeholder="Acchiappasogni Classici" />
+                <button class="btn" id="btnCreateCategory" type="button">➕ Crea categoria</button>
+              </div>
+              <datalist id="catDatalist"></datalist>
             </div>
 
             <div style="grid-column:1 / -1">
@@ -463,6 +527,149 @@
     </div>
   </div>
 
+  <!-- MODAL: CONFIGURATORE ACCHIAPPASOGNI (UTENTE) -->
+  <div class="modal-back" id="builderModalBack">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>🪄 Crea il tuo Acchiappasogni</h2>
+        <div class="spacer"></div>
+        <button class="btn" id="btnCloseBuilder">✖ Chiudi</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="builder-grid">
+
+          <!-- SINISTRA: FORM -->
+          <div class="box">
+            <h3>1) Base</h3>
+
+            <div class="row2">
+              <div>
+                <label>Modello</label>
+                <select id="bModel">
+                  <option value="Classico (1)">Classico (1)</option>
+                  <option value="Cerchio (2)">Cerchio (2)</option>
+                  <option value="Luna (3)">Luna (3)</option>
+                  <option value="Cuore (4)">Cuore (4)</option>
+                  <option value="Stella (5)">Stella (5)</option>
+                  <option value="Chakra (6)">Chakra (6)</option>
+                  <option value="Yin & Yang (7)">Yin & Yang (7)</option>
+                  <option value="Personalizzato (8)">Personalizzato (8)</option>
+                  <option value="Tema speciale (es. REAL HASTA LA MUERTE)">Tema speciale</option>
+                </select>
+              </div>
+
+              <div>
+                <label>Diametro (cm)</label>
+                <select id="bDiameter">
+                  <option>15</option><option>20</option><option>25</option>
+                  <option selected>30</option><option>35</option><option>40</option><option>50</option>
+                </select>
+              </div>
+
+              <div>
+                <label>Colore cerchio</label>
+                <input id="bRingColor" placeholder="Es: bianco / nero / oro / legno..." />
+              </div>
+
+              <div>
+                <label>Colore piume</label>
+                <input id="bFeatherColor" placeholder="Es: bianco / rosso e nero / azzurro..." />
+              </div>
+            </div>
+
+            <div class="hr2"></div>
+
+            <h3>2) Cerchi (aggiungine quanti vuoi)</h3>
+            <div class="small">Usa “Aggiungi cerchio” per aggiungere cerchi extra (diametro/colore/intreccio/decorazioni).</div>
+            <div class="list" id="bRingsList"></div>
+            <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn" id="btnAddRing" type="button">➕ Aggiungi cerchio</button>
+            </div>
+
+            <div class="hr2"></div>
+
+            <h3>3) Piume (gruppi: sinistra/centro/destra)</h3>
+            <div class="list" id="bFeathersList"></div>
+            <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn" id="btnAddFeathers" type="button">➕ Aggiungi gruppo piume</button>
+            </div>
+
+            <div class="hr2"></div>
+
+            <h3>4) Accessori (aggiungine quanti vuoi)</h3>
+            <div class="list" id="bAccList"></div>
+            <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn" id="btnAddAcc" type="button">➕ Aggiungi accessorio</button>
+            </div>
+
+            <div class="hr2"></div>
+
+            <h3>5) Foto e Note</h3>
+            <div class="row2">
+              <div>
+                <label>Vuoi inserire una foto?</label>
+                <select id="bHasPhoto">
+                  <option value="no" selected>No</option>
+                  <option value="si">Sì</option>
+                </select>
+                <div class="small">Se sì, puoi caricarla qui e vedere l’anteprima.</div>
+              </div>
+              <div>
+                <label>Carica foto (opzionale)</label>
+                <input id="bPhotoFile" type="file" accept="image/*" />
+              </div>
+            </div>
+
+            <div style="margin-top:10px">
+              <label>Scritta (opzionale)</label>
+              <input id="bText" placeholder="Es: Nome, frase, data..." />
+            </div>
+
+            <div style="margin-top:10px">
+              <label>Note extra</label>
+              <textarea id="bNotes" placeholder="Es: perle rosse e nere, brillanti, charm, emoji, ecc..."></textarea>
+            </div>
+
+            <div class="hr2"></div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn" id="btnResumeProject" type="button">↩️ Riprendi ultimo progetto</button>
+              <button class="btn" id="btnSaveProject" type="button">💾 Salva progetto</button>
+              <button class="btn primary" id="btnSendProject" type="button">📲 Invia su WhatsApp</button>
+              <button class="btn primary" id="btnSaveAndSend" type="button">✅ Salva & Invia</button>
+            </div>
+
+            <div class="small" style="margin-top:8px">
+              Nota: WhatsApp non permette di allegare automaticamente la foto dal link, ma nel messaggio ti ricorda di inviarla in chat.
+            </div>
+          </div>
+
+          <!-- DESTRA: ANTEPRIMA + STIMA -->
+          <div class="box">
+            <h3>Anteprima & riepilogo</h3>
+
+            <div class="preview">
+              <div class="preview-inner">
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+                  <span class="badge2" id="bEstimate">Totale stimato: € 0,00</span>
+                  <span class="badge2" id="bCode">Codice: —</span>
+                </div>
+
+                <img id="bPhotoPreview" class="preview-img" alt="Anteprima foto" />
+
+                <div class="hr2"></div>
+
+                <div id="bSummary" class="small"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const DEFAULT_WA = "+393440260906";
     const ADMIN_PASS_DEFAULT = "1234";
@@ -476,7 +683,10 @@
       productsOverride: "ae_products_override",
       cart: "ae_cart_v1",
       broken: "ae_broken_images_v1",
-      deleted: "ae_deleted_ids"
+      deleted: "ae_deleted_ids",
+      prices: "ae_builder_prices_v1",
+      projects: "ae_builder_projects_v1",
+      categories: "ae_categories_v1"
     };
 
     const IMG_OPT = { maxSide: 1200, quality: 0.72, mime: "image/jpeg" };
@@ -555,7 +765,12 @@
 
     function rebuildCategories(){
       const set = new Set(allProducts.map(p => p.category || "Altro"));
+      let saved = [];
+      try{ saved = JSON.parse(localStorage.getItem(K.categories) || "[]"); }catch{}
+      if(!Array.isArray(saved)) saved = [];
+      for(const c of saved){ if(c && typeof c === "string") set.add(c); }
       categories = ["Tutti", ...Array.from(set).sort((a,b)=>a.localeCompare(b,"it"))];
+      refreshCategoryDatalist();
     }
 
     function renderFilters(){
@@ -840,10 +1055,6 @@
       window.open(url, "_blank");
     }
 
-    document.getElementById("btnCustomizer").onclick = () => {
-      alert("Qui possiamo mettere una pagina/box per richieste personalizzate. Se vuoi te la preparo.");
-    };
-
     function openAdmin(){
       document.getElementById("adminLogin").style.display = "block";
       document.getElementById("adminPanel").style.display = "none";
@@ -860,6 +1071,7 @@
       document.getElementById("waNumber").value = getWa();
       document.getElementById("newAdminPass").value = "";
       rebuildEditSelect();
+      injectAdminPricesUI();
     }
 
     function rebuildEditSelect(){
@@ -998,6 +1210,7 @@
 
       await reloadProducts();
       rebuildEditSelect();
+      injectAdminPricesUI();
       document.getElementById("editSelect").value = id;
       document.getElementById("fImageFile").value = "";
 
@@ -1042,6 +1255,7 @@
 
       await reloadProducts();
       rebuildEditSelect();
+      injectAdminPricesUI();
       alert("Eliminato!");
     }
 
@@ -1074,6 +1288,7 @@
 
       await reloadProducts();
       rebuildEditSelect();
+      injectAdminPricesUI();
       alert("Categoria eliminata!");
     }
 
@@ -1170,6 +1385,7 @@
         saveOverride(normalized);
         await reloadProducts();
         rebuildEditSelect();
+        injectAdminPricesUI();
         alert("Configurazione importata nel telefono ✅");
       }catch(e){
         console.error(e);
@@ -1268,6 +1484,652 @@
       console.error(err);
       alert("Errore caricamento catalogo: " + err.message);
     });
+
+    /* =========================================================
+       CONFIGURATORE UTENTE + PREZZI (ADMIN) + CATEGORIE SALVATE
+       ========================================================= */
+
+    const DEFAULT_PRICES = {
+      base_model: 12.00,
+      ring_extra: 3.00,
+      feathers_group: 2.50,
+      accessory_beads: 1.50,
+      accessory_glitter: 1.00,
+      accessory_charm: 2.00,
+      accessory_symbol: 1.50,
+      accessory_text: 2.00,
+      lights: 4.00,
+      photo: 0.00
+    };
+
+    function loadPrices(){
+      try{
+        const p = JSON.parse(localStorage.getItem(K.prices) || "null");
+        return p && typeof p === "object" ? { ...DEFAULT_PRICES, ...p } : { ...DEFAULT_PRICES };
+      }catch{
+        return { ...DEFAULT_PRICES };
+      }
+    }
+    function savePrices(p){ localStorage.setItem(K.prices, JSON.stringify(p)); }
+
+    function loadSavedCategories(){
+      try{
+        const arr = JSON.parse(localStorage.getItem(K.categories) || "[]");
+        return Array.isArray(arr) ? arr : [];
+      }catch{ return []; }
+    }
+    function saveSavedCategories(arr){ localStorage.setItem(K.categories, JSON.stringify(arr)); }
+
+    function refreshCategoryDatalist(){
+      const dl = document.getElementById("catDatalist");
+      if(!dl) return;
+      dl.innerHTML = "";
+      for(const c of categories.filter(x => x && x !== "Tutti")){
+        const o = document.createElement("option");
+        o.value = c;
+        dl.appendChild(o);
+      }
+    }
+
+    const btnCreateCategory = document.getElementById("btnCreateCategory");
+    if(btnCreateCategory){
+      btnCreateCategory.onclick = () => {
+        const name = prompt("Nome nuova categoria:");
+        if(!name) return;
+        const clean = name.trim();
+        if(!clean) return;
+
+        const norm = clean.toLowerCase();
+        const existing = new Set(categories.map(c => String(c).toLowerCase()));
+        if(existing.has(norm)){
+          alert("Questa categoria esiste già ✅");
+          document.getElementById("fCategory").value = categories.find(c => String(c).toLowerCase() === norm) || clean;
+          return;
+        }
+
+        const saved = loadSavedCategories();
+        const savedNorm = new Set(saved.map(c => String(c).toLowerCase()));
+        if(!savedNorm.has(norm)) saved.push(clean);
+        saveSavedCategories(saved);
+
+        document.getElementById("fCategory").value = clean;
+
+        rebuildCategories();
+        renderFilters();
+        refreshCategoryDatalist();
+        alert("Categoria creata ✅");
+      };
+    }
+
+    function injectAdminPricesUI(){
+      const panel = document.getElementById("adminPanel");
+      if(!panel) return;
+      if(document.getElementById("adminPricesBox")) return;
+
+      const box = document.createElement("div");
+      box.id = "adminPricesBox";
+      box.innerHTML = `
+        <div class="hr"></div>
+        <h3 style="margin:0 0 10px 0;font-size:13px">💶 Prezzi configuratore (privati)</h3>
+        <div class="form">
+          ${Object.keys(DEFAULT_PRICES).map(k => `
+            <div>
+              <label>${k.replaceAll("_"," ")}</label>
+              <input type="number" step="0.01" id="price_${k}" />
+            </div>
+          `).join("")}
+          <div style="grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+            <button class="btn primary" id="btnSavePrices" type="button">💾 Salva prezzi</button>
+            <button class="btn danger" id="btnResetPrices" type="button">♻️ Ripristina default</button>
+          </div>
+          <div class="hint" style="grid-column:1/-1">
+            Questi prezzi li vedi solo tu (Admin). Servono per la stima nel configuratore.
+          </div>
+        </div>
+      `;
+      panel.appendChild(box);
+
+      const fill = () => {
+        const p = loadPrices();
+        for(const k of Object.keys(DEFAULT_PRICES)){
+          const el = document.getElementById(`price_${k}`);
+          if(el) el.value = Number(p[k] ?? DEFAULT_PRICES[k]);
+        }
+      };
+      fill();
+
+      document.getElementById("btnSavePrices").onclick = () => {
+        const p = loadPrices();
+        for(const k of Object.keys(DEFAULT_PRICES)){
+          const v = Number(document.getElementById(`price_${k}`).value || 0);
+          p[k] = v;
+        }
+        savePrices(p);
+        alert("Prezzi salvati ✅");
+        updateBuilderSummary();
+      };
+
+      document.getElementById("btnResetPrices").onclick = () => {
+        if(!confirm("Ripristinare i prezzi di default?")) return;
+        savePrices({ ...DEFAULT_PRICES });
+        fill();
+        updateBuilderSummary();
+      };
+    }
+
+    const builderModalBack = document.getElementById("builderModalBack");
+    const btnCloseBuilder = document.getElementById("btnCloseBuilder");
+
+    const bModel = document.getElementById("bModel");
+    const bDiameter = document.getElementById("bDiameter");
+    const bRingColor = document.getElementById("bRingColor");
+    const bFeatherColor = document.getElementById("bFeatherColor");
+
+    const bRingsList = document.getElementById("bRingsList");
+    const bFeathersList = document.getElementById("bFeathersList");
+    const bAccList = document.getElementById("bAccList");
+
+    const bHasPhoto = document.getElementById("bHasPhoto");
+    const bPhotoFile = document.getElementById("bPhotoFile");
+    const bPhotoPreview = document.getElementById("bPhotoPreview");
+
+    const bText = document.getElementById("bText");
+    const bNotes = document.getElementById("bNotes");
+
+    const bSummary = document.getElementById("bSummary");
+    const bEstimate = document.getElementById("bEstimate");
+    const bCode = document.getElementById("bCode");
+
+    let currentBuilder = null;
+
+    function builderCode(){
+      const n = Date.now().toString().slice(-6);
+      return `AE-${new Date().getFullYear()}-${n}`;
+    }
+
+    function loadProjects(){
+      try{
+        const arr = JSON.parse(localStorage.getItem(K.projects) || "[]");
+        return Array.isArray(arr) ? arr : [];
+      }catch{ return []; }
+    }
+    function saveProjects(arr){ localStorage.setItem(K.projects, JSON.stringify(arr)); }
+
+    function openBuilder(){
+      currentBuilder = {
+        id: uid(),
+        code: builderCode(),
+        created_at: new Date().toISOString(),
+        base: { model: bModel.value, diameter: bDiameter.value, ringColor:"", featherColor:"" },
+        rings: [],
+        feathers: [],
+        accessories: [],
+        hasPhoto: "no",
+        photoDataUrl: "",
+        text: "",
+        notes: ""
+      };
+
+      bRingColor.value = "";
+      bFeatherColor.value = "";
+      bText.value = "";
+      bNotes.value = "";
+      bHasPhoto.value = "no";
+      bPhotoFile.value = "";
+      bPhotoPreview.style.display = "none";
+      bPhotoPreview.src = "";
+
+      bRingsList.innerHTML = "";
+      bFeathersList.innerHTML = "";
+      bAccList.innerHTML = "";
+
+      addRing();
+      addFeathersGroup("centro");
+      addAccessory();
+
+      bCode.textContent = "Codice: " + currentBuilder.code;
+
+      builderModalBack.style.display = "flex";
+      updateBuilderSummary();
+    }
+
+    function closeBuilder(){ builderModalBack.style.display = "none"; }
+
+    btnCloseBuilder.onclick = closeBuilder;
+    builderModalBack.addEventListener("click",(e)=>{ if(e.target===builderModalBack) closeBuilder(); });
+
+    document.getElementById("btnCustomizer").onclick = openBuilder;
+
+    function loadIntoBuilder(project){
+      if(!project) return;
+      currentBuilder = JSON.parse(JSON.stringify(project));
+      const _rings = Array.isArray(currentBuilder.rings) ? currentBuilder.rings : [];
+      const _feathers = Array.isArray(currentBuilder.feathers) ? currentBuilder.feathers : [];
+      const _accessories = Array.isArray(currentBuilder.accessories) ? currentBuilder.accessories : [];
+      currentBuilder.rings = [];
+      currentBuilder.feathers = [];
+      currentBuilder.accessories = [];
+      currentBuilder.photoDataUrl = currentBuilder.photoDataUrl || "";
+
+      bModel.value = currentBuilder.base?.model || bModel.value;
+      bDiameter.value = currentBuilder.base?.diameter || bDiameter.value;
+      bRingColor.value = currentBuilder.base?.ringColor || "";
+      bFeatherColor.value = currentBuilder.base?.featherColor || "";
+
+      bHasPhoto.value = currentBuilder.hasPhoto || "no";
+      bText.value = currentBuilder.text || "";
+      bNotes.value = currentBuilder.notes || "";
+
+      if(currentBuilder.photoDataUrl){
+        bPhotoPreview.src = currentBuilder.photoDataUrl;
+        bPhotoPreview.style.display = "block";
+      } else {
+        bPhotoPreview.src = "";
+        bPhotoPreview.style.display = "none";
+      }
+      bPhotoFile.value = "";
+
+      bRingsList.innerHTML = "";
+      bFeathersList.innerHTML = "";
+      bAccList.innerHTML = "";
+
+      (_rings || []).forEach(r => addRing(r));
+      (_feathers || []).forEach(f => addFeathersGroup(null, f));
+      (_accessories || []).forEach(a => addAccessory(a));
+
+      bCode.textContent = "Codice: " + (currentBuilder.code || "—");
+      updateBuilderSummary();
+    }
+
+    function resumeLastProject(){
+      const all = loadProjects();
+      if(!all.length){
+        alert("Non ci sono progetti salvati da riprendere.");
+        return;
+      }
+      const last = all[all.length - 1];
+      if(builderModalBack.style.display !== "flex"){
+        builderModalBack.style.display = "flex";
+      }
+      loadIntoBuilder(last);
+      alert("Progetto ripristinato ✅");
+    }
+
+    document.getElementById("btnResumeProject").onclick = resumeLastProject;
+
+    document.getElementById("btnAddRing").onclick = () => addRing();
+    document.getElementById("btnAddFeathers").onclick = () => addFeathersGroup();
+    document.getElementById("btnAddAcc").onclick = () => addAccessory();
+
+    [bModel, bDiameter, bRingColor, bFeatherColor, bHasPhoto, bText, bNotes].forEach(el=>{
+      el.addEventListener("input", updateBuilderSummary);
+      el.addEventListener("change", updateBuilderSummary);
+    });
+
+    bPhotoFile.addEventListener("change", async (e)=>{
+      const f = e.target.files?.[0];
+      if(!f){
+        if(currentBuilder) currentBuilder.photoDataUrl="";
+        bPhotoPreview.style.display="none";
+        updateBuilderSummary();
+        return;
+      }
+      try{
+        const dataUrl = await optimizeImageFile(f);
+        if(currentBuilder) currentBuilder.photoDataUrl = dataUrl;
+        bPhotoPreview.src = dataUrl;
+        bPhotoPreview.style.display = "block";
+        updateBuilderSummary();
+      }catch(err){
+        console.error(err);
+        alert("Errore nel caricamento foto.");
+      }
+    });
+
+    function addRing(init){
+      const id = uid();
+      const ring = { id, diameter:(init?.diameter||""), color:(init?.color||""), weave:(init?.weave||""), decor:(init?.decor||"") };
+      currentBuilder.rings.push(ring);
+
+      const el = document.createElement("div");
+      el.className = "item";
+      el.dataset.id = id;
+      el.innerHTML = `
+        <div class="item-head">
+          <b>🧿 Cerchio</b>
+          <div class="item-actions">
+            <button class="btn danger mini" data-del type="button">Elimina</button>
+          </div>
+        </div>
+        <div class="row2">
+          <div><label>Diametro (cm)</label><input data-k="diameter" placeholder="Es: 30" value="${escapeHtml(ring.diameter)}" /></div>
+          <div><label>Colore cerchio</label><input data-k="color" placeholder="Es: bianco/nero/oro" value="${escapeHtml(ring.color)}" /></div>
+          <div><label>Intreccio</label><input data-k="weave" placeholder="Es: pizzo / classico" value="${escapeHtml(ring.weave)}" /></div>
+          <div><label>Decorazioni</label><input data-k="decor" placeholder="Es: brillanti, perline, charm..." value="${escapeHtml(ring.decor)}" /></div>
+        </div>
+      `;
+      bRingsList.appendChild(el);
+
+      el.querySelectorAll("input").forEach(inp=>{
+        inp.addEventListener("input", ()=>{
+          ring[inp.dataset.k] = inp.value.trim();
+          updateBuilderSummary();
+        });
+      });
+
+      el.querySelector("[data-del]").onclick = () => {
+        currentBuilder.rings = currentBuilder.rings.filter(r=>r.id!==id);
+        el.remove();
+        updateBuilderSummary();
+      };
+
+      updateBuilderSummary();
+    }
+
+    function addFeathersGroup(pos, init){
+      const id = uid();
+      const fg = {
+        id,
+        position: init?.position || pos || "sinistra",
+        color: init?.color || "",
+        qty: init?.qty || "",
+        length: init?.length || ""
+      };
+      currentBuilder.feathers.push(fg);
+
+      const el = document.createElement("div");
+      el.className = "item";
+      el.dataset.id = id;
+      el.innerHTML = `
+        <div class="item-head">
+          <b>🪶 Gruppo piume</b>
+          <div class="item-actions">
+            <button class="btn danger mini" data-del type="button">Elimina</button>
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label>Posizione</label>
+            <select data-k="position">
+              <option ${fg.position==="sinistra"?"selected":""}>sinistra</option>
+              <option ${fg.position==="centro"?"selected":""}>centro</option>
+              <option ${fg.position==="destra"?"selected":""}>destra</option>
+            </select>
+          </div>
+          <div><label>Colore</label><input data-k="color" placeholder="Es: rosso e nero" value="${escapeHtml(fg.color)}" /></div>
+          <div><label>Quantità</label><input data-k="qty" placeholder="Es: 3, 5, 7..." value="${escapeHtml(fg.qty)}" /></div>
+          <div><label>Lunghezza</label><input data-k="length" placeholder="corta / media / lunga" value="${escapeHtml(fg.length)}" /></div>
+        </div>
+      `;
+      bFeathersList.appendChild(el);
+
+      el.querySelectorAll("input,select").forEach(inp=>{
+        const onAny = ()=>{
+          fg[inp.dataset.k] = (inp.value || "").trim();
+          updateBuilderSummary();
+        };
+        inp.addEventListener("input", onAny);
+        inp.addEventListener("change", onAny);
+      });
+
+      el.querySelector("[data-del]").onclick = () => {
+        currentBuilder.feathers = currentBuilder.feathers.filter(x=>x.id!==id);
+        el.remove();
+        updateBuilderSummary();
+      };
+
+      updateBuilderSummary();
+    }
+
+    function addAccessory(init){
+      const id = uid();
+      const acc = {
+        id,
+        type: init?.type || "Perline",
+        color: init?.color || "",
+        details: init?.details || "",
+        qty: init?.qty || ""
+      };
+      currentBuilder.accessories.push(acc);
+
+      const el = document.createElement("div");
+      el.className = "item";
+      el.dataset.id = id;
+      el.innerHTML = `
+        <div class="item-head">
+          <b>✨ Accessorio</b>
+          <div class="item-actions">
+            <button class="btn danger mini" data-del type="button">Elimina</button>
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label>Tipo</label>
+            <select data-k="type">
+              <option ${acc.type==="Perline"?"selected":""}>Perline</option>
+              <option ${acc.type==="Brillanti"?"selected":""}>Brillanti</option>
+              <option ${acc.type==="Charm"?"selected":""}>Charm</option>
+              <option ${acc.type==="Simbolo"?"selected":""}>Simbolo</option>
+              <option ${acc.type==="Scritta"?"selected":""}>Scritta</option>
+              <option ${acc.type==="Luci"?"selected":""}>Luci</option>
+            </select>
+          </div>
+          <div><label>Colore</label><input data-k="color" placeholder="Es: oro / nero / rosso..." value="${escapeHtml(acc.color)}" /></div>
+          <div><label>Quantità</label><input data-k="qty" placeholder="Es: 5" value="${escapeHtml(acc.qty)}" /></div>
+          <div><label>Dettagli</label><input data-k="details" placeholder="Es: emoji, perle rosse/nere..." value="${escapeHtml(acc.details)}" /></div>
+        </div>
+      `;
+      bAccList.appendChild(el);
+
+      el.querySelectorAll("input,select").forEach(inp=>{
+        const onAny = ()=>{
+          acc[inp.dataset.k] = (inp.value || "").trim();
+          updateBuilderSummary();
+        };
+        inp.addEventListener("input", onAny);
+        inp.addEventListener("change", onAny);
+      });
+
+      el.querySelector("[data-del]").onclick = () => {
+        currentBuilder.accessories = currentBuilder.accessories.filter(x=>x.id!==id);
+        el.remove();
+        updateBuilderSummary();
+      };
+
+      updateBuilderSummary();
+    }
+
+    function estimatePrice(project){
+      const P = loadPrices();
+      let total = 0;
+      total += Number(P.base_model || 0);
+      total += (project.rings?.length || 0) * Number(P.ring_extra || 0);
+      total += (project.feathers?.length || 0) * Number(P.feathers_group || 0);
+
+      for(const a of (project.accessories || [])){
+        const t = (a.type || "").toLowerCase();
+        if(t.includes("perl")) total += Number(P.accessory_beads || 0);
+        else if(t.includes("brill")) total += Number(P.accessory_glitter || 0);
+        else if(t.includes("charm")) total += Number(P.accessory_charm || 0);
+        else if(t.includes("simbol")) total += Number(P.accessory_symbol || 0);
+        else if(t.includes("scritt")) total += Number(P.accessory_text || 0);
+        else if(t.includes("luci")) total += Number(P.lights || 0);
+      }
+
+      if((project.hasPhoto || "no") === "si") total += Number(P.photo || 0);
+      return total;
+    }
+
+    function updateBuilderSummary(){
+      if(!currentBuilder) return;
+
+      currentBuilder.base = currentBuilder.base || { model:"", diameter:"", ringColor:"", featherColor:"" };
+      currentBuilder.base.model = bModel.value;
+      currentBuilder.base.diameter = bDiameter.value;
+      currentBuilder.base.ringColor = bRingColor.value.trim();
+      currentBuilder.base.featherColor = bFeatherColor.value.trim();
+
+      currentBuilder.hasPhoto = bHasPhoto.value;
+      currentBuilder.text = bText.value.trim();
+      currentBuilder.notes = (bNotes.value || "").trim();
+
+      const total = estimatePrice(currentBuilder);
+      bEstimate.textContent = "Totale stimato: " + euro(total);
+
+      const lines = [];
+      lines.push(`<b>Modello:</b> ${escapeHtml(currentBuilder.base.model)}`);
+      lines.push(`<b>Diametro:</b> ${escapeHtml(currentBuilder.base.diameter)} cm`);
+      if(currentBuilder.base.ringColor) lines.push(`<b>Colore del cerchio principale:</b> ${escapeHtml(currentBuilder.base.ringColor)}`);
+      if(currentBuilder.base.featherColor) lines.push(`<b>Colore delle piume principali:</b> ${escapeHtml(currentBuilder.base.featherColor)}`);
+
+      if((currentBuilder.rings||[]).length){
+        lines.push(`<br><b>Cerchi aggiuntivi:</b>`);
+        currentBuilder.rings.forEach((r,i)=>{
+          const parts = [];
+          if(r.diameter) parts.push(`${escapeHtml(r.diameter)} cm`);
+          if(r.color) parts.push(`${escapeHtml(r.color)}`);
+          if(r.weave) parts.push(`intreccio ${escapeHtml(r.weave)}`);
+          if(r.decor) parts.push(`decorazioni ${escapeHtml(r.decor)}`);
+          lines.push(`• Cerchio ${i+1}: ${parts.join(", ") || "dettagli da definire"}`);
+        });
+      }
+
+      if((currentBuilder.feathers||[]).length){
+        lines.push(`<br><b>Piume:</b>`);
+        currentBuilder.feathers.forEach((f,i)=>{
+          const parts = [];
+          if(f.position) parts.push(`posizione ${escapeHtml(f.position)}`);
+          if(f.color) parts.push(`colore ${escapeHtml(f.color)}`);
+          if(f.qty) parts.push(`quantità ${escapeHtml(f.qty)}`);
+          if(f.length) parts.push(`lunghezza ${escapeHtml(f.length)}`);
+          lines.push(`• Gruppo ${i+1}: ${parts.join(", ") || "dettagli da definire"}`);
+        });
+      }
+
+      if((currentBuilder.accessories||[]).length){
+        lines.push(`<br><b>Accessori:</b>`);
+        currentBuilder.accessories.forEach((a,i)=>{
+          const parts = [];
+          if(a.type) parts.push(`${escapeHtml(a.type)}`);
+          if(a.color) parts.push(`colore ${escapeHtml(a.color)}`);
+          if(a.qty) parts.push(`quantità ${escapeHtml(a.qty)}`);
+          if(a.details) parts.push(`dettagli ${escapeHtml(a.details)}`);
+          lines.push(`• ${i+1}) ${parts.join(", ") || "dettagli da definire"}`);
+        });
+      }
+
+      if((currentBuilder.hasPhoto||"no")==="si"){
+        lines.push(`<br><b>Foto:</b> Sì (anteprima caricata) — la invio in chat su WhatsApp dopo il messaggio.`);
+      } else {
+        lines.push(`<br><b>Foto:</b> No`);
+      }
+
+      if(currentBuilder.text) lines.push(`<br><b>Scritta:</b> ${escapeHtml(currentBuilder.text)}`);
+      if(currentBuilder.notes) lines.push(`<br><b>Note:</b> ${escapeHtml(currentBuilder.notes)}`);
+
+      bSummary.innerHTML = lines.join("<br>");
+    }
+
+    function buildWhatsAppBuilderMessage(project){
+      const total = estimatePrice(project);
+      const lines = [];
+      lines.push("Ciao! Vorrei un acchiappasogni personalizzato con queste caratteristiche:");
+
+      lines.push(`• Modello: ${project.base.model}`);
+      lines.push(`• Diametro: ${project.base.diameter} cm`);
+      if(project.base.ringColor) lines.push(`• Colore del cerchio principale: ${project.base.ringColor}`);
+      if(project.base.featherColor) lines.push(`• Colore delle piume principali: ${project.base.featherColor}`);
+
+      if(project.rings?.length){
+        lines.push("");
+        lines.push("CERCHI AGGIUNTIVI:");
+        project.rings.forEach((r,i)=>{
+          const parts = [];
+          if(r.diameter) parts.push(`${r.diameter} cm`);
+          if(r.color) parts.push(`${r.color}`);
+          if(r.weave) parts.push(`intreccio ${r.weave}`);
+          if(r.decor) parts.push(`decorazioni ${r.decor}`);
+          lines.push(`- Cerchio ${i+1}: ${parts.join(", ") || "dettagli da definire"}`);
+        });
+      }
+
+      if(project.feathers?.length){
+        lines.push("");
+        lines.push("PIUME:");
+        project.feathers.forEach((f,i)=>{
+          const parts = [];
+          if(f.position) parts.push(`posizione ${f.position}`);
+          if(f.color) parts.push(`colore ${f.color}`);
+          if(f.qty) parts.push(`quantità ${f.qty}`);
+          if(f.length) parts.push(`lunghezza ${f.length}`);
+          lines.push(`- Gruppo piume ${i+1}: ${parts.join(", ") || "dettagli da definire"}`);
+        });
+      }
+
+      if(project.accessories?.length){
+        lines.push("");
+        lines.push("ACCESSORI:");
+        project.accessories.forEach((a,i)=>{
+          const parts = [];
+          if(a.type) parts.push(`${a.type}`);
+          if(a.color) parts.push(`colore ${a.color}`);
+          if(a.qty) parts.push(`quantità ${a.qty}`);
+          if(a.details) parts.push(`dettagli ${a.details}`);
+          lines.push(`- ${i+1}) ${parts.join(", ") || "dettagli da definire"}`);
+        });
+      }
+
+      lines.push("");
+      lines.push(`• Foto: ${project.hasPhoto === "si" ? "Sì (dopo l’invio, allego la foto in chat)" : "No"}`);
+      if(project.text) lines.push(`• Scritta: ${project.text}`);
+      if(project.notes) lines.push(`• Note: ${project.notes}`);
+
+      lines.push("");
+      lines.push(`Totale stimato: ${euro(total)} (da confermare)`);
+      lines.push("Grazie!");
+
+      return lines.join("\\n");
+    }
+
+    function saveCurrentProject(){
+      if(!currentBuilder) return null;
+      const project = {
+        ...currentBuilder,
+        hasPhoto: bHasPhoto.value,
+        photoDataUrl: currentBuilder.photoDataUrl || ""
+      };
+
+      const all = loadProjects();
+      const idx = all.findIndex(p => p.id === project.id);
+      if(idx >= 0) all[idx] = project;
+      else all.push(project);
+      saveProjects(all);
+      return project;
+    }
+
+    function sendProject(project){
+      const number = getWa();
+      const msg = buildWhatsAppBuilderMessage(project);
+      const url = `https://wa.me/${encodeURIComponent(number.replace(/\\s+/g,""))}?text=${encodeURIComponent(msg)}`;
+      window.open(url, "_blank");
+    }
+
+    document.getElementById("btnSaveProject").onclick = () => {
+      const p = saveCurrentProject();
+      if(!p) return;
+      alert("Progetto salvato ✅");
+    };
+
+    document.getElementById("btnSendProject").onclick = () => {
+      if(!currentBuilder) return;
+      sendProject(currentBuilder);
+    };
+
+    document.getElementById("btnSaveAndSend").onclick = () => {
+      const p = saveCurrentProject();
+      if(!p) return;
+      sendProject(p);
+    };
   </script>
 </body>
 </html>
