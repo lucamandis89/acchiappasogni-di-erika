@@ -2654,6 +2654,7 @@ const WEAVE_TEMPLATES = {
 
     function liteEmoji(type){
       const t = String(type || "").trim();
+      if(t.startsWith("emoji:")) return t.slice(6) || "✨";
       return LITE_EMOJI[t] || "✨";
     }
 
@@ -3134,6 +3135,14 @@ function selectLite(id){
     document.querySelectorAll('.palette .chip[data-add]').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const t = btn.getAttribute('data-add');
+        // Emoji: consenti scelta emoji personalizzata (zoomabile come gli altri elementi)
+        if(t === 'orc'){
+          const val = prompt('Inserisci un emoji (es: 🥰 ⭐️ ❤️)', '👹');
+          if(val && String(val).trim()){
+            liteAdd('emoji:' + String(val).trim());
+          }
+          return;
+        }
         liteAdd(t);
       });
     });
@@ -4082,12 +4091,12 @@ function selectLite(id){
           const wrapRect = stageWrap.getBoundingClientRect();
           const topSafe = 10 + (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safeTop')) || 0);
           // spazio disponibile tra top stage e top del foglio (meno padding)
-          const availH = Math.max(200, (sheetTop - wrapRect.top - 28 - topSafe));
+          const availH = Math.max(200, (sheetTop - wrapRect.top - 44 - topSafe));
           // larghezza disponibile dentro il box (meno padding)
           const availW = Math.max(200, wrapRect.width - 24);
 
           // margine extra per evitare qualsiasi clipping
-          const size = Math.max(200, Math.floor(Math.min(availH, availW) - 10));
+          const size = Math.max(200, Math.floor(Math.min(availH, availW) - 28));
 
           document.documentElement.style.setProperty('--studioStageSize', size + 'px');
         }catch(e){}
