@@ -468,6 +468,8 @@
 
     /* Prefer vertical scrolling; keep drag interactions inside stage */
     body{ touch-action: pan-y; }
+    body.builder-open{ touch-action: none; }
+
 
     /* Make tap targets comfortable on phone */
     @media (max-width: 560px){
@@ -726,13 +728,13 @@ body.studio-mode{
     overflow: visible !important;
     padding: 8px 10px 10px !important;
     /* riserva spazio esatto per il canvas, così non viene mai "clippato" */
-    height: var(--studioStageSize, min(92vw, 420px)) !important;
+    height: var(--studioStageSize, min(88vw, 380px)) !important;
   }
 
   /* canvas: dimensione calcolata in JS */
   #builderLiteBack.studio-mode #dlStage{
-    width: var(--studioStageSize, min(92vw, 420px)) !important;
-    height: var(--studioStageSize, min(92vw, 420px)) !important;
+    width: var(--studioStageSize, min(88vw, 380px)) !important;
+    height: var(--studioStageSize, min(88vw, 380px)) !important;
     max-width: 100% !important;
     max-height: 100% !important;
     touch-action: none;
@@ -2356,11 +2358,13 @@ function openBuilderLite(){
       seedLiteByModel(dlModel.value);
 
       builderLiteBack.style.display = "flex";
+      document.body.classList.add("builder-open");
           enterStudioMode();
     }
 
     function closeBuilderLite(){
       exitStudioMode();
+      document.body.classList.remove("builder-open");
       builderLiteBack.style.display = "none";
       liteSelectedId = null;
     }
@@ -4091,12 +4095,12 @@ function selectLite(id){
           const wrapRect = stageWrap.getBoundingClientRect();
           const topSafe = 10 + (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safeTop')) || 0);
           // spazio disponibile tra top stage e top del foglio (meno padding)
-          const availH = Math.max(200, (sheetTop - wrapRect.top - 44 - topSafe));
+          const availH = Math.max(200, (sheetTop - wrapRect.top - 66 - topSafe));
           // larghezza disponibile dentro il box (meno padding)
-          const availW = Math.max(200, wrapRect.width - 24);
+          const availW = Math.max(200, wrapRect.width - 28);
 
-          // margine extra per evitare qualsiasi clipping
-          const size = Math.max(200, Math.floor(Math.min(availH, availW) - 28));
+          // margine extra per evitare qualsiasi clipping (bordi + padding + variazioni browser)
+          const size = Math.max(200, Math.floor(Math.min(availH, availW) - 90));
 
           document.documentElement.style.setProperty('--studioStageSize', size + 'px');
         }catch(e){}
