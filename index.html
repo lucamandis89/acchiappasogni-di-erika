@@ -2392,18 +2392,27 @@ const WEAVE_TEMPLATES = {
       };
 
       dlStage.addEventListener("pointerdown", (ev)=>{
-        // Non blocchiamo il drag normale sull'elemento (che è gestito dal nodo).
-        // Qui ci interessa soprattutto il pinch con 2 dita, quindi attiviamo solo se si usano 2 dita.
+        // Pinch/rotate sulla STAGE solo quando arrivano 2 dita.
+        // IMPORTANTE: non rubare il puntatore quando l'utente sta trascinando un elemento (.dl-el).
+        if(ev.target && ev.target.closest && ev.target.closest(".dl-el")) return;
+
         const sel = getSelectedEl();
         if(!sel) return;
 
-        // Evita lo zoom pagina del browser
-        ev.preventDefault();
-
+        // Tracciamo i tocchi, ma attiviamo davvero SOLO quando diventano 2
         st.pointers.set(ev.pointerId, toStage(ev));
-        dlStage.setPointerCapture(ev.pointerId);
 
         if(st.pointers.size === 2){
+          // Evita zoom/pan della pagina e cattura entrambi i tocchi
+          ev.preventDefault();
+          dlStage.setPointerCapture(ev.pointerId);
+
+          // (ri)cattura anche l'altro puntatore, se possibile
+          const ids = Array.from(st.pointers.keys());
+          for(const pid of ids){
+            try{ dlStage.setPointerCapture(pid); }catch{}
+          }
+
           st.mode = "transform";
           const pts = Array.from(st.pointers.values());
           st.tf.startDist = Math.max(10, dist(pts[0], pts[1]));
