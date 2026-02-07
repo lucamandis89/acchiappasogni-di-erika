@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-  <title>Acchiappasogni di Erika — Catalogo</title>
+  <title>Acchiappasogni di Erika</title>
   <style>
     :root{
       --bg:#0b1027;
@@ -14,6 +14,8 @@
       --muted:#b9c3ff;
       --accent:#7c5cff;
       --accent2:#2dd4bf;
+      --danger:#ff4d6d;
+      --ok:#00e5a8;
       --shadow:0 12px 40px rgba(0,0,0,.35);
       --r:16px;
       --r2:22px;
@@ -31,41 +33,35 @@
       text-rendering:optimizeLegibility;
     }
     header{
-      position:sticky; top:0; z-index:20;
+      position:sticky; top:0; z-index:30;
       padding:12px 12px 10px;
       border-bottom:1px solid var(--line);
       background: linear-gradient(180deg, rgba(11,16,39,.92), rgba(11,16,39,.60));
       backdrop-filter: blur(12px);
     }
-    .top{
-      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
-    }
-    .brand{
-      display:flex; flex-direction:column; gap:4px; min-width:0;
-    }
-    .brand h1{
-      margin:0; font-size:14px; font-weight:900; letter-spacing:.2px;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .brand .sub{
-      font-size:12px; color:var(--muted); display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-    }
+    .top{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+    .brand{display:flex; flex-direction:column; gap:4px; min-width:0;}
+    .brand h1{margin:0; font-size:14px; font-weight:1000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+    .brand .sub{font-size:12px; color:var(--muted); display:flex; gap:10px; flex-wrap:wrap;}
     .btn{
       border:none; cursor:pointer;
       padding:10px 12px; border-radius:12px;
-      font-weight:900; font-size:13px; color:var(--text);
+      font-weight:1000; font-size:13px; color:var(--text);
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.06);
       user-select:none;
       transition: transform .06s ease, background .15s ease;
       display:inline-flex; align-items:center; gap:8px;
+      -webkit-tap-highlight-color: transparent;
     }
     .btn:active{transform: translateY(1px)}
     .btn.primary{
       background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(45,212,191,.55));
       border-color: rgba(255,255,255,.16);
     }
-    .btn.ghost{background:transparent}
+    .btn.ok{ background: rgba(0,229,168,.12); border-color: rgba(0,229,168,.35); color:#c9fff2;}
+    .btn.danger{ background: rgba(255,77,109,.12); border-color: rgba(255,77,109,.35); color:#ffd6de;}
+    .btn.ghost{ background: transparent; }
     .badge{
       display:inline-grid; place-items:center;
       min-width:22px; height:22px; padding:0 6px;
@@ -77,19 +73,18 @@
     }
 
     main{padding:12px; display:grid; gap:12px}
-    .searchRow{
-      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-    }
-    input[type="search"]{
+    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+    input[type="search"], input[type="text"], input[type="number"], textarea{
       flex:1 1 260px;
       padding:12px 12px;
       border-radius:14px;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.18);
       color:var(--text);
-      font-weight:800;
+      font-weight:900;
       outline:none;
     }
+    textarea{min-height:90px; resize:vertical}
     .chips{display:flex; gap:8px; flex-wrap:wrap;}
     .chip{
       padding:9px 10px;
@@ -97,7 +92,7 @@
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.03);
       color:var(--text);
-      font-weight:900;
+      font-weight:1000;
       font-size:12px;
       cursor:pointer;
       user-select:none;
@@ -107,14 +102,28 @@
       border-color: rgba(124,92,255,.45);
     }
 
+    .section{
+      border:1px solid var(--line);
+      border-radius: var(--r2);
+      background: linear-gradient(180deg, rgba(17,26,63,.55), rgba(15,22,54,.55));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .shead{
+      padding:12px 12px 10px;
+      border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .shead h2{margin:0; font-size:14px; font-weight:1000}
+    .small{font-size:12px; color:var(--muted); font-weight:900}
+    .sbody{padding:12px; display:grid; gap:12px;}
+
     .grid{
       display:grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap:12px;
     }
-    @media (min-width: 860px){
-      .grid{grid-template-columns: repeat(3, minmax(0, 1fr));}
-    }
+    @media (min-width: 860px){ .grid{grid-template-columns: repeat(3, minmax(0, 1fr));} }
     .card{
       border:1px solid var(--line);
       border-radius: var(--r2);
@@ -130,27 +139,16 @@
       display:grid;
       place-items:center;
       overflow:hidden;
+      position:relative;
     }
-    .img img{
-      width:100%; height:100%; object-fit:cover; display:block;
-    }
-    .img .ph{
-      color:rgba(255,255,255,.55);
-      font-weight:900;
-      font-size:12px;
-      padding:16px;
-      text-align:center;
-    }
+    .img img{width:100%; height:100%; object-fit:cover; display:block;}
+    .img .ph{color:rgba(255,255,255,.55); font-weight:900; font-size:12px; padding:16px; text-align:center;}
     .cbody{padding:10px 10px 12px; display:grid; gap:10px;}
     .title{margin:0; font-weight:1000; font-size:13px; line-height:1.2;}
     .meta{margin:0; color:var(--muted); font-size:11px;}
     .price{font-weight:1000; font-size:13px;}
-    .qtyRow{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-    }
-    .qty{
-      display:flex; align-items:center; gap:8px;
-    }
+    .qtyRow{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+    .qty{display:flex; align-items:center; gap:8px;}
     .qbtn{
       width:34px; height:34px; border-radius:12px;
       border:1px solid rgba(255,255,255,.12);
@@ -160,8 +158,10 @@
       cursor:pointer;
     }
     .qnum{min-width:18px; text-align:center; font-weight:1000;}
+    .tools{display:flex; gap:8px; flex-wrap:wrap;}
+
     .footerBar{
-      position:sticky; bottom:0; z-index:30;
+      position:sticky; bottom:0; z-index:35;
       padding:10px 12px;
       border-top:1px solid var(--line);
       background: linear-gradient(180deg, rgba(15,22,54,.0), rgba(15,22,54,.86));
@@ -172,8 +172,37 @@
       justify-content:space-between;
       flex-wrap:wrap;
     }
-    .small{font-size:12px; color:var(--muted); font-weight:900;}
-    .sum{font-weight:1000}
+
+    /* MODAL */
+    .modal{
+      display:none;
+      position:fixed; inset:0; z-index:999;
+      background: rgba(0,0,0,.55);
+      padding:18px;
+      overflow:auto;
+    }
+    .modal .box{
+      max-width: 980px;
+      margin: 26px auto;
+      background: rgba(15,22,54,.98);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+    .modal .mhead{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
+    .split{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
+    @media (max-width: 920px){ .split{grid-template-columns:1fr;} }
+    .panel{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 16px;
+      padding: 12px;
+      display:grid;
+      gap:10px;
+    }
+    .label{font-size:12px; color:var(--muted); font-weight:1000;}
+    .hr{height:1px; background: rgba(255,255,255,.10); margin:6px 0;}
   </style>
 </head>
 
@@ -184,234 +213,721 @@
       <h1>Acchiappasogni di Erika</h1>
       <div class="sub">
         <span>Catalogo • Ordina su WhatsApp</span>
+        <span class="small" id="proBadge"></span>
       </div>
     </div>
 
-    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+    <div class="row" style="justify-content:flex-end">
       <button class="btn primary" id="goCustomizer">✨ CREA IL TUO ACCHIAPPASOGNI</button>
       <button class="btn ghost" id="goCart">🛒 Carrello <span class="badge" id="cartBadge">0</span></button>
+      <button class="btn" id="openSettings">⚙️ Impostazioni</button>
     </div>
   </div>
 
-  <div class="searchRow" style="margin-top:10px">
+  <div class="row" style="margin-top:10px">
     <input id="search" type="search" placeholder="Cerca (nome o descrizione)…" />
     <div class="chips" id="chips"></div>
   </div>
 </header>
 
 <main>
-  <div class="grid" id="grid"></div>
+  <!-- CATALOGO -->
+  <section class="section">
+    <div class="shead">
+      <h2>Catalogo</h2>
+      <div class="small">Suggerimento: aggiungi prodotti da Impostazioni (admin)</div>
+    </div>
+    <div class="sbody">
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <!-- I MIEI PROGETTI -->
+  <section class="section">
+    <div class="shead">
+      <h2>I miei progetti (personalizzati)</h2>
+      <div class="tools">
+        <button class="btn" id="btnExportAll">📤 Export</button>
+        <label class="btn" style="cursor:pointer">
+          📥 Import
+          <input type="file" id="importFile" accept="application/json" style="display:none">
+        </label>
+      </div>
+    </div>
+    <div class="sbody">
+      <div class="grid" id="projGrid"></div>
+      <div class="small" id="projHint"></div>
+    </div>
+  </section>
 </main>
 
 <div class="footerBar">
-  <div class="small">
-    Totale carrello: <span class="sum" id="cartTotal">0,00€</span>
-  </div>
-  <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+  <div class="small">Totale carrello: <span style="font-weight:1000" id="cartTotal">0,00€</span></div>
+  <div class="row">
     <button class="btn" id="btnClear">🧹 Svuota</button>
     <button class="btn primary" id="btnWhatsApp">💬 Ordina su WhatsApp</button>
   </div>
 </div>
 
+<!-- MODAL IMPOSTAZIONI -->
+<div class="modal" id="settingsModal">
+  <div class="box">
+    <div class="mhead">
+      <div style="font-weight:1000">⚙️ Impostazioni / Admin</div>
+      <div class="row">
+        <button class="btn" id="closeSettings">✖ Chiudi</button>
+      </div>
+    </div>
+
+    <div class="split" style="margin-top:12px">
+
+      <!-- GENERALI -->
+      <div class="panel">
+        <div style="font-weight:1000">Generali</div>
+        <div class="label">Numero WhatsApp (riceve ordini)</div>
+        <input id="waNumber" type="text" placeholder="Es: 393440260906">
+
+        <div class="hr"></div>
+
+        <div style="font-weight:1000">Password PRO (sblocca funzioni)</div>
+        <div class="label">Metti la password PRO qui e rimane salvata.</div>
+        <input id="proPass" type="password" placeholder="Password PRO">
+        <button class="btn ok" id="savePro">Salva password PRO</button>
+        <div class="small" id="proStatus"></div>
+
+        <div class="hr"></div>
+
+        <div style="font-weight:1000">Admin</div>
+        <div class="label">Password admin (per aggiungere/eliminare catalogo e progetti)</div>
+        <input id="adminPass" type="password" placeholder="Password admin">
+        <button class="btn ok" id="loginAdmin">Entra come admin</button>
+        <div class="small" id="adminStatus"></div>
+      </div>
+
+      <!-- ADMIN TOOLS -->
+      <div class="panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+          <div style="font-weight:1000">Strumenti Admin</div>
+          <div class="small" id="adminOnlyBadge"></div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div style="font-weight:1000">➕ Inserisci prodotto (Catalogo)</div>
+        <div class="label">Foto prodotto (carica dal telefono)</div>
+        <input type="file" id="prodImg" accept="image/*">
+        <div class="label">Nome</div>
+        <input id="prodName" type="text" placeholder="Es: Modello 12">
+        <div class="label">Categoria</div>
+        <input id="prodCat" type="text" placeholder="Es: Acchiappasogni Classici">
+        <div class="label">Prezzo (€)</div>
+        <input id="prodPrice" type="number" step="0.01" min="0" placeholder="5.00">
+        <div class="label">Descrizione</div>
+        <textarea id="prodDesc" placeholder="Descrizione..."></textarea>
+        <button class="btn ok" id="addProduct">Aggiungi prodotto</button>
+
+        <div class="hr"></div>
+
+        <div style="font-weight:1000">➕ Inserisci progetto (Home)</div>
+        <div class="label">Foto progetto (screenshot o foto)</div>
+        <input type="file" id="projImg" accept="image/*">
+        <div class="label">Titolo</div>
+        <input id="projTitle" type="text" placeholder="Es: Natale Rosso">
+        <div class="label">Descrizione</div>
+        <textarea id="projDesc" placeholder="Descrizione..."></textarea>
+        <button class="btn ok" id="addProject">Aggiungi progetto</button>
+
+        <div class="hr"></div>
+
+        <div class="row">
+          <button class="btn danger" id="wipeCatalog">🗑️ Elimina TUTTO catalogo</button>
+          <button class="btn danger" id="wipeProjects">🗑️ Elimina TUTTI progetti</button>
+        </div>
+
+        <div class="row">
+          <button class="btn" id="exportCatalog">📤 Export catalogo</button>
+          <label class="btn" style="cursor:pointer">
+            📥 Import catalogo
+            <input type="file" id="importCatalogFile" accept="application/json" style="display:none">
+          </label>
+        </div>
+
+        <div class="small">⚠️ Gli strumenti admin funzionano solo dopo login admin.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <script>
-  // ===== CONFIG =====
-  const STORAGE_CART = "ery_cart_v1";
-  // Metti qui il numero WhatsApp (con prefisso paese, senza +)
-  // Esempio Italia: 393440260906
-  const WA_NUMBER = ""; // <-- se vuoi lo imposto tu: scrivi qui il numero
+/* =======================
+   STORAGE KEYS (RECUPERO)
+   ======================= */
+const K = {
+  wa: "ae_wa_number_v1",
+  pro: "ae_pro_password_v1",
+  admin: "ae_admin_logged_v1",
+  adminPass: "ae_admin_password_v1",
+  catalog: "ae_catalog_v1",
+  cart: "ae_cart_v1",
+  // IMPORTANT: questa key è fatta apposta per recuperare progetti vecchi
+  projects: "ae_builder_projects_v1"
+};
 
-  const CATEGORIES = ["Tutti","Acchiappasogni Classici","Natale","Nascita","Matrimonio"];
+// Cambia qui le password di default
+const DEFAULT_ADMIN_PASS = localStorage.getItem(K.adminPass) || "1234";
+const PRO_SECRET = "PRO2026"; // se vuoi cambiare password PRO, cambiala qui
 
-  // Prodotti esempio (puoi cambiare immagini e nomi quando vuoi)
-  // Per le immagini: usa URL oppure lascia vuoto per placeholder.
-  const PRODUCTS = [
-    { id:"m3",  name:"Acchiappasogni - Modello 3",  cat:"Acchiappasogni Classici", price:5.00, img:"" },
-    { id:"m4",  name:"Acchiappasogni - Modello 4",  cat:"Acchiappasogni Classici", price:5.00, img:"" },
-    { id:"m5",  name:"Acchiappasogni - Modello 5",  cat:"Acchiappasogni Classici", price:5.00, img:"" },
-    { id:"m6",  name:"Acchiappasogni - Modello 6",  cat:"Acchiappasogni Classici", price:5.00, img:"" },
-    { id:"m7",  name:"Acchiappasogni - Modello 7",  cat:"Acchiappasogni Classici", price:5.00, img:"" },
-    { id:"m8",  name:"Acchiappasogni - Modello 8",  cat:"Acchiappasogni Classici", price:5.00, img:"" },
-    { id:"m9",  name:"Acchiappasogni - Modello 9",  cat:"Acchiappasogni Classici", price:5.00, img:"" },
-    { id:"m31", name:"Acchiappasogni - Modello 31", cat:"Natale", price:5.00, img:"" },
-    { id:"m32", name:"Acchiappasogni - Modello 32", cat:"Acchiappasogni Classici", price:5.00, img:"" },
-    { id:"m33", name:"Acchiappasogni - Modello 33", cat:"Natale", price:5.00, img:"" },
-    { id:"m34", name:"Acchiappasogni - Modello 34", cat:"Natale", price:5.00, img:"" },
-    { id:"m35", name:"Acchiappasogni - Modello 35", cat:"Natale", price:5.00, img:"" },
+/* =======================
+   UTILS
+   ======================= */
+const euro = (n) => (Number(n||0)).toLocaleString("it-IT",{style:"currency",currency:"EUR"});
+
+function loadJSON(key, fallback){
+  try{ return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
+  catch(e){ return fallback; }
+}
+function saveJSON(key, obj){ localStorage.setItem(key, JSON.stringify(obj)); }
+
+function cartCount(cart){ return Object.values(cart).reduce((a,b)=>a+(b||0),0); }
+function cartTotal(cart, products){
+  let t=0;
+  for(const [id, qty] of Object.entries(cart)){
+    const p = products.find(x=>x.id===id);
+    if(p) t += (Number(p.price)||0) * (qty||0);
+  }
+  return t;
+}
+
+function uid(prefix="id"){
+  return prefix+"_"+Math.random().toString(16).slice(2)+"_"+Date.now().toString(16);
+}
+
+/* =======================
+   IMG COMPRESS (PER FOTO)
+   ======================= */
+const IMG_OPT = { maxSide: 1200, quality: 0.75, mime:"image/jpeg" };
+
+function fileToDataURL(file){
+  return new Promise((resolve,reject)=>{
+    const r = new FileReader();
+    r.onload = ()=>resolve(r.result);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+function loadImg(src){
+  return new Promise((resolve,reject)=>{
+    const img = new Image();
+    img.onload = ()=>resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+async function compressImageFile(file){
+  const src = await fileToDataURL(file);
+  const img = await loadImg(src);
+
+  const max = IMG_OPT.maxSide;
+  let w = img.naturalWidth, h = img.naturalHeight;
+  if(w>max || h>max){
+    const r = Math.min(max/w, max/h);
+    w = Math.round(w*r);
+    h = Math.round(h*r);
+  }
+
+  const c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  const ctx = c.getContext("2d");
+  ctx.drawImage(img, 0, 0, w, h);
+  return c.toDataURL(IMG_OPT.mime, IMG_OPT.quality);
+}
+
+/* =======================
+   DATA LOAD
+   ======================= */
+let products = loadJSON(K.catalog, []);
+let projects = loadJSON(K.projects, []); // recupera i vecchi progetti se ci sono
+let cart = loadJSON(K.cart, {});
+let currentCat = "Tutti";
+let q = "";
+
+/* Se catalogo vuoto, metto un esempio minimo */
+if(!Array.isArray(products) || products.length===0){
+  products = [
+    {id:"m3", name:"Acchiappasogni - Modello 3", cat:"Acchiappasogni Classici", price:5.00, desc:"", img:""},
+    {id:"m4", name:"Acchiappasogni - Modello 4", cat:"Acchiappasogni Classici", price:5.00, desc:"", img:""},
+    {id:"m5", name:"Acchiappasogni - Modello 5", cat:"Acchiappasogni Classici", price:5.00, desc:"", img:""}
   ];
+  saveJSON(K.catalog, products);
+}
 
-  // ===== STATE =====
-  let currentCat = "Tutti";
-  let q = "";
-  let cart = loadCart();
+/* =======================
+   UI RENDER
+   ======================= */
+const chipsEl = document.getElementById("chips");
+const gridEl = document.getElementById("grid");
+const projGrid = document.getElementById("projGrid");
+const projHint = document.getElementById("projHint");
 
-  // ===== HELPERS =====
-  function euro(n){
-    const s = (Math.round(n*100)/100).toFixed(2).replace(".", ",");
-    return s + "€";
-  }
-  function loadCart(){
-    try{ return JSON.parse(localStorage.getItem(STORAGE_CART) || "{}"); }
-    catch(e){ return {}; }
-  }
-  function saveCart(){
-    localStorage.setItem(STORAGE_CART, JSON.stringify(cart));
-  }
-  function cartCount(){
-    return Object.values(cart).reduce((a,b)=>a+b,0);
-  }
-  function cartTotal(){
-    let t = 0;
-    for(const [id, qty] of Object.entries(cart)){
-      const p = PRODUCTS.find(x=>x.id===id);
-      if(p) t += p.price * qty;
-    }
-    return t;
-  }
+function categories(){
+  const set = new Set(products.map(p=>p.cat||"Altro"));
+  return ["Tutti", ...Array.from(set)];
+}
 
-  // ===== UI RENDER =====
-  const chipsEl = document.getElementById("chips");
-  const gridEl = document.getElementById("grid");
+function renderChips(){
+  chipsEl.innerHTML = "";
+  categories().forEach(cat=>{
+    const d = document.createElement("div");
+    d.className = "chip" + (cat===currentCat ? " on" : "");
+    d.textContent = cat;
+    d.onclick = ()=>{ currentCat = cat; renderGrid(); };
+    chipsEl.appendChild(d);
+  });
+}
 
-  function renderChips(){
-    chipsEl.innerHTML = "";
-    CATEGORIES.forEach(cat=>{
-      const d = document.createElement("div");
-      d.className = "chip" + (cat===currentCat ? " on" : "");
-      d.textContent = cat;
-      d.onclick = ()=>{ currentCat = cat; renderAll(); };
-      chipsEl.appendChild(d);
-    });
-  }
+function filteredProducts(){
+  return products.filter(p=>{
+    const okCat = (currentCat==="Tutti") || ((p.cat||"Altro")===currentCat);
+    const text = ((p.name||"") + " " + (p.desc||"") + " " + (p.cat||"")).toLowerCase();
+    const okQ = !q || text.includes(q);
+    return okCat && okQ;
+  });
+}
 
-  function filteredProducts(){
-    return PRODUCTS.filter(p=>{
-      const okCat = (currentCat==="Tutti") || (p.cat===currentCat);
-      const text = (p.name + " " + (p.cat||"")).toLowerCase();
-      const okQ = !q || text.includes(q);
-      return okCat && okQ;
-    });
-  }
+function updateCartUI(){
+  document.getElementById("cartBadge").textContent = cartCount(cart);
+  document.getElementById("cartTotal").textContent = euro(cartTotal(cart, products));
+}
 
-  function renderGrid(){
-    const items = filteredProducts();
-    gridEl.innerHTML = "";
+function renderGrid(){
+  const items = filteredProducts();
+  gridEl.innerHTML = "";
 
-    items.forEach(p=>{
-      const qty = cart[p.id] || 0;
+  items.forEach(p=>{
+    const qty = cart[p.id] || 0;
 
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <div class="img">
-          ${
-            p.img
-              ? `<img src="${p.img}" alt="${p.name}">`
-              : `<div class="ph">Immagine non trovata</div>`
-          }
-        </div>
-        <div class="cbody">
-          <div>
-            <p class="title">${p.name}</p>
-            <p class="meta">${p.cat}</p>
-          </div>
-          <div class="qtyRow">
-            <div>
-              <div class="price">${euro(p.price)}</div>
-            </div>
-            <div class="qty">
-              <button class="qbtn" data-a="minus" data-id="${p.id}">-</button>
-              <div class="qnum" id="q_${p.id}">${qty}</div>
-              <button class="qbtn" data-a="plus" data-id="${p.id}">+</button>
-            </div>
-          </div>
-          <button class="btn primary" data-a="add" data-id="${p.id}">Aggiungi</button>
-        </div>
-      `;
-
-      card.addEventListener("click", (e)=>{
-        const btn = e.target.closest("[data-a]");
-        if(!btn) return;
-        const id = btn.dataset.id;
-        const a = btn.dataset.a;
-
-        if(a==="minus"){
-          cart[id] = Math.max(0, (cart[id]||0)-1);
-          if(cart[id]===0) delete cart[id];
-        } else if(a==="plus" || a==="add"){
-          cart[id] = (cart[id]||0) + 1;
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="img">
+        ${
+          p.img
+            ? `<img src="${p.img}" alt="${(p.name||"").replace(/"/g,"&quot;")}">`
+            : `<div class="ph">Immagine non trovata</div>`
         }
-        saveCart();
+      </div>
+      <div class="cbody">
+        <div>
+          <p class="title">${p.name||""}</p>
+          <p class="meta">${p.cat||"Altro"}${p.desc ? " • " + p.desc : ""}</p>
+        </div>
+        <div class="qtyRow">
+          <div class="price">${euro(p.price||0)}</div>
+          <div class="qty">
+            <button class="qbtn" data-a="minus" data-id="${p.id}">-</button>
+            <div class="qnum" id="q_${p.id}">${qty}</div>
+            <button class="qbtn" data-a="plus" data-id="${p.id}">+</button>
+          </div>
+        </div>
+
+        <div class="tools">
+          <button class="btn primary" data-a="add" data-id="${p.id}">Aggiungi</button>
+          <button class="btn danger" data-a="delprod" data-id="${p.id}" style="display:none">Elimina</button>
+        </div>
+      </div>
+    `;
+
+    // Admin button show/hide
+    const isAdmin = localStorage.getItem(K.admin)==="1";
+    if(isAdmin) card.querySelector('[data-a="delprod"]').style.display = "inline-flex";
+
+    card.addEventListener("click", (e)=>{
+      const btn = e.target.closest("[data-a]");
+      if(!btn) return;
+      const id = btn.dataset.id;
+      const a = btn.dataset.a;
+
+      if(a==="minus"){
+        cart[id] = Math.max(0, (cart[id]||0)-1);
+        if(cart[id]===0) delete cart[id];
+        saveJSON(K.cart, cart);
         updateCartUI();
         const qn = document.getElementById("q_"+id);
         if(qn) qn.textContent = cart[id] || 0;
         e.stopPropagation();
-      });
-
-      gridEl.appendChild(card);
+        return;
+      }
+      if(a==="plus" || a==="add"){
+        cart[id] = (cart[id]||0) + 1;
+        saveJSON(K.cart, cart);
+        updateCartUI();
+        const qn = document.getElementById("q_"+id);
+        if(qn) qn.textContent = cart[id] || 0;
+        e.stopPropagation();
+        return;
+      }
+      if(a==="delprod"){
+        if(localStorage.getItem(K.admin)!=="1"){ alert("Solo admin"); return; }
+        if(!confirm("Eliminare questo prodotto dal catalogo?")) return;
+        products = products.filter(x=>x.id!==id);
+        saveJSON(K.catalog, products);
+        renderChips();
+        renderGrid();
+        e.stopPropagation();
+        return;
+      }
     });
 
-    if(items.length===0){
-      gridEl.innerHTML = `<div style="color:var(--muted); font-weight:900">Nessun prodotto trovato.</div>`;
-    }
-  }
-
-  function updateCartUI(){
-    document.getElementById("cartBadge").textContent = cartCount();
-    document.getElementById("cartTotal").textContent = euro(cartTotal());
-  }
-
-  // ===== ACTIONS =====
-  document.getElementById("search").addEventListener("input", (e)=>{
-    q = (e.target.value || "").trim().toLowerCase();
-    renderGrid();
+    gridEl.appendChild(card);
   });
 
-  document.getElementById("btnClear").onclick = ()=>{
-    if(!confirm("Svuotare il carrello?")) return;
-    cart = {};
-    saveCart();
-    renderGrid();
-    updateCartUI();
-  };
+  if(items.length===0){
+    gridEl.innerHTML = `<div class="small">Nessun prodotto trovato.</div>`;
+  }
+}
 
-  document.getElementById("btnWhatsApp").onclick = ()=>{
-    if(cartCount()===0){
-      alert("Il carrello è vuoto.");
-      return;
-    }
-    const lines = [];
-    lines.push("Ciao! 😊 Vorrei ordinare questi acchiappasogni:");
-    for(const [id, qty] of Object.entries(cart)){
-      const p = PRODUCTS.find(x=>x.id===id);
-      if(p) lines.push(`- ${p.name} x${qty} (${euro(p.price)})`);
-    }
-    lines.push(`Totale: ${euro(cartTotal())}`);
-    lines.push("Grazie! 🙏");
+function renderProjects(){
+  if(!Array.isArray(projects)) projects = [];
+  projGrid.innerHTML = "";
 
-    const msg = encodeURIComponent(lines.join("\n"));
+  if(projects.length===0){
+    projHint.textContent = "Nessun progetto salvato. Crea un personalizzato e salvalo dal configuratore.";
+    return;
+  }
+  projHint.textContent = "";
 
-    // se non hai messo il numero, apre WhatsApp senza numero (condividi manualmente)
-    const url = WA_NUMBER
-      ? `https://wa.me/${WA_NUMBER}?text=${msg}`
-      : `https://wa.me/?text=${msg}`;
+  projects.slice().reverse().forEach(pr=>{
+    const card = document.createElement("div");
+    card.className = "card";
+    const date = pr.ts ? new Date(pr.ts).toLocaleString("it-IT") : "";
+    card.innerHTML = `
+      <div class="img">
+        ${pr.img ? `<img src="${pr.img}" alt="progetto">` : `<div class="ph">Senza foto</div>`}
+      </div>
+      <div class="cbody">
+        <div>
+          <p class="title">${pr.title||"Progetto"}</p>
+          <p class="meta">${date}${pr.desc ? " • "+pr.desc : ""}</p>
+        </div>
+        <div class="tools">
+          <button class="btn" data-a="wa">💬 WhatsApp</button>
+          <button class="btn danger" data-a="del" style="display:none">🗑️ Elimina</button>
+        </div>
+      </div>
+    `;
+    const isAdmin = localStorage.getItem(K.admin)==="1";
+    if(isAdmin) card.querySelector('[data-a="del"]').style.display = "inline-flex";
 
-    window.open(url, "_blank");
-  };
+    card.addEventListener("click",(e)=>{
+      const b = e.target.closest("[data-a]");
+      if(!b) return;
+      const a = b.dataset.a;
 
-  // QUI: apre SOLO il configuratore
-  document.getElementById("goCustomizer").onclick = ()=>{
-    window.location.href = "configuratore.html";
-  };
+      if(a==="del"){
+        if(localStorage.getItem(K.admin)!=="1"){ alert("Solo admin"); return; }
+        if(!confirm("Eliminare questo progetto?")) return;
+        projects = projects.filter(x=>x.id!==pr.id);
+        saveJSON(K.projects, projects);
+        renderProjects();
+        e.stopPropagation();
+        return;
+      }
 
-  // carrello button (solo scroll su fondo, semplice)
-  document.getElementById("goCart").onclick = ()=>{
-    window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
-  };
+      if(a==="wa"){
+        const num = (localStorage.getItem(K.wa)||"").replace(/\D/g,"");
+        if(!num){ alert("Imposta il numero WhatsApp nelle impostazioni."); return; }
+        const msg = encodeURIComponent(
+          `Ciao! 😊\nProgetto personalizzato:\n- Titolo: ${pr.title||""}\n- Descrizione: ${pr.desc||""}\n- Data: ${date}\n`
+        );
+        window.open(`https://wa.me/${num}?text=${msg}`,"_blank");
+        e.stopPropagation();
+        return;
+      }
+    });
 
-  // INIT
-  renderChips();
+    projGrid.appendChild(card);
+  });
+}
+
+/* =======================
+   SEARCH
+   ======================= */
+document.getElementById("search").addEventListener("input",(e)=>{
+  q = (e.target.value||"").trim().toLowerCase();
+  renderGrid();
+});
+
+/* =======================
+   WHATSAPP ORDER
+   ======================= */
+document.getElementById("btnWhatsApp").onclick = ()=>{
+  if(cartCount(cart)===0){ alert("Il carrello è vuoto."); return; }
+
+  const num = (localStorage.getItem(K.wa)||"").replace(/\D/g,"");
+  if(!num){ alert("Imposta il numero WhatsApp nelle impostazioni."); return; }
+
+  const lines = [];
+  lines.push("Ciao! 😊 Vorrei ordinare questi acchiappasogni:");
+  for(const [id, qty] of Object.entries(cart)){
+    const p = products.find(x=>x.id===id);
+    if(p) lines.push(`- ${p.name} x${qty} (${euro(p.price)})`);
+  }
+  lines.push(`Totale: ${euro(cartTotal(cart, products))}`);
+  lines.push("Grazie! 🙏");
+
+  const msg = encodeURIComponent(lines.join("\n"));
+  window.open(`https://wa.me/${num}?text=${msg}`,"_blank");
+};
+
+document.getElementById("btnClear").onclick = ()=>{
+  if(!confirm("Svuotare il carrello?")) return;
+  cart = {};
+  saveJSON(K.cart, cart);
   renderGrid();
   updateCartUI();
+};
+
+document.getElementById("goCart").onclick = ()=>{
+  window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
+};
+
+document.getElementById("goCustomizer").onclick = ()=>{
+  window.location.href = "configuratore.html";
+};
+
+/* =======================
+   SETTINGS MODAL
+   ======================= */
+const modal = document.getElementById("settingsModal");
+document.getElementById("openSettings").onclick = ()=>{
+  modal.style.display="block";
+  document.getElementById("waNumber").value = (localStorage.getItem(K.wa)||"").replace(/\D/g,"");
+  document.getElementById("proBadge").textContent = (isPro() ? "✅ PRO attivo" : "🔒 PRO non attivo");
+  refreshAdminUI();
+  refreshProUI();
+};
+document.getElementById("closeSettings").onclick = ()=> modal.style.display="none";
+
+/* PRO */
+function isPro(){
+  return (localStorage.getItem(K.pro)||"") === PRO_SECRET;
+}
+function refreshProUI(){
+  const st = document.getElementById("proStatus");
+  st.textContent = isPro() ? "✅ PRO attivo" : "🔒 PRO non attivo";
+  document.getElementById("proBadge").textContent = isPro() ? "✅ PRO attivo" : "🔒 PRO non attivo";
+}
+document.getElementById("savePro").onclick = ()=>{
+  const v = (document.getElementById("proPass").value||"").trim();
+  localStorage.setItem(K.pro, v);
+  refreshProUI();
+  alert(isPro() ? "PRO attivo ✅" : "Password PRO errata ❌");
+};
+
+/* WA */
+document.getElementById("waNumber").addEventListener("input",(e)=>{
+  const v = (e.target.value||"").replace(/\D/g,"");
+  localStorage.setItem(K.wa, v);
+});
+
+/* ADMIN */
+function isAdmin(){ return localStorage.getItem(K.admin)==="1"; }
+
+function refreshAdminUI(){
+  const st = document.getElementById("adminStatus");
+  const badge = document.getElementById("adminOnlyBadge");
+  if(isAdmin()){
+    st.textContent = "✅ Admin attivo (puoi eliminare/aggiungere)";
+    badge.textContent = "✅ Admin attivo";
+  }else{
+    st.textContent = "🔒 Non sei admin";
+    badge.textContent = "🔒 Solo admin";
+  }
+  // aggiorna bottoni elimina
+  renderGrid();
+  renderProjects();
+}
+
+document.getElementById("loginAdmin").onclick = ()=>{
+  const v = (document.getElementById("adminPass").value||"").trim();
+  const pass = localStorage.getItem(K.adminPass) || DEFAULT_ADMIN_PASS;
+  if(v===pass){
+    localStorage.setItem(K.admin,"1");
+    refreshAdminUI();
+    alert("Admin attivo ✅");
+  }else{
+    alert("Password admin errata ❌");
+  }
+};
+
+/* =======================
+   ADMIN: ADD PRODUCT
+   ======================= */
+document.getElementById("addProduct").onclick = async ()=>{
+  if(!isAdmin()){ alert("Solo admin"); return; }
+
+  const name = (document.getElementById("prodName").value||"").trim();
+  const cat = (document.getElementById("prodCat").value||"Altro").trim();
+  const price = Number(document.getElementById("prodPrice").value||0);
+  const desc = (document.getElementById("prodDesc").value||"").trim();
+
+  if(!name){ alert("Inserisci il nome prodotto"); return; }
+
+  let img = "";
+  const f = document.getElementById("prodImg").files?.[0];
+  if(f){
+    img = await compressImageFile(f);
+  }
+
+  const p = { id: uid("p"), name, cat, price, desc, img };
+  products.push(p);
+  saveJSON(K.catalog, products);
+
+  // pulisci
+  document.getElementById("prodName").value="";
+  document.getElementById("prodCat").value="";
+  document.getElementById("prodPrice").value="";
+  document.getElementById("prodDesc").value="";
+  document.getElementById("prodImg").value="";
+
+  renderChips();
+  renderGrid();
+  alert("Prodotto aggiunto ✅");
+};
+
+/* =======================
+   ADMIN: ADD PROJECT
+   ======================= */
+document.getElementById("addProject").onclick = async ()=>{
+  if(!isAdmin()){ alert("Solo admin"); return; }
+
+  const title = (document.getElementById("projTitle").value||"").trim();
+  const desc = (document.getElementById("projDesc").value||"").trim();
+  if(!title){ alert("Inserisci titolo progetto"); return; }
+
+  let img = "";
+  const f = document.getElementById("projImg").files?.[0];
+  if(f) img = await compressImageFile(f);
+
+  const pr = { id: uid("pr"), title, desc, img, ts: Date.now() };
+  projects.push(pr);
+  saveJSON(K.projects, projects);
+
+  document.getElementById("projTitle").value="";
+  document.getElementById("projDesc").value="";
+  document.getElementById("projImg").value="";
+
+  renderProjects();
+  alert("Progetto aggiunto ✅");
+};
+
+/* =======================
+   ADMIN: WIPE
+   ======================= */
+document.getElementById("wipeCatalog").onclick = ()=>{
+  if(!isAdmin()){ alert("Solo admin"); return; }
+  if(!confirm("Eliminare TUTTO il catalogo?")) return;
+  products = [];
+  saveJSON(K.catalog, products);
+  renderChips();
+  renderGrid();
+};
+
+document.getElementById("wipeProjects").onclick = ()=>{
+  if(!isAdmin()){ alert("Solo admin"); return; }
+  if(!confirm("Eliminare TUTTI i progetti?")) return;
+  projects = [];
+  saveJSON(K.projects, projects);
+  renderProjects();
+};
+
+/* =======================
+   EXPORT / IMPORT (ALL)
+   ======================= */
+function downloadJSON(filename, obj){
+  const blob = new Blob([JSON.stringify(obj,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+}
+document.getElementById("btnExportAll").onclick = ()=>{
+  const payload = {
+    wa: localStorage.getItem(K.wa)||"",
+    pro: localStorage.getItem(K.pro)||"",
+    catalog: products,
+    projects: projects
+  };
+  downloadJSON("acchiappasogni_backup.json", payload);
+};
+
+document.getElementById("importFile").addEventListener("change",(e)=>{
+  const file = e.target.files?.[0];
+  if(!file) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const obj = JSON.parse(r.result);
+      if(obj.wa) localStorage.setItem(K.wa, String(obj.wa));
+      if(obj.pro) localStorage.setItem(K.pro, String(obj.pro));
+      if(Array.isArray(obj.catalog)){ products = obj.catalog; saveJSON(K.catalog, products); }
+      if(Array.isArray(obj.projects)){ projects = obj.projects; saveJSON(K.projects, projects); }
+      renderChips(); renderGrid(); renderProjects(); updateCartUI();
+      alert("Import completato ✅");
+    }catch(err){
+      alert("File non valido ❌");
+    }
+  };
+  r.readAsText(file);
+  e.target.value="";
+});
+
+/* =======================
+   EXPORT/IMPORT CATALOGO
+   ======================= */
+document.getElementById("exportCatalog").onclick = ()=>{
+  if(!isAdmin()){ alert("Solo admin"); return; }
+  downloadJSON("catalogo.json", products);
+};
+
+document.getElementById("importCatalogFile").addEventListener("change",(e)=>{
+  if(!isAdmin()){ alert("Solo admin"); e.target.value=""; return; }
+  const file = e.target.files?.[0];
+  if(!file) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const arr = JSON.parse(r.result);
+      if(!Array.isArray(arr)) throw new Error("not array");
+      products = arr;
+      saveJSON(K.catalog, products);
+      renderChips(); renderGrid();
+      alert("Catalogo importato ✅");
+    }catch(err){
+      alert("Catalogo non valido ❌");
+    }
+  };
+  r.readAsText(file);
+  e.target.value="";
+});
+
+/* =======================
+   INIT
+   ======================= */
+function init(){
+  // se prima avevi whatsapp nel formato +39..., lo normalizzo
+  if(!localStorage.getItem(K.wa)) localStorage.setItem(K.wa, "393440260906");
+
+  renderChips();
+  renderGrid();
+  renderProjects();
+  updateCartUI();
+
+  refreshProUI();
+  refreshAdminUI();
+}
+init();
 </script>
 </body>
 </html>
