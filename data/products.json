@@ -1,7 +1,7 @@
 [
   {
     "id": "AE-1003",
-    "title": "Acchiappasogni - Modello 4",
+    "title": "Acchiappasogni - Modello 1",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -10,7 +10,7 @@
   },
   {
     "id": "AE-1004",
-    "title": "Acchiappasogni - Modello 5",
+    "title": "Acchiappasogni - Modello 2",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -19,7 +19,7 @@
   },
   {
     "id": "AE-1005",
-    "title": "Acchiappasogni - Modello 6",
+    "title": "Acchiappasogni - Modello 3",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -28,7 +28,7 @@
   },
   {
     "id": "AE-1006",
-    "title": "Acchiappasogni - Modello 7",
+    "title": "Acchiappasogni - Modello 4",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -37,7 +37,7 @@
   },
   {
     "id": "AE-1007",
-    "title": "Acchiappasogni - Modello 8",
+    "title": "Acchiappasogni - Modello 5",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -46,7 +46,7 @@
   },
   {
     "id": "AE-1008",
-    "title": "Acchiappasogni - Modello 9",
+    "title": "Acchiappasogni - Modello 6",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -54,8 +54,197 @@
     "featured": true
   },
   {
+    "id": "AE-1009",
+    "title": "Acchiappasogni - Modello 7",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994858984.jpg",
+    "featured": true
+  },
+  {
+    "id": "AE-1010",
+    "title": "Acchiappasogni - Modello 8",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994884289.jpg",
+    "featured": true
+  },
+  {
+    "id": "AE-1011",
+    "title": "Acchiappasogni - Modello 9",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994890377.jpg",
+    "featured": true
+  },
+  {
+    "id": "AE-1012",
+    "title": "Acchiappasogni - Modello 10",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994897870.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1013",
+    "title": "Acchiappasogni - Modello 11",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994911730.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1014",
+    "title": "Acchiappasogni - Modello 12",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994916872.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1015",
+    "title": "Acchiappasogni - Modello 13",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994924178.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1016",
+    "title": "Acchiappasogni - Modello 14",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994931817.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1017",
+    "title": "Acchiappasogni - Modello 15",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994950453.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1018",
+    "title": "Acchiappasogni - Modello 16",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994955562.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1019",
+    "title": "Acchiappasogni - Modello 17",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994960666.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1020",
+    "title": "Acchiappasogni - Modello 18",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994965220.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1021",
+    "title": "Acchiappasogni - Modello 19",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994972033.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1022",
+    "title": "Acchiappasogni - Modello 20",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994977510.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1023",
+    "title": "Acchiappasogni - Modello 21",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994989897.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1024",
+    "title": "Acchiappasogni - Modello 22",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994992921.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1025",
+    "title": "Acchiappasogni - Modello 23",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769994995911.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1026",
+    "title": "Acchiappasogni - Modello 24",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769995004140.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1027",
+    "title": "Acchiappasogni - Modello 25",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769995011218.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1028",
+    "title": "Acchiappasogni - Modello 26",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769995026356.jpg",
+    "featured": false
+  },
+  {
+    "id": "AE-1029",
+    "title": "Acchiappasogni - Modello 27",
+    "category": "Acchiappasogni Classici",
+    "price_from": 30,
+    "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
+    "image": "assets/images/acchiappasogni_hd/FB_IMG_1769995037849.jpg",
+    "featured": false
+  },
+  {
     "id": "AE-1030",
-    "title": "Acchiappasogni - Modello 31",
+    "title": "Acchiappasogni - Modello 28",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -64,7 +253,7 @@
   },
   {
     "id": "AE-1031",
-    "title": "Acchiappasogni - Modello 32",
+    "title": "Acchiappasogni - Modello 29",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -73,7 +262,7 @@
   },
   {
     "id": "AE-1032",
-    "title": "Acchiappasogni - Modello 33",
+    "title": "Acchiappasogni - Modello 30",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -82,7 +271,7 @@
   },
   {
     "id": "AE-1033",
-    "title": "Acchiappasogni - Modello 34",
+    "title": "Acchiappasogni - Modello 31",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -91,7 +280,7 @@
   },
   {
     "id": "AE-1034",
-    "title": "Acchiappasogni - Modello 35",
+    "title": "Acchiappasogni - Modello 32",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -100,7 +289,7 @@
   },
   {
     "id": "AE-1035",
-    "title": "Acchiappasogni - Modello 36",
+    "title": "Acchiappasogni - Modello 33",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -109,7 +298,7 @@
   },
   {
     "id": "AE-1036",
-    "title": "Acchiappasogni - Modello 37",
+    "title": "Acchiappasogni - Modello 34",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -118,7 +307,7 @@
   },
   {
     "id": "AE-1037",
-    "title": "Acchiappasogni - Modello 38",
+    "title": "Acchiappasogni - Modello 35",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -127,7 +316,7 @@
   },
   {
     "id": "AE-1038",
-    "title": "Acchiappasogni - Modello 39",
+    "title": "Acchiappasogni - Modello 36",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -136,7 +325,7 @@
   },
   {
     "id": "AE-1039",
-    "title": "Acchiappasogni - Modello 40",
+    "title": "Acchiappasogni - Modello 37",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -145,7 +334,7 @@
   },
   {
     "id": "AE-1040",
-    "title": "Acchiappasogni - Modello 41",
+    "title": "Acchiappasogni - Modello 38",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -154,7 +343,7 @@
   },
   {
     "id": "AE-1041",
-    "title": "Acchiappasogni - Modello 42",
+    "title": "Acchiappasogni - Modello 39",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -163,7 +352,7 @@
   },
   {
     "id": "AE-1042",
-    "title": "Acchiappasogni - Modello 43",
+    "title": "Acchiappasogni - Modello 40",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -172,7 +361,7 @@
   },
   {
     "id": "AE-1043",
-    "title": "Acchiappasogni - Modello 44",
+    "title": "Acchiappasogni - Modello 41",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -181,7 +370,7 @@
   },
   {
     "id": "AE-1044",
-    "title": "Acchiappasogni - Modello 45",
+    "title": "Acchiappasogni - Modello 42",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -190,7 +379,7 @@
   },
   {
     "id": "AE-1045",
-    "title": "Acchiappasogni - Modello 46",
+    "title": "Acchiappasogni - Modello 43",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -199,7 +388,7 @@
   },
   {
     "id": "AE-1046",
-    "title": "Acchiappasogni - Modello 47",
+    "title": "Acchiappasogni - Modello 44",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -208,7 +397,7 @@
   },
   {
     "id": "AE-1047",
-    "title": "Acchiappasogni - Modello 48",
+    "title": "Acchiappasogni - Modello 45",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -217,7 +406,7 @@
   },
   {
     "id": "AE-1048",
-    "title": "Acchiappasogni - Modello 49",
+    "title": "Acchiappasogni - Modello 46",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -226,7 +415,7 @@
   },
   {
     "id": "AE-1049",
-    "title": "Acchiappasogni - Modello 50",
+    "title": "Acchiappasogni - Modello 47",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -235,7 +424,7 @@
   },
   {
     "id": "AE-1050",
-    "title": "Acchiappasogni - Modello 51",
+    "title": "Acchiappasogni - Modello 48",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -244,7 +433,7 @@
   },
   {
     "id": "AE-1051",
-    "title": "Acchiappasogni - Modello 52",
+    "title": "Acchiappasogni - Modello 49",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -253,7 +442,7 @@
   },
   {
     "id": "AE-1052",
-    "title": "Acchiappasogni - Modello 53",
+    "title": "Acchiappasogni - Modello 50",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -262,7 +451,7 @@
   },
   {
     "id": "AE-1053",
-    "title": "Acchiappasogni - Modello 54",
+    "title": "Acchiappasogni - Modello 51",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -271,7 +460,7 @@
   },
   {
     "id": "AE-1054",
-    "title": "Acchiappasogni - Modello 55",
+    "title": "Acchiappasogni - Modello 52",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -280,7 +469,7 @@
   },
   {
     "id": "AE-1055",
-    "title": "Acchiappasogni - Modello 56",
+    "title": "Acchiappasogni - Modello 53",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -289,7 +478,7 @@
   },
   {
     "id": "AE-1056",
-    "title": "Acchiappasogni - Modello 57",
+    "title": "Acchiappasogni - Modello 54",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -298,7 +487,7 @@
   },
   {
     "id": "AE-1057",
-    "title": "Acchiappasogni - Modello 58",
+    "title": "Acchiappasogni - Modello 55",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -307,7 +496,7 @@
   },
   {
     "id": "AE-1058",
-    "title": "Acchiappasogni - Modello 59",
+    "title": "Acchiappasogni - Modello 56",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -316,7 +505,7 @@
   },
   {
     "id": "AE-1059",
-    "title": "Acchiappasogni - Modello 60",
+    "title": "Acchiappasogni - Modello 57",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -325,7 +514,7 @@
   },
   {
     "id": "AE-1060",
-    "title": "Acchiappasogni - Modello 61",
+    "title": "Acchiappasogni - Modello 58",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -334,7 +523,7 @@
   },
   {
     "id": "AE-1061",
-    "title": "Acchiappasogni - Modello 62",
+    "title": "Acchiappasogni - Modello 59",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -343,7 +532,7 @@
   },
   {
     "id": "AE-1062",
-    "title": "Acchiappasogni - Modello 63",
+    "title": "Acchiappasogni - Modello 60",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -352,7 +541,7 @@
   },
   {
     "id": "AE-1063",
-    "title": "Acchiappasogni - Modello 64",
+    "title": "Acchiappasogni - Modello 61",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -361,7 +550,7 @@
   },
   {
     "id": "AE-1064",
-    "title": "Acchiappasogni - Modello 65",
+    "title": "Acchiappasogni - Modello 62",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -370,7 +559,7 @@
   },
   {
     "id": "AE-1065",
-    "title": "Acchiappasogni - Modello 66",
+    "title": "Acchiappasogni - Modello 63",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -379,7 +568,7 @@
   },
   {
     "id": "AE-1066",
-    "title": "Acchiappasogni - Modello 67",
+    "title": "Acchiappasogni - Modello 64",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -388,7 +577,7 @@
   },
   {
     "id": "AE-1067",
-    "title": "Acchiappasogni - Modello 68",
+    "title": "Acchiappasogni - Modello 65",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -397,7 +586,7 @@
   },
   {
     "id": "AE-1068",
-    "title": "Acchiappasogni - Modello 69",
+    "title": "Acchiappasogni - Modello 66",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -406,7 +595,7 @@
   },
   {
     "id": "AE-1069",
-    "title": "Acchiappasogni - Modello 70",
+    "title": "Acchiappasogni - Modello 67",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -415,7 +604,7 @@
   },
   {
     "id": "AE-1070",
-    "title": "Acchiappasogni - Modello 71",
+    "title": "Acchiappasogni - Modello 68",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -424,7 +613,7 @@
   },
   {
     "id": "AE-1071",
-    "title": "Acchiappasogni - Modello 72",
+    "title": "Acchiappasogni - Modello 69",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -433,7 +622,7 @@
   },
   {
     "id": "AE-1072",
-    "title": "Acchiappasogni - Modello 73",
+    "title": "Acchiappasogni - Modello 70",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -442,7 +631,7 @@
   },
   {
     "id": "AE-1073",
-    "title": "Acchiappasogni - Modello 74",
+    "title": "Acchiappasogni - Modello 71",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -451,7 +640,7 @@
   },
   {
     "id": "AE-1074",
-    "title": "Acchiappasogni - Modello 75",
+    "title": "Acchiappasogni - Modello 72",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -460,7 +649,7 @@
   },
   {
     "id": "AE-1075",
-    "title": "Acchiappasogni - Modello 76",
+    "title": "Acchiappasogni - Modello 73",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -469,7 +658,7 @@
   },
   {
     "id": "AE-1076",
-    "title": "Acchiappasogni - Modello 77",
+    "title": "Acchiappasogni - Modello 74",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -478,7 +667,7 @@
   },
   {
     "id": "AE-1077",
-    "title": "Acchiappasogni - Modello 78",
+    "title": "Acchiappasogni - Modello 75",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -487,7 +676,7 @@
   },
   {
     "id": "AE-1078",
-    "title": "Acchiappasogni - Modello 79",
+    "title": "Acchiappasogni - Modello 76",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -496,7 +685,7 @@
   },
   {
     "id": "AE-1079",
-    "title": "Acchiappasogni - Modello 80",
+    "title": "Acchiappasogni - Modello 77",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -505,7 +694,7 @@
   },
   {
     "id": "AE-1080",
-    "title": "Acchiappasogni - Modello 81",
+    "title": "Acchiappasogni - Modello 78",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -514,7 +703,7 @@
   },
   {
     "id": "AE-1081",
-    "title": "Acchiappasogni - Modello 82",
+    "title": "Acchiappasogni - Modello 79",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -523,7 +712,7 @@
   },
   {
     "id": "AE-1082",
-    "title": "Acchiappasogni - Modello 83",
+    "title": "Acchiappasogni - Modello 80",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -532,7 +721,7 @@
   },
   {
     "id": "AE-1083",
-    "title": "Acchiappasogni - Modello 84",
+    "title": "Acchiappasogni - Modello 81",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -541,7 +730,7 @@
   },
   {
     "id": "AE-1084",
-    "title": "Acchiappasogni - Modello 85",
+    "title": "Acchiappasogni - Modello 82",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -550,7 +739,7 @@
   },
   {
     "id": "AE-1085",
-    "title": "Acchiappasogni - Modello 86",
+    "title": "Acchiappasogni - Modello 83",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -559,7 +748,7 @@
   },
   {
     "id": "AE-1086",
-    "title": "Acchiappasogni - Modello 87",
+    "title": "Acchiappasogni - Modello 84",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -568,7 +757,7 @@
   },
   {
     "id": "AE-1087",
-    "title": "Acchiappasogni - Modello 88",
+    "title": "Acchiappasogni - Modello 85",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -577,7 +766,7 @@
   },
   {
     "id": "AE-1088",
-    "title": "Acchiappasogni - Modello 89",
+    "title": "Acchiappasogni - Modello 86",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -586,7 +775,7 @@
   },
   {
     "id": "AE-1089",
-    "title": "Acchiappasogni - Modello 90",
+    "title": "Acchiappasogni - Modello 87",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -595,7 +784,7 @@
   },
   {
     "id": "AE-1090",
-    "title": "Acchiappasogni - Modello 91",
+    "title": "Acchiappasogni - Modello 88",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -604,7 +793,7 @@
   },
   {
     "id": "AE-1091",
-    "title": "Acchiappasogni - Modello 92",
+    "title": "Acchiappasogni - Modello 89",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -613,7 +802,7 @@
   },
   {
     "id": "AE-1092",
-    "title": "Acchiappasogni - Modello 93",
+    "title": "Acchiappasogni - Modello 90",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -622,7 +811,7 @@
   },
   {
     "id": "AE-1093",
-    "title": "Acchiappasogni - Modello 94",
+    "title": "Acchiappasogni - Modello 91",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -631,7 +820,7 @@
   },
   {
     "id": "AE-1094",
-    "title": "Acchiappasogni - Modello 95",
+    "title": "Acchiappasogni - Modello 92",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -640,7 +829,7 @@
   },
   {
     "id": "AE-1095",
-    "title": "Acchiappasogni - Modello 96",
+    "title": "Acchiappasogni - Modello 93",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -649,7 +838,7 @@
   },
   {
     "id": "AE-1096",
-    "title": "Acchiappasogni - Modello 97",
+    "title": "Acchiappasogni - Modello 94",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -658,7 +847,7 @@
   },
   {
     "id": "AE-1097",
-    "title": "Acchiappasogni - Modello 98",
+    "title": "Acchiappasogni - Modello 95",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -667,7 +856,7 @@
   },
   {
     "id": "AE-1098",
-    "title": "Acchiappasogni - Modello 99",
+    "title": "Acchiappasogni - Modello 96",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -676,7 +865,7 @@
   },
   {
     "id": "AE-1099",
-    "title": "Acchiappasogni - Modello 100",
+    "title": "Acchiappasogni - Modello 97",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -685,7 +874,7 @@
   },
   {
     "id": "AE-1100",
-    "title": "Acchiappasogni - Modello 101",
+    "title": "Acchiappasogni - Modello 98",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -694,7 +883,7 @@
   },
   {
     "id": "AE-1101",
-    "title": "Acchiappasogni - Modello 102",
+    "title": "Acchiappasogni - Modello 99",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -703,7 +892,7 @@
   },
   {
     "id": "AE-1102",
-    "title": "Acchiappasogni - Modello 103",
+    "title": "Acchiappasogni - Modello 100",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -712,7 +901,7 @@
   },
   {
     "id": "AE-1103",
-    "title": "Acchiappasogni - Modello 104",
+    "title": "Acchiappasogni - Modello 101",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -721,7 +910,7 @@
   },
   {
     "id": "AE-1104",
-    "title": "Acchiappasogni - Modello 105",
+    "title": "Acchiappasogni - Modello 102",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -730,7 +919,7 @@
   },
   {
     "id": "AE-1105",
-    "title": "Acchiappasogni - Modello 106",
+    "title": "Acchiappasogni - Modello 103",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -739,7 +928,7 @@
   },
   {
     "id": "AE-1106",
-    "title": "Acchiappasogni - Modello 107",
+    "title": "Acchiappasogni - Modello 104",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -748,7 +937,7 @@
   },
   {
     "id": "AE-1107",
-    "title": "Acchiappasogni - Modello 108",
+    "title": "Acchiappasogni - Modello 105",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -757,7 +946,7 @@
   },
   {
     "id": "AE-1108",
-    "title": "Acchiappasogni - Modello 109",
+    "title": "Acchiappasogni - Modello 106",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -766,7 +955,7 @@
   },
   {
     "id": "AE-1109",
-    "title": "Acchiappasogni - Modello 110",
+    "title": "Acchiappasogni - Modello 107",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -775,7 +964,7 @@
   },
   {
     "id": "AE-1110",
-    "title": "Acchiappasogni - Modello 111",
+    "title": "Acchiappasogni - Modello 108",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -784,7 +973,7 @@
   },
   {
     "id": "AE-1111",
-    "title": "Acchiappasogni - Modello 112",
+    "title": "Acchiappasogni - Modello 109",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -793,7 +982,7 @@
   },
   {
     "id": "AE-1112",
-    "title": "Acchiappasogni - Modello 113",
+    "title": "Acchiappasogni - Modello 110",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -802,7 +991,7 @@
   },
   {
     "id": "AE-1113",
-    "title": "Acchiappasogni - Modello 114",
+    "title": "Acchiappasogni - Modello 111",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -811,7 +1000,7 @@
   },
   {
     "id": "AE-1114",
-    "title": "Acchiappasogni - Modello 115",
+    "title": "Acchiappasogni - Modello 112",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -820,7 +1009,7 @@
   },
   {
     "id": "AE-1115",
-    "title": "Acchiappasogni - Modello 116",
+    "title": "Acchiappasogni - Modello 113",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -829,7 +1018,7 @@
   },
   {
     "id": "AE-1116",
-    "title": "Acchiappasogni - Modello 117",
+    "title": "Acchiappasogni - Modello 114",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -838,7 +1027,7 @@
   },
   {
     "id": "AE-1117",
-    "title": "Acchiappasogni - Modello 118",
+    "title": "Acchiappasogni - Modello 115",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -847,7 +1036,7 @@
   },
   {
     "id": "AE-1118",
-    "title": "Acchiappasogni - Modello 119",
+    "title": "Acchiappasogni - Modello 116",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -856,7 +1045,7 @@
   },
   {
     "id": "AE-1119",
-    "title": "Acchiappasogni - Modello 120",
+    "title": "Acchiappasogni - Modello 117",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -865,7 +1054,7 @@
   },
   {
     "id": "AE-1120",
-    "title": "Acchiappasogni - Modello 121",
+    "title": "Acchiappasogni - Modello 118",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
@@ -874,7 +1063,7 @@
   },
   {
     "id": "AE-1121",
-    "title": "Acchiappasogni - Modello 122",
+    "title": "Acchiappasogni - Modello 119",
     "category": "Acchiappasogni Classici",
     "price_from": 30,
     "description": "Prodotto artigianale fatto a mano da Erika. Personalizzabile su richiesta.",
