@@ -641,6 +641,67 @@ body.studio-mode{
   max-width: none !important;
 }
 
+
+/* === STUDIO MODE (MOBILE): controlli come "cassetto" (bottom sheet) === */
+#builderLiteBack.studio-mode .studio-sheet-handle{
+  width: 64px;
+  height: 6px;
+  border-radius: 999px;
+  margin: 6px auto 10px;
+  background: rgba(255,255,255,.18);
+}
+#builderLiteBack.studio-mode .studio-sheet{
+  position: fixed !important;
+  left: 10px !important;
+  right: 10px !important;
+  bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+  z-index: 99999 !important;
+  border-radius: 18px !important;
+  background: rgba(6,10,22,.94) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+  box-shadow: 0 16px 50px rgba(0,0,0,.55) !important;
+  overflow: hidden !important; /* scroll solo nell'inner */
+}
+#builderLiteBack.studio-mode .studio-sheet .studio-sheet-scroll{
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px;
+}
+
+/* su mobile: stage sempre visibile e non tagliato */
+@media (max-width: 820px){
+  /* blocca lo scroll della pagina sotto mentre sei in studio */
+  #builderLiteBack.studio-mode .modal-body{
+    overflow: hidden !important;
+  }
+  /* niente grid: lo stage resta "pagina", i controlli diventano sheet */
+  #builderLiteBack.studio-mode .lite-grid{
+    display: block !important;
+    height: 100% !important;
+  }
+  /* box sinistro occupa tutta l'altezza disponibile */
+  #builderLiteBack.studio-mode .lite-grid > .box:first-child{
+    height: 100% !important;
+    overflow: hidden !important;
+    padding-bottom: 20px !important;
+  }
+  /* stage: contenuto e centrato, mai clippato */
+  #builderLiteBack.studio-mode #dlStageWrap{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow: visible !important;
+    padding: 10px !important;
+  }
+  #builderLiteBack.studio-mode #dlStage{
+    width: 100% !important;
+    height: auto !important;
+    max-height: 56vh !important; /* lascia spazio al cassetto */
+    object-fit: contain !important;
+  }
+}
+
 </style>
  </head>
  <body>
@@ -3901,6 +3962,106 @@ function selectLite(id){
   });
 })();
 
+</script>
+  <script>
+(function(){
+  function qs(sel, root){ return (root||document).querySelector(sel); }
+
+  function setupBuilderBottomSheet(){
+    const back = document.getElementById('builderLiteBack');
+    if(!back) return;
+    if(!back.classList.contains('studio-mode')) return;
+
+    const grid = qs('.lite-grid', back);
+    if(!grid) return;
+
+    const boxes = grid.querySelectorAll(':scope > .box');
+    if(boxes.length < 2) return;
+
+    const stageBox = boxes[0];
+    const sheetBox = boxes[1];
+
+    // Applica classi una sola volta
+    if(!sheetBox.classList.contains('studio-sheet')){
+      sheetBox.classList.add('studio-sheet');
+
+      // crea wrapper scroll interno (così il box può essere overflow hidden)
+      const scroll = document.createElement('div');
+      scroll.className = 'studio-sheet-scroll';
+      while(sheetBox.firstChild){
+        scroll.appendChild(sheetBox.firstChild);
+      }
+      // handle in cima (zona di trascinamento)
+      const handle = document.createElement('div');
+      handle.className = 'studio-sheet-handle';
+      handle.setAttribute('aria-label','Trascina per ridimensionare');
+      scroll.prepend(handle);
+
+      sheetBox.appendChild(scroll);
+
+      // altezza iniziale (piccolo, non copre lo stage)
+      sheetBox.style.height = Math.round(window.innerHeight * 0.38) + 'px';
+      sheetBox.style.maxHeight = Math.round(window.innerHeight * 0.82) + 'px';
+      sheetBox.style.minHeight = Math.round(window.innerHeight * 0.22) + 'px';
+
+      // drag per cambiare altezza (cassetto)
+      let startY = 0;
+      let startH = 0;
+      handle.style.touchAction = 'none';
+
+      handle.addEventListener('pointerdown', (e)=>{
+        startY = e.clientY;
+        startH = sheetBox.getBoundingClientRect().height;
+        handle.setPointerCapture(e.pointerId);
+        e.preventDefault();
+      });
+
+      handle.addEventListener('pointermove', (e)=>{
+        if(!startY) return;
+        const dy = startY - e.clientY; // su = aumenta altezza
+        let newH = startH + dy;
+
+        const minH = window.innerHeight * 0.22;
+        const maxH = window.innerHeight * 0.82;
+
+        newH = Math.max(minH, Math.min(maxH, newH));
+        sheetBox.style.height = Math.round(newH) + 'px';
+        e.preventDefault();
+      });
+
+      function endDrag(){
+        startY = 0;
+      }
+      handle.addEventListener('pointerup', endDrag);
+      handle.addEventListener('pointercancel', endDrag);
+    }
+
+    // Ricalcola limiti su resize/orientamento
+    function refreshSheetLimits(){
+      if(!sheetBox.classList.contains('studio-sheet')) return;
+      sheetBox.style.maxHeight = Math.round(window.innerHeight * 0.82) + 'px';
+      sheetBox.style.minHeight = Math.round(window.innerHeight * 0.22) + 'px';
+      // se troppo grande dopo resize, riduci
+      const h = sheetBox.getBoundingClientRect().height;
+      const maxH = window.innerHeight * 0.82;
+      if(h > maxH) sheetBox.style.height = Math.round(maxH) + 'px';
+    }
+    window.addEventListener('resize', refreshSheetLimits, {passive:true});
+  }
+
+  // osserva cambi classi (quando apri/chiudi personalizza e scatta studio-mode)
+  const obs = new MutationObserver(()=>{
+    setupBuilderBottomSheet();
+  });
+  obs.observe(document.documentElement, {subtree:true, attributes:true, attributeFilter:['class']});
+  // fallback: prova anche quando cambia il back
+  const back = document.getElementById('builderLiteBack');
+  if(back){
+    obs.observe(back, {attributes:true, attributeFilter:['class']});
+  }
+  // primo giro
+  setupBuilderBottomSheet();
+})();
 </script>
  </body>
 </html>
