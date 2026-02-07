@@ -280,6 +280,7 @@ function bindAdmin(){
     err?.classList.add("hidden");
     document.getElementById("adminLogin")?.classList.add("hidden");
     document.getElementById("adminPanel")?.classList.remove("hidden");
+    ensureAdminTools();     // <-- aggiunto
     renderAdminList();
   });
 
@@ -314,6 +315,83 @@ function commitAdminProducts(list){
   applyFilters();
   renderAdminList();
   alert("Salvato sul telefono (non cambia GitHub).");
+}
+
+/* =========================
+   EXPORT / IMPORT (GitHub)
+   ========================= */
+
+function downloadTextFile(filename, text){
+  const blob = new Blob([text], { type: "application/json;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 500);
+}
+
+function exportProductsJson(){
+  const list = getEditableProducts();
+  const pretty = JSON.stringify(list, null, 2);
+  downloadTextFile("products_export.json", pretty);
+  alert("Scaricato: products_export.json\nOra caricalo su GitHub sostituendo data/products.json e fai commit.");
+}
+
+function importProductsJsonFromFile(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const parsed = JSON.parse(String(reader.result || "[]"));
+      if(!Array.isArray(parsed)) throw new Error("Il file non contiene un array di prodotti.");
+      commitAdminProducts(parsed); // salva override + refresh
+      alert("Import completato sul telefono.\nSe vuoi che valga per tutti, fai Export e poi commit su GitHub.");
+    }catch(e){
+      alert("Errore import JSON: " + (e?.message || e));
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* Crea i pulsanti Export/Import dentro al pannello admin, senza richiedere modifiche HTML */
+function ensureAdminTools(){
+  const panel = document.getElementById("adminPanel");
+  const listBox = document.getElementById("adminList");
+  if(!panel || !listBox) return;
+
+  // se esiste già, non duplicare
+  if(document.getElementById("adminTools")) return;
+
+  const tools = document.createElement("div");
+  tools.id = "adminTools";
+  tools.className = "admin-tools";
+  tools.innerHTML = `
+    <div class="admin-tools-row">
+      <button class="btn ghost" id="adminExportJson" type="button">Esporta configurazione (JSON)</button>
+      <button class="btn ghost" id="adminImportJson" type="button">Importa configurazione (JSON)</button>
+      <input id="adminImportFile" type="file" accept="application/json" style="display:none;" />
+    </div>
+    <div class="small muted" style="margin-top:6px;">
+      Export scarica un file da caricare su GitHub (data/products.json). Import ricarica quel file sul telefono.
+    </div>
+  `;
+
+  // inserisci sopra la lista prodotti
+  listBox.parentElement?.insertBefore(tools, listBox);
+
+  document.getElementById("adminExportJson")?.addEventListener("click", exportProductsJson);
+
+  const pick = document.getElementById("adminImportFile");
+  document.getElementById("adminImportJson")?.addEventListener("click", ()=>pick?.click());
+  pick?.addEventListener("change", ()=>{
+    const f = pick.files?.[0];
+    if(!f) return;
+    importProductsJsonFromFile(f);
+    pick.value = "";
+  });
 }
 
 function renderAdminList(){
