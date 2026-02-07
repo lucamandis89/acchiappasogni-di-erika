@@ -2367,6 +2367,93 @@ const WEAVE_TEMPLATES = {
       });
     }
 
+    
+    // ====== PINCH/ROTATE su STAGE (anche se le dita non sono sopra l'elemento) ======
+    (function bindStagePinch(){
+      if(!dlStage) return;
+
+      const st = {
+        pointers: new Map(),
+        mode: "idle", // idle | transform
+        tf: { startDist:0, startAng:0, startScale:1, startRot:0 }
+      };
+
+      const stageRect = ()=> dlStage.getBoundingClientRect();
+      const toStage = (e)=>{
+        const r = stageRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+      };
+      const dist = (a,b)=> Math.hypot(b.x-a.x, b.y-a.y);
+      const ang  = (a,b)=> Math.atan2(b.y-a.y, b.x-a.x);
+
+      const getSelectedEl = ()=>{
+        if(!lite || !liteSelectedId) return null;
+        return lite.elements.find(e=>e.id === liteSelectedId) || null;
+      };
+
+      dlStage.addEventListener("pointerdown", (ev)=>{
+        // Non blocchiamo il drag normale sull'elemento (che è gestito dal nodo).
+        // Qui ci interessa soprattutto il pinch con 2 dita, quindi attiviamo solo se si usano 2 dita.
+        const sel = getSelectedEl();
+        if(!sel) return;
+
+        // Evita lo zoom pagina del browser
+        ev.preventDefault();
+
+        st.pointers.set(ev.pointerId, toStage(ev));
+        dlStage.setPointerCapture(ev.pointerId);
+
+        if(st.pointers.size === 2){
+          st.mode = "transform";
+          const pts = Array.from(st.pointers.values());
+          st.tf.startDist = Math.max(10, dist(pts[0], pts[1]));
+          st.tf.startAng  = ang(pts[0], pts[1]);
+          ensureLiteElDefaults(sel);
+          st.tf.startScale = sel.scale;
+          st.tf.startRot   = sel.rot;
+        }
+      });
+
+      dlStage.addEventListener("pointermove", (ev)=>{
+        if(!st.pointers.has(ev.pointerId)) return;
+        const sel = getSelectedEl();
+        if(!sel) return;
+
+        st.pointers.set(ev.pointerId, toStage(ev));
+
+        if(st.mode === "transform" && st.pointers.size >= 2){
+          const pts = Array.from(st.pointers.values()).slice(0,2);
+          const d = Math.max(10, dist(pts[0], pts[1]));
+          const a = ang(pts[0], pts[1]);
+
+          let nextScale = st.tf.startScale * (d / st.tf.startDist);
+          nextScale = Math.max(0.45, Math.min(3.0, nextScale));
+
+          let nextRot = st.tf.startRot + ((a - st.tf.startAng) * 180 / Math.PI);
+          if(nextRot > 180) nextRot -= 360;
+          if(nextRot < -180) nextRot += 360;
+
+          sel.scale = nextScale;
+          sel.rot = nextRot;
+
+          const node = dlStage.querySelector(`.dl-el[data-id="${CSS.escape(sel.id)}"]`);
+          if(node) applyLiteElTransform(node, sel);
+        }
+      });
+
+      const end = (ev)=>{
+        if(st.pointers.has(ev.pointerId)) st.pointers.delete(ev.pointerId);
+        if(st.pointers.size < 2){
+          st.mode = "idle";
+        }
+      };
+      dlStage.addEventListener("pointerup", end);
+      dlStage.addEventListener("pointercancel", end);
+      dlStage.addEventListener("lostpointercapture", end);
+    })();
+    // ====== /PINCH/ROTATE su STAGE ======
+
+
     function createLiteNode(el){
       const node = document.createElement("div");
       node.className = "dl-el";
@@ -2391,6 +2478,7 @@ const WEAVE_TEMPLATES = {
       // pos + transform
       node.style.left = el.x + "px";
       node.style.top  = el.y + "px";
+      applyLiteElTransform(node, el);
       applyLiteElTransform(node, el);
 
       // gesture
