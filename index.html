@@ -4,6 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Acchiappasogni di Erika</title>
+  <link rel="manifest" href="/acchiappasogni-di-erika/manifest.webmanifest">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Catalogo online per Acchiappasogni di Erika con ordini diretti su WhatsApp.">
+  <link rel="apple-touch-icon" href="/acchiappasogni-di-erika/icons/icon-192.png">
   <style>
     :root{
       --bg1:#070a12;
@@ -766,7 +770,7 @@
        <h3>Scelte rapide</h3>
        <div class="row2">
         <div>
-         <label>Modello</label> <select id="dlModel"> <option value="1">1 • Classico</option> <option value="2">2 • Cerchio</option> <option value="3">3 • Luna</option> <option value="4">4 • Cuore</option> <option value="5">5 • Stella</option> <option value="6">6 • Chakra</option> <option value="7">7 • Yin &amp; Yang</option> <option value="8">8 • Personalizzato</option> </select> 
+         <label>Modello</label> <select id="dlModel"> <option value="1">1 • Classico</option> <option value="2">2 • Cerchio</option> <option value="3">3 • Luna</option> <option value="4">4 • Cuore</option> <option value="5">5 • Stella</option> <option value="6">6 • Chakra</option> <option value="7">7 • Yin &amp; Yang</option> <option value="8">8 • Personalizzato</option> </select>
         </div>
         <div>
          <label>Diametro (cm)</label> <select id="dlDiameter"> <option>15</option><option>20</option><option>25</option> <option selected>30</option><option>35</option><option>40</option><option>50</option> </select>
@@ -3315,5 +3319,19 @@ const WEAVE_TEMPLATES = {
 
 
 </script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker
+          .register("/acchiappasogni-di-erika/sw.js")
+          .then(function () {
+            console.log("Service Worker registrato correttamente");
+          })
+          .catch(function (error) {
+            console.log("Errore Service Worker:", error);
+          });
+      });
+    }
+  </script>
  </body>
 </html>
