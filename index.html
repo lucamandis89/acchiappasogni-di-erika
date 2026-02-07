@@ -2,7 +2,7 @@
 <html lang="it">
  <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Acchiappasogni di Erika</title>
   <link rel="manifest" href="/acchiappasogni-di-erika/manifest.webmanifest">
   <meta name="theme-color" content="#ffffff">
@@ -456,11 +456,12 @@
     .preset b{display:block;font-size:12px}
     .preset small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
     .preset:active{transform: translateY(1px)}
-</style>
-  <style>
-    /* Fix gesture: prevent browser pinch-zoom/scroll from stealing multitouch */
-    #dlStage, .dl-stage, .dl-el, .dl-el * { touch-action: none; }
-  </style>
+
+    /* --- Fix gesture: allow pinch/rotate on stage elements without page zoom --- */
+    #dlStage { touch-action: none; overscroll-behavior: contain; }
+    #dlStage .dl-el { touch-action: none; }
+
+\1
  </head>
  <body>
   <div class="topbar">
@@ -2245,25 +2246,25 @@ const WEAVE_TEMPLATES = {
           bead_green:"🟢",
           bead_purple:"🟣",
           bead_yellow:"🟡",
-          bead_pink:"💗",
+          bead_pink:"🩷",
+          bow:"🎀",
+          bell:"🔔",
+          snow:"❄️",
+          glitter:"✨",
+          orc:"👹",
+          symbolA:"🅰️",
+          lace:"🧵",
+          light:"💡",
+          moon:"🌙",
+          heart:"❤️",
+          star:"⭐",
+          yinyang:"☯️",
           crown:"👑",
           teddy:"🧸",
           paw:"🐾",
           shell:"🐚",
           flower:"🌸",
-          tree:"🌳",
-          moon:"🌙",
-          heart:"❤️",
-          star:"⭐",
-          yinyang:"☯️",
-          bow:"🎀",
-          bell:"🔔",
-          snow:"❄️",
-          glitter:"✨",
-          lace:"🧵",
-          light:"💡",
-          emoji:"😊",
-          ring_small:"⭕"
+          tree:"🌳"
         })[type] || "✨";
         node.appendChild(s);
       }
@@ -3198,4 +3199,8 @@ const WEAVE_TEMPLATES = {
     }
   </script>
  </body>
+</html>
+</style>
+ </head>
+ <body></body>
 </html>
