@@ -1,31 +1,27 @@
 /* ============================
    Acchiappasogni di Erika - app.js
-   - GitHub Pages (statico)
-   - Admin (password 1234) con salvataggio su telefono (localStorage)
-   - Foto: upload -> dataURL (solo locale)
-   - DESCRIZIONE: COMPLETAMENTE RIMOSSA
+   GitHub Pages (statico)
+   Admin (password 1234) con salvataggio su telefono (localStorage)
+   DESCRIZIONE: NON USATA (ignorata anche se presente nel JSON)
+   Immagini: fallback automatico su percorsi alternativi (assets ripetuti)
    ============================ */
 
 const DATA_PRODUCTS_URL = "data/products.json";
 const DATA_CONFIG_URL = "data/config.json";
-const LS_PRODUCTS_OVERRIDE = "ae_products_override_v1";
+const LS_PRODUCTS_OVERRIDE = "ae_products_override_v2";
 const LS_ADMIN_UNLOCKED = "ae_admin_unlocked_v1";
+const LS_FIRST_PRICE_FIX = "ae_first_price_fix_v1";
 
 /* ---------- Helpers ---------- */
 function euro(n) {
   const v = Number(n || 0);
   return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(v);
 }
-function safeText(s) {
-  return (s ?? "").toString();
-}
+function safeText(s) { return (s ?? "").toString(); }
 function escapeHtml(str) {
   return safeText(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+    .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;").replaceAll("'", "&#039;");
 }
 function uid(prefix = "AE") {
   return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
@@ -46,14 +42,13 @@ async function fetchJSON(url) {
 async function fetchProductsRemote() {
   const data = await fetchJSON(DATA_PRODUCTS_URL);
   if (!Array.isArray(data)) throw new Error("products.json non è un array");
-  // ✅ RIMUOVE QUALSIASI CAMPO description SE PRESENTE
+  // ignora description se c’è
   return data.map(p => {
     const { description, ...rest } = p || {};
     return rest;
   });
 }
 
-// ✅ QUESTA È LA FUNZIONE CHE VOLEVI
 async function fetchProductsWithLocalOverride() {
   const overrideRaw = localStorage.getItem(LS_PRODUCTS_OVERRIDE);
   if (overrideRaw) {
@@ -73,7 +68,6 @@ async function fetchProductsWithLocalOverride() {
 }
 
 function saveProductsOverride(products) {
-  // ✅ SALVA SENZA description
   const cleaned = (products || []).map(p => {
     const { description, ...rest } = p || {};
     return rest;
@@ -91,7 +85,7 @@ async function fetchConfig() {
   } catch {
     return {
       brandName: "Acchiappasogni di Erika",
-      whatsappNumber: "", // es: "393401234567"
+      whatsappNumber: "",
       whatsappPrefill: "Ciao! Vorrei ordinare questi acchiappasogni:",
     };
   }
@@ -119,11 +113,10 @@ let PRODUCTS = [];
 let FILTER = { q: "", featuredOnly: false };
 let CART = new Map(); // id -> qty
 
-/* ---------- UI: Settings button + modal ---------- */
+/* ---------- Settings button ---------- */
 function ensureSettingsButton() {
   const actions = document.querySelector(".actions");
   if (!actions) return;
-
   if (document.getElementById("btnSettings")) return;
 
   const btn = document.createElement("button");
@@ -135,6 +128,7 @@ function ensureSettingsButton() {
   actions.insertBefore(btn, actions.firstChild);
 }
 
+/* ---------- Admin gate ---------- */
 function openAdminGate() {
   const already = localStorage.getItem(LS_ADMIN_UNLOCKED) === "1";
   if (already) {
@@ -151,6 +145,7 @@ function openAdminGate() {
   }
 }
 
+/* ---------- Admin modal ---------- */
 function buildAdminModal() {
   if (document.getElementById("adminModal")) return;
 
@@ -176,7 +171,7 @@ function buildAdminModal() {
       <div style="display:flex; gap:10px; align-items:center; justify-content:space-between;">
         <div>
           <div style="font-size:18px; font-weight:700;">Impostazioni</div>
-          <div style="opacity:.75; font-size:12px;">Salvataggio: solo su questo telefono. (Descrizione disattivata)</div>
+          <div style="opacity:.75; font-size:12px;">Le modifiche restano su questo telefono (salvataggio locale).</div>
         </div>
         <div style="display:flex; gap:8px;">
           <button id="adminClose" class="btn">Chiudi</button>
@@ -227,12 +222,13 @@ function buildAdminModal() {
     a.download = "products.json";
     a.click();
     URL.revokeObjectURL(url);
-    alert("Scaricato products.json (senza descrizioni).");
+    alert("Scaricato products.json.");
   });
 
   document.getElementById("btnResetLocal").addEventListener("click", () => {
     if (!confirm("Vuoi tornare ai prodotti originali di GitHub?")) return;
     clearProductsOverride();
+    localStorage.removeItem(LS_FIRST_PRICE_FIX);
     location.reload();
   });
 
@@ -356,7 +352,7 @@ function openEditor(product) {
 
       <div style="grid-column:1 / -1; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
         <div style="display:flex; flex-direction:column; gap:6px;">
-          <span style="opacity:.8; font-size:12px;">Foto (upload dal telefono)</span>
+          <span style="opacity:.8; font-size:12px;">Foto (scegli dalla galleria)</span>
           <input id="edFile" type="file" accept="image/*">
         </div>
 
@@ -389,10 +385,7 @@ function openEditor(product) {
   const edInfo = document.getElementById("edInfo");
 
   function setPreview(src) {
-    if (!src) {
-      edPreviewWrap.style.display = "none";
-      return;
-    }
+    if (!src) { edPreviewWrap.style.display = "none"; return; }
     edPreview.src = src;
     edPreviewWrap.style.display = "block";
   }
@@ -401,7 +394,8 @@ function openEditor(product) {
   btnEdClose.addEventListener("click", () => { ed.style.display = "none"; });
   btnEdCancel.addEventListener("click", () => { ed.style.display = "none"; });
 
-  edFile.addEventListener("change", async () => {
+  // ✅ su Android apre la galleria (chooser)
+  edFile.addEventListener("change", () => {
     const file = edFile.files?.[0];
     if (!file) return;
     if (file.size > 2.5 * 1024 * 1024) {
@@ -411,9 +405,9 @@ function openEditor(product) {
     const reader = new FileReader();
     reader.onload = () => {
       const dataUrl = reader.result;
-      edImg.value = dataUrl;
+      edImg.value = dataUrl;     // salva la foto su telefono
       setPreview(dataUrl);
-      edInfo.textContent = "Foto caricata (salvata sul telefono).";
+      edInfo.textContent = "Foto caricata dalla galleria (salvata sul telefono).";
     };
     reader.readAsDataURL(file);
   });
@@ -428,10 +422,7 @@ function openEditor(product) {
       featured: document.getElementById("edFeatured").value === "1",
     };
 
-    if (!newP.title) {
-      alert("Titolo obbligatorio.");
-      return;
-    }
+    if (!newP.title) { alert("Titolo obbligatorio."); return; }
 
     if (isNew) PRODUCTS = [newP, ...PRODUCTS];
     else PRODUCTS = PRODUCTS.map(x => x.id === newP.id ? newP : x);
@@ -442,6 +433,59 @@ function openEditor(product) {
   });
 }
 
+/* ---------- IMMAGINI: fallback percorsi ---------- */
+/*
+  Nel tuo repo hai una struttura tipo:
+  assets/assets/images/assets/images/acchiappasogni_hd/...
+  Quindi se nel JSON hai "assets/images/...." è 404.
+  Qui proviamo automaticamente più varianti finché una funziona.
+*/
+function buildImageCandidates(original) {
+  const src = safeText(original).trim();
+  if (!src) return [];
+
+  // normalizza (rimuove eventuale "./")
+  const clean = src.replace(/^\.\//, "");
+
+  // se già è dataURL (upload da telefono), lascialo e basta
+  if (clean.startsWith("data:image/")) return [clean];
+
+  // togli eventuale "assets/" iniziale per ricostruire alternative
+  const rest = clean.startsWith("assets/") ? clean.slice("assets/".length) : clean;
+
+  const candidates = [
+    clean, // com'è nel JSON
+    `assets/${rest}`, // forza assets/ davanti
+    `assets/assets/${rest}`, // assets ripetuto
+    `assets/assets/images/${rest}`, // ancora più profondo
+  ];
+
+  // casi tipici: JSON "assets/images/..." ma repo "assets/assets/images/assets/images/..."
+  if (clean.startsWith("assets/images/")) {
+    const tail = clean.slice("assets/images/".length);
+    candidates.push(`assets/assets/images/assets/images/${tail}`);
+    candidates.push(`assets/assets/images/${tail}`);
+  }
+
+  // rimuovi duplicati
+  return [...new Set(candidates)];
+}
+
+function attachImageFallback(imgEl, candidates) {
+  let idx = 0;
+  function tryNext() {
+    idx++;
+    if (idx >= candidates.length) {
+      // niente: lascia vuoto
+      imgEl.style.display = "none";
+      return;
+    }
+    imgEl.src = candidates[idx];
+  }
+  imgEl.onerror = tryNext;
+  imgEl.src = candidates[0];
+}
+
 /* ---------- Catalog rendering ---------- */
 function normalizeForSearch(p) {
   const t = `${p.title || ""} ${p.category || ""}`.toLowerCase();
@@ -450,12 +494,12 @@ function normalizeForSearch(p) {
 
 function getFilteredProducts() {
   let list = [...PRODUCTS];
-
   if (FILTER.featuredOnly) list = list.filter(p => !!p.featured);
 
   const q = FILTER.q.trim().toLowerCase();
   if (q) list = list.filter(p => normalizeForSearch(p).includes(q));
 
+  // ordine stabile
   list.sort((a, b) => safeText(a.id).localeCompare(safeText(b.id)));
   return list;
 }
@@ -467,14 +511,9 @@ function renderProducts() {
     const displayTitle = `Acchiappasogni - Modello ${i + 1}`;
     const imgId = `img-${escapeHtml(p.id)}`;
 
-    // ✅ immagine con fallback (se non carica)
-    const imgHtml = p.image
-      ? `<img id="${imgId}" class="card-img" src="${escapeHtml(p.image)}" alt="${escapeHtml(displayTitle)}" loading="lazy">`
-      : `<div class="card-img ph"></div>`;
-
     return `
       <article class="card">
-        ${imgHtml}
+        <img id="${imgId}" class="card-img" alt="${escapeHtml(displayTitle)}" loading="lazy">
         <div class="card-body">
           <div class="card-title">${escapeHtml(displayTitle)}</div>
           <div class="card-sub">${escapeHtml(p.category || "")}</div>
@@ -493,43 +532,36 @@ function renderProducts() {
     `;
   }).join("");
 
-  // bind + fallback immagini
-  list.forEach(p => {
-    if (!p.image) return;
-    const el = document.getElementById(`img-${p.id}`);
-    if (!el) return;
-    el.addEventListener("error", () => {
-      // sostituisce l’immagine con placeholder senza rompere layout
-      const ph = document.createElement("div");
-      ph.className = "card-img ph";
-      el.replaceWith(ph);
-    });
-  });
-
+  // bind bottoni
   elGrid.querySelectorAll("[data-inc]").forEach(b => b.addEventListener("click", () => inc(b.dataset.inc)));
   elGrid.querySelectorAll("[data-dec]").forEach(b => b.addEventListener("click", () => dec(b.dataset.dec)));
   elGrid.querySelectorAll("[data-add]").forEach(b => b.addEventListener("click", () => addToCart(b.dataset.add)));
 
+  // immagini con fallback
+  list.forEach(p => {
+    const img = document.getElementById(`img-${p.id}`);
+    if (!img) return;
+    const candidates = buildImageCandidates(p.image);
+    if (!candidates.length) {
+      img.style.display = "none";
+      return;
+    }
+    attachImageFallback(img, candidates);
+  });
+
   updateCartBadge();
 }
 
-function inc(id) {
-  CART.set(id, (CART.get(id) || 0) + 1);
-  updateQty(id);
-  updateCartBadge();
-}
+function inc(id) { CART.set(id, (CART.get(id) || 0) + 1); updateQty(id); updateCartBadge(); }
 function dec(id) {
   const v = (CART.get(id) || 0) - 1;
   if (v <= 0) CART.delete(id);
   else CART.set(id, v);
-  updateQty(id);
-  updateCartBadge();
+  updateQty(id); updateCartBadge();
 }
 function addToCart(id) {
   if (!CART.get(id)) CART.set(id, 1);
-  updateQty(id);
-  updateCartBadge();
-  openDrawer();
+  updateQty(id); updateCartBadge(); openDrawer();
 }
 function updateQty(id) {
   const q = CART.get(id) || 0;
@@ -543,19 +575,12 @@ function updateCartBadge() {
 }
 
 /* ---------- Drawer / Checkout ---------- */
-function openDrawer() {
-  elBackdrop.classList.add("open");
-  elDrawer.classList.add("open");
-  renderCart();
-}
-function closeDrawer() {
-  elBackdrop.classList.remove("open");
-  elDrawer.classList.remove("open");
-}
+function openDrawer() { elBackdrop.classList.add("open"); elDrawer.classList.add("open"); renderCart(); }
+function closeDrawer() { elBackdrop.classList.remove("open"); elDrawer.classList.remove("open"); }
+
 function renderCart() {
   const items = [];
   let total = 0;
-
   const map = new Map(PRODUCTS.map(p => [p.id, p]));
 
   for (const [id, qty] of CART.entries()) {
@@ -593,10 +618,7 @@ function renderCart() {
 }
 
 function checkoutWhatsApp() {
-  if (!CONFIG?.whatsappNumber) {
-    alert("Numero WhatsApp non configurato in data/config.json");
-    return;
-  }
+  if (!CONFIG?.whatsappNumber) { alert("Numero WhatsApp non configurato in data/config.json"); return; }
   const map = new Map(PRODUCTS.map(p => [p.id, p]));
   const lines = [];
   let total = 0;
@@ -608,11 +630,7 @@ function checkoutWhatsApp() {
     total += sub;
     lines.push(`- ${p.title || id} x${qty} (${euro(sub)})`);
   }
-
-  if (!lines.length) {
-    alert("Carrello vuoto.");
-    return;
-  }
+  if (!lines.length) { alert("Carrello vuoto."); return; }
 
   const msg = [
     CONFIG.whatsappPrefill || "Ciao! Vorrei ordinare:",
@@ -640,12 +658,17 @@ async function init() {
 
   PRODUCTS = await fetchProductsWithLocalOverride();
 
+  // ✅ una sola volta: imposta i prezzi a 5€ se vuoi (come mi avevi chiesto)
+  // Se vuoi lasciarli a 30, cancella questo blocco.
+  if (!localStorage.getItem(LS_FIRST_PRICE_FIX)) {
+    PRODUCTS = PRODUCTS.map(p => ({ ...p, price_from: 5 }));
+    saveProductsOverride(PRODUCTS);
+    localStorage.setItem(LS_FIRST_PRICE_FIX, "1");
+  }
+
   renderProducts();
 
-  elSearch?.addEventListener("input", () => {
-    FILTER.q = elSearch.value || "";
-    renderProducts();
-  });
+  elSearch?.addEventListener("input", () => { FILTER.q = elSearch.value || ""; renderProducts(); });
 
   elTabAll?.addEventListener("click", () => {
     FILTER.featuredOnly = false;
@@ -668,10 +691,7 @@ async function init() {
   elCheckout?.addEventListener("click", checkoutWhatsApp);
 
   elBtnCustom?.addEventListener("click", () => {
-    if (!CONFIG?.whatsappNumber) {
-      alert("Numero WhatsApp non configurato in data/config.json");
-      return;
-    }
+    if (!CONFIG?.whatsappNumber) { alert("Numero WhatsApp non configurato in data/config.json"); return; }
     const msg = "Ciao! Vorrei un acchiappasogni personalizzato 😊\nMi dici tempi e prezzo?";
     const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank");
