@@ -814,24 +814,15 @@
         <button class="chip" data-add="bead_purple">🟣 Perla viola</button>
         <button class="chip" data-add="bead_yellow">🟡 Perla gialla</button>
         <button class="chip" data-add="bead_pink">💗 Perla rosa</button>
-        <button class="chip" data-add="crown">👑 Corona</button>
-        <button class="chip" data-add="teddy">🧸 Orsetto</button>
-        <button class="chip" data-add="paw">🐾 Zampetta</button>
-        <button class="chip" data-add="shell">🐚 Conchiglia</button>
-        <button class="chip" data-add="flower">🌸 Fiore</button>
-        <button class="chip" data-add="tree">🌳 Albero vita</button>
-        <button class="chip" data-add="moon">🌙 Luna</button>
-        <button class="chip" data-add="heart">❤️ Cuore</button>
-        <button class="chip" data-add="star">⭐ Stella</button>
-        <button class="chip" data-add="yinyang">☯️ YinYang</button>
         <button class="chip" data-add="bow">🎀 Fiocco</button>
         <button class="chip" data-add="bell">🔔 Campanella</button>
         <button class="chip" data-add="snow">❄️ Fiocco neve</button>
         <button class="chip" data-add="glitter">✨ Brillantini</button>
+        <button class="chip" data-add="chain">⛓️ Catena</button>
+        <button class="chip" data-add="light">💡 Luci</button>
         <button class="chip" data-add="orc">👹 Emoji</button>
         <button class="chip" data-add="symbolA">🅰️ Doppia A</button>
         <button class="chip" data-add="lace">🧵 Centrino/Pizzo</button>
-        <button class="chip" data-add="light">💡 Luci</button>
         <button class="chip" data-add="ring_small">⭕ Cerchio piccolo</button>
        </div>
        <div class="hr2"></div>
@@ -2210,179 +2201,163 @@ const WEAVE_TEMPLATES = {
       }
     }
 
-    function syncLiteStageFromData(){
-      // ricrea gli elementi nella stage da lite.elements (senza toccare base + web)
-      Array.from(dlStage.querySelectorAll(".dl-el")).forEach(n=>n.remove());
-      if(!lite) return;
-      for(const el of lite.elements){
-        const id = el.id;
-        const node = document.createElement("div");
-        node.className = "dl-el";
-        node.dataset.id = id;
+    
+    // ====== LITE: Accessori + Gesture (drag / pinch / rotate) ======
+    const LITE_EMOJI = {
+      feather:"🪶",
+      crystal:"💎",
+      bead:"⚪",
+      bead_red:"🔴",
+      bead_black:"⚫",
+      bead_blue:"🔵",
+      bead_green:"🟢",
+      bead_purple:"🟣",
+      bead_yellow:"🟡",
+      bead_pink:"💗",
+      bead_gold:"🟡",
+      bead_silver:"⚪",
+      bow:"🎀",
+      bell:"🔔",
+      snow:"❄️",
+      glitter:"✨",
+      orc:"👹",
+      symbolA:"🅰️",
+      lace:"🧵",
+      light:"💡",
+      ring_small:"⭕",
+      ring:"⭕",
+      chain:"⛓️",
+      chain_gold:"🔗",
+      chain_silver:"⛓️",
+      moon:"🌙",
+      heart:"❤️",
+      star:"⭐",
+      yinyang:"☯️"
+    };
 
-        if(el.type === "ring_small"){
-          const c = document.createElement("div");
-          c.className = "dl-ring small";
-          node.appendChild(c);
-        }else if(el.type === "ring"){
-          const c = document.createElement("div");
-          c.className = "dl-ring";
-          node.appendChild(c);
-        }else{
-          const s = document.createElement("div");
-          s.className = "emoji";
-          s.textContent = ({
-            feather:"🪶",
-            crystal:"💎",
-            bead:"⚪",
-            bead_red:"🔴",
-            bead_black:"⚫",
-            bow:"🎀",
-            bell:"🔔",
-            snow:"❄️",
-            glitter:"✨",
-            orc:"👹",
-            symbolA:"🅰️",
-            lace:"🧵",
-            light:"💡",
-            bead_blue:"🔵",
-            bead_green:"🟢",
-            bead_purple:"🟣",
-            bead_yellow:"🟡",
-            bead_pink:"💗",
-            bead_gold:"🟡",
-            bead_silver:"⚪",
-            shell:"🐚",
-            flower:"🌸",
-            tree:"🌳",
-            crown:"👑",
-            teddy:"🧸",
-            paw:"🐾",
-            bead_blue:"🔵",
-            bead_green:"🟢",
-            bead_purple:"🟣",
-            bead_yellow:"🟡",
-            bead_pink:"💗",
-            bead_gold:"🟡",
-            bead_silver:"⚪",
-            shell:"🐚",
-            flower:"🌸",
-            tree:"🌳",
-            crown:"👑",
-            teddy:"🧸",
-            paw:"🐾",
-            moon:"🌙",
-            heart:"❤️",
-            star:"⭐",
-            yinyang:"☯️"
-          })[el.type] || "✨";
-          node.appendChild(s);
-        }
+    function liteEmoji(type){
+      const t = String(type || "").trim();
+      return LITE_EMOJI[t] || "✨";
+    }
 
-        node.style.left = el.x + "px";
-        node.style.top = el.y + "px";
+    function ensureLiteElDefaults(el){
+      if(el.scale == null) el.scale = 1;
+      if(el.rot == null) el.rot = 0;
+    }
 
-        // scala/rotazione (persistenti)
-        if(el.scale == null) el.scale = 1;
-        if(el.rot == null) el.rot = 0;
-        node.style.transformOrigin = "50% 50%";
-        node.style.transform = `rotate(${el.rot}deg) scale(${el.scale})`;
-        node.style.touchAction = "none";
+    function applyLiteElTransform(node, el){
+      ensureLiteElDefaults(el);
+      node.style.transformOrigin = "50% 50%";
+      node.style.transform = `translate(-50%,-50%) rotate(${el.rot}deg) scale(${el.scale})`;
+    }
 
+    function attachLiteGesture(node, el){
+      // Multi-touch su singolo elemento:
+      // 1 dito = trascina
+      // 2 dita = pinch (zoom) + rotate
+      node.style.touchAction = "none";
 
-        node.addEventListener("pointerdown", (ev)=>{
+      node.addEventListener("pointerdown", (ev)=>{
         ev.preventDefault();
         if(!lite) return;
-        selectLite(id);
 
-        const cur = lite.elements.find(e=>e.id===id);
-        if(!cur) return;
-        if(cur.scale == null) cur.scale = 1;
-        if(cur.rot == null) cur.rot = 0;
+        selectLite(el.id);
 
-        // Gestione multi-touch con Pointer Events (drag 1 dito, pinch+rotate 2 dita)
-        const st = (node._dlGesture ||= {
+        const state = (node._liteGesture ||= {
           pointers: new Map(),
-          mode: "none",
+          mode: "drag",
           drag: { offX:0, offY:0 },
           tf: { startDist:0, startAng:0, startScale:1, startRot:0 }
         });
 
-        const stageRect = ()=>dlStage.getBoundingClientRect();
-        const pt = (e)=>{
+        const stageRect = ()=> dlStage.getBoundingClientRect();
+        const toStage = (e)=>{
           const r = stageRect();
           return { x: e.clientX - r.left, y: e.clientY - r.top };
         };
 
-        st.pointers.set(ev.pointerId, pt(ev));
+        const p = toStage(ev);
+        state.pointers.set(ev.pointerId, p);
         node.setPointerCapture(ev.pointerId);
 
-        const applyTransform = ()=>{
-          node.style.transformOrigin = "50% 50%";
-          node.style.transform = `rotate(${cur.rot}deg) scale(${cur.scale})`;
-        };
-        applyTransform();
+        // Se è il primo dito -> prepara drag
+        if(state.pointers.size === 1){
+          state.mode = "drag";
+          state.drag.offX = p.x - el.x;
+          state.drag.offY = p.y - el.y;
+        }
 
-        if(st.pointers.size === 1){
-          // DRAG
-          st.mode = "drag";
-          const p0 = st.pointers.get(ev.pointerId);
-          st.drag.offX = p0.x - cur.x;
-          st.drag.offY = p0.y - cur.y;
-        } else if(st.pointers.size === 2){
-          // PINCH + ROTATE
-          st.mode = "transform";
-          const pts = Array.from(st.pointers.values());
+        // Se arriva il secondo dito -> prepara transform
+        if(state.pointers.size === 2){
+          state.mode = "transform";
+          const pts = Array.from(state.pointers.values());
           const dx = pts[1].x - pts[0].x;
           const dy = pts[1].y - pts[0].y;
-          st.tf.startDist = Math.hypot(dx, dy) || 1;
-          st.tf.startAng = Math.atan2(dy, dx);
-          st.tf.startScale = cur.scale || 1;
-          st.tf.startRot = cur.rot || 0;
+          state.tf.startDist = Math.hypot(dx, dy);
+          state.tf.startAng  = Math.atan2(dy, dx);
+          ensureLiteElDefaults(el);
+          state.tf.startScale = el.scale;
+          state.tf.startRot   = el.rot;
         }
 
         const onMove = (e2)=>{
-          if(!st.pointers.has(e2.pointerId)) return;
-          st.pointers.set(e2.pointerId, pt(e2));
+          if(!lite) return;
+          if(!state.pointers.has(e2.pointerId)) return;
 
-          if(st.mode === "drag" && st.pointers.size === 1){
-            const r2 = stageRect();
-            const p = st.pointers.get(e2.pointerId);
-            cur.x = Math.max(10, Math.min(r2.width-10, p.x - st.drag.offX));
-            cur.y = Math.max(10, Math.min(r2.height-10, p.y - st.drag.offY));
-            node.style.left = cur.x + "px";
-            node.style.top = cur.y + "px";
-            // mantiene transform
-            applyTransform();
+          state.pointers.set(e2.pointerId, toStage(e2));
+
+          const r2 = stageRect();
+
+          if(state.mode === "transform" && state.pointers.size >= 2){
+            const pts = Array.from(state.pointers.values()).slice(0,2);
+            const dx = pts[1].x - pts[0].x;
+            const dy = pts[1].y - pts[0].y;
+            const dist = Math.max(1, Math.hypot(dx, dy));
+            const ang  = Math.atan2(dy, dx);
+
+            // scale
+            let nextScale = state.tf.startScale * (dist / Math.max(1, state.tf.startDist));
+            nextScale = Math.max(0.45, Math.min(3.0, nextScale));
+
+            // rotate
+            let nextRot = state.tf.startRot + ((ang - state.tf.startAng) * 180 / Math.PI);
+            // normalize (opzionale)
+            if(nextRot > 180) nextRot -= 360;
+            if(nextRot < -180) nextRot += 360;
+
+            el.scale = nextScale;
+            el.rot = nextRot;
+            applyLiteElTransform(node, el);
             return;
           }
 
-          if(st.pointers.size >= 2){
-            st.mode = "transform";
-            const pts = Array.from(st.pointers.values()).slice(0,2);
-            const dx = pts[1].x - pts[0].x;
-            const dy = pts[1].y - pts[0].y;
-            const dist = Math.hypot(dx, dy) || 1;
-            const ang = Math.atan2(dy, dx);
+          // drag 1 dito
+          const pt = state.pointers.get(e2.pointerId);
+          if(!pt) return;
 
-            const scale = (st.tf.startScale * (dist / st.tf.startDist));
-            cur.scale = Math.max(0.35, Math.min(3.0, scale));
-            cur.rot = st.tf.startRot + ((ang - st.tf.startAng) * 180 / Math.PI);
+          el.x = Math.max(10, Math.min(r2.width - 10, pt.x - state.drag.offX));
+          el.y = Math.max(10, Math.min(r2.height - 10, pt.y - state.drag.offY));
 
-            applyTransform();
-          }
+          node.style.left = el.x + "px";
+          node.style.top  = el.y + "px";
         };
 
         const onUp = (e3)=>{
-          st.pointers.delete(e3.pointerId);
-          if(st.pointers.size === 0){
-            st.mode = "none";
-          } else if(st.pointers.size === 1){
-            // passa a drag con il dito rimasto
-            st.mode = "drag";
-            const only = Array.from(st.pointers.values())[0];
-            st.drag.offX = only.x - cur.x;
-            st.drag.offY = only.y - cur.y;
+          if(state.pointers.has(e3.pointerId)) state.pointers.delete(e3.pointerId);
+
+          // Se resta un dito, torna a drag con quello rimasto
+          if(state.pointers.size === 1){
+            state.mode = "drag";
+            const pt = Array.from(state.pointers.values())[0];
+            state.drag.offX = pt.x - el.x;
+            state.drag.offY = pt.y - el.y;
+          }
+
+          // Se non resta nessun dito, stop
+          if(state.pointers.size === 0){
+            node.removeEventListener("pointermove", onMove);
+            node.removeEventListener("pointerup", onUp);
+            node.removeEventListener("pointercancel", onUp);
           }
         };
 
@@ -2390,13 +2365,56 @@ const WEAVE_TEMPLATES = {
         node.addEventListener("pointerup", onUp);
         node.addEventListener("pointercancel", onUp);
       });
+    }
 
+    function createLiteNode(el){
+      const node = document.createElement("div");
+      node.className = "dl-el";
+      node.dataset.id = el.id;
+
+      // contenuto
+      if(el.type === "ring_small"){
+        const c = document.createElement("div");
+        c.className = "dl-ring small";
+        node.appendChild(c);
+      }else if(el.type === "ring"){
+        const c = document.createElement("div");
+        c.className = "dl-ring";
+        node.appendChild(c);
+      }else{
+        const s = document.createElement("div");
+        s.className = "emoji";
+        s.textContent = liteEmoji(el.type);
+        node.appendChild(s);
+      }
+
+      // pos + transform
+      node.style.left = el.x + "px";
+      node.style.top  = el.y + "px";
+      applyLiteElTransform(node, el);
+
+      // gesture
+      attachLiteGesture(node, el);
+
+      return node;
+    }
+
+    function syncLiteStageFromData(){
+      // ricrea gli elementi nella stage da lite.elements (senza toccare base + web)
+      Array.from(dlStage.querySelectorAll(".dl-el")).forEach(n=>n.remove());
+      if(!lite) return;
+
+      for(const el of lite.elements){
+        if(!el || !el.id) continue;
+        ensureLiteElDefaults(el);
+        const node = createLiteNode(el);
         dlStage.appendChild(node);
       }
       selectLite(liteSelectedId);
     }
 
-    function applyLitePreset(id){
+
+function applyLitePreset(id){
       if(!lite) return;
       // reset sicuro
       lite.elements = [];
@@ -2545,6 +2563,8 @@ const WEAVE_TEMPLATES = {
 
     function liteAdd(type){
       if(!lite) return;
+
+      const cleanType = String(type || "").trim();
       const id = uid();
 
       // posizione iniziale al centro stage
@@ -2552,166 +2572,16 @@ const WEAVE_TEMPLATES = {
       const x = rect.width * 0.50;
       const y = rect.height * 0.70;
 
-      const el = { id, type, x, y };
+      const el = { id, type: cleanType, x, y, scale: 1, rot: 0 };
       lite.elements.push(el);
 
-      const node = document.createElement("div");
-      node.className = "dl-el";
-      node.dataset.id = id;
-
-      // contenuto in base al tipo
-      if(type === "ring_small"){
-        const c = document.createElement("div");
-        c.className = "dl-ring small";
-        node.appendChild(c);
-      }else if(type === "ring"){
-        const c = document.createElement("div");
-        c.className = "dl-ring";
-        node.appendChild(c);
-      }else{
-        const s = document.createElement("div");
-        s.className = "emoji";
-        s.textContent = ({
-          feather:"🪶",
-          crystal:"💎",
-          bead:"⚪",
-          bead_red:"🔴",
-          bead_black:"⚫",
-          bow:"🎀",
-          bell:"🔔",
-          snow:"❄️",
-          glitter:"✨",
-          orc:"👹",
-          symbolA:"🅰️",
-          lace:"🧵",
-          light:"💡",
-          moon:"🌙",
-          heart:"❤️",
-          star:"⭐",
-          yinyang:"☯️"
-        })[type] || "✨";
-        node.appendChild(s);
-      }
-
-      // posiziona
-      node.style.left = el.x + "px";
-      node.style.top = el.y + "px";
-
-        // scala/rotazione (persistenti)
-        if(el.scale == null) el.scale = 1;
-        if(el.rot == null) el.rot = 0;
-        node.style.transformOrigin = "50% 50%";
-        node.style.transform = `rotate(${el.rot}deg) scale(${el.scale})`;
-        node.style.touchAction = "none";
-
-
-      // selezione
-      node.addEventListener("pointerdown", (ev)=>{
-        ev.preventDefault();
-        if(!lite) return;
-        selectLite(id);
-
-        const cur = lite.elements.find(e=>e.id===id);
-        if(!cur) return;
-        if(cur.scale == null) cur.scale = 1;
-        if(cur.rot == null) cur.rot = 0;
-
-        // Gestione multi-touch con Pointer Events (drag 1 dito, pinch+rotate 2 dita)
-        const st = (node._dlGesture ||= {
-          pointers: new Map(),
-          mode: "none",
-          drag: { offX:0, offY:0 },
-          tf: { startDist:0, startAng:0, startScale:1, startRot:0 }
-        });
-
-        const stageRect = ()=>dlStage.getBoundingClientRect();
-        const pt = (e)=>{
-          const r = stageRect();
-          return { x: e.clientX - r.left, y: e.clientY - r.top };
-        };
-
-        st.pointers.set(ev.pointerId, pt(ev));
-        node.setPointerCapture(ev.pointerId);
-
-        const applyTransform = ()=>{
-          node.style.transformOrigin = "50% 50%";
-          node.style.transform = `rotate(${cur.rot}deg) scale(${cur.scale})`;
-        };
-        applyTransform();
-
-        if(st.pointers.size === 1){
-          // DRAG
-          st.mode = "drag";
-          const p0 = st.pointers.get(ev.pointerId);
-          st.drag.offX = p0.x - cur.x;
-          st.drag.offY = p0.y - cur.y;
-        } else if(st.pointers.size === 2){
-          // PINCH + ROTATE
-          st.mode = "transform";
-          const pts = Array.from(st.pointers.values());
-          const dx = pts[1].x - pts[0].x;
-          const dy = pts[1].y - pts[0].y;
-          st.tf.startDist = Math.hypot(dx, dy) || 1;
-          st.tf.startAng = Math.atan2(dy, dx);
-          st.tf.startScale = cur.scale || 1;
-          st.tf.startRot = cur.rot || 0;
-        }
-
-        const onMove = (e2)=>{
-          if(!st.pointers.has(e2.pointerId)) return;
-          st.pointers.set(e2.pointerId, pt(e2));
-
-          if(st.mode === "drag" && st.pointers.size === 1){
-            const r2 = stageRect();
-            const p = st.pointers.get(e2.pointerId);
-            cur.x = Math.max(10, Math.min(r2.width-10, p.x - st.drag.offX));
-            cur.y = Math.max(10, Math.min(r2.height-10, p.y - st.drag.offY));
-            node.style.left = cur.x + "px";
-            node.style.top = cur.y + "px";
-            // mantiene transform
-            applyTransform();
-            return;
-          }
-
-          if(st.pointers.size >= 2){
-            st.mode = "transform";
-            const pts = Array.from(st.pointers.values()).slice(0,2);
-            const dx = pts[1].x - pts[0].x;
-            const dy = pts[1].y - pts[0].y;
-            const dist = Math.hypot(dx, dy) || 1;
-            const ang = Math.atan2(dy, dx);
-
-            const scale = (st.tf.startScale * (dist / st.tf.startDist));
-            cur.scale = Math.max(0.35, Math.min(3.0, scale));
-            cur.rot = st.tf.startRot + ((ang - st.tf.startAng) * 180 / Math.PI);
-
-            applyTransform();
-          }
-        };
-
-        const onUp = (e3)=>{
-          st.pointers.delete(e3.pointerId);
-          if(st.pointers.size === 0){
-            st.mode = "none";
-          } else if(st.pointers.size === 1){
-            // passa a drag con il dito rimasto
-            st.mode = "drag";
-            const only = Array.from(st.pointers.values())[0];
-            st.drag.offX = only.x - cur.x;
-            st.drag.offY = only.y - cur.y;
-          }
-        };
-
-        node.addEventListener("pointermove", onMove);
-        node.addEventListener("pointerup", onUp);
-        node.addEventListener("pointercancel", onUp);
-      });
-
+      const node = createLiteNode(el);
       dlStage.appendChild(node);
       selectLite(id);
     }
 
-    function selectLite(id){
+
+function selectLite(id){
       liteSelectedId = id || null;
       Array.from(dlStage.querySelectorAll(".dl-el")).forEach(n=>{
         n.classList.toggle("selected", n.dataset.id === liteSelectedId);
@@ -3510,15 +3380,12 @@ const WEAVE_TEMPLATES = {
 </script>
   <script>
     if ("serviceWorker" in navigator) {
+      // DISATTIVATO: il Service Worker causava pagina bianca su alcuni dispositivi (cache vecchia/rotta).
+      // Se in futuro vuoi riattivarlo, rimetti la register().
       window.addEventListener("load", function () {
-        navigator.serviceWorker
-          .register("/acchiappasogni-di-erika/sw.js")
-          .then(function () {
-            console.log("Service Worker registrato correttamente");
-          })
-          .catch(function (error) {
-            console.log("Errore Service Worker:", error);
-          });
+        navigator.serviceWorker.getRegistrations()
+          .then(function (regs) { regs.forEach(function (r) { r.unregister(); }); })
+          .catch(function (e) { console.log("SW unregister error:", e); });
       });
     }
   </script>
