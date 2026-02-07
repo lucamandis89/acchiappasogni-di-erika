@@ -1,220 +1,211 @@
-// =========================
-//  APP - Acchiappasogni di Erika
-//  Repo structure (from your screenshots):
-//   - data/products.json
-//   - data/config.json
-//   - images in duplicated folders (various)
-//  Fix: robust JSON load + image fallback across multiple base paths
-// =========================
+// ===============================
+// PATHS + LOCAL OVERRIDE KEY
+// ===============================
+const CONFIG_URL = "data/config.json";
+const PRODUCTS_URL = "data/products.json";
+const ADMIN_LOCAL_KEY = "AE_PRODUCTS_OVERRIDE_V1";
 
+// ===============================
+// HELPERS
+// ===============================
+const $ = (s) => document.querySelector(s);
+
+function euro(v) {
+  const n = Number(v || 0);
+  return "€ " + n.toFixed(2).replace(".", ",");
+}
+
+function escapeHtml(str) {
+  return String(str || "").replace(/[&<>"']/g, (c) => {
+    return {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    }[c];
+  });
+}
+
+function safeNum(x, fallback = 0) {
+  const n = Number(x);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+// ===============================
+// CART STORAGE
+// ===============================
+function loadCart() {
+  try {
+    return JSON.parse(localStorage.getItem("cart") || "{}") || {};
+  } catch {
+    return {};
+  }
+}
+function saveCart(cart) {
+  localStorage.setItem("cart", JSON.stringify(cart));
+}
+function cartCount(cart) {
+  return Object.values(cart).reduce((sum, n) => sum + (Number(n) || 0), 0);
+}
+
+// ===============================
+// PRODUCTS FETCH (LOCAL OVERRIDE)
+// ===============================
+async function fetchProductsWithLocalOverride() {
+  // 1) Se esistono prodotti modificati in locale (da pannello admin), usa quelli
+  const local = localStorage.getItem(ADMIN_LOCAL_KEY);
+  if (local) {
+    try {
+      const arr = JSON.parse(local);
+      if (Array.isArray(arr) && arr.length > 0) return arr;
+    } catch (e) {
+      console.warn("Errore JSON localStorage prodotti:", e);
+    }
+  }
+
+  // 2) Altrimenti carica dal file GitHub
+  const res = await fetch(PRODUCTS_URL + "?t=" + Date.now(), { cache: "no-store" });
+  if (!res.ok) throw new Error("Errore caricamento products.json");
+  const data = await res.json();
+  if (!Array.isArray(data)) throw new Error("products.json non valido (non è un array)");
+  return data;
+}
+
+// ===============================
+// STATE
+// ===============================
 const state = {
-  config: {
-    brandName: "Acchiappasogni di Erika",
-    whatsappNumber: "393440260906",
-    shippingFeeCents: 0,
-    freeOverCents: 0,
-  },
+  config: null,
   products: [],
   categories: [],
   activeCategory: "Tutti",
-  query: "",
-  cart: {},
+  searchQuery: "",
+  cart: loadCart(),
 };
 
-const $ = (s) => document.querySelector(s);
-
-// ✅ Percorsi possibili immagini (in base alle tue cartelle duplicate)
-const IMAGE_BASES = [
-  "assets/assets/images/assets/images/acchiappasogni_hd/",
-  "assets/assets/images/acchiappasogni_hd/",
-  "assets/assets/images/assets/images/",
-  "assets/assets/images/",
-  "assets/images/assets/images/acchiappasogni_hd/",
-  "assets/images/acchiappasogni_hd/",
-  "assets/images/assets/images/",
-  "assets/images/",
-  "images/",
-  ""
-];
-
-function escapeHtml(s) {
-  return String(s ?? "").replace(/[&<>"]/g, (c) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-  }[c]));
+// ===============================
+// CONFIG NORMALIZATION (supporta più nomi campo)
+// ===============================
+function getWhatsappNumber() {
+  // supporto vari nomi possibili
+  const raw =
+    state.config?.whatsappNumber ||
+    state.config?.whatsapp ||
+    state.config?.phone ||
+    "";
+  return String(raw).replace(/\D/g, "");
 }
 
-function euroFromCents(cents) {
-  const n = (Number(cents) || 0) / 100;
-  return `€ ${n.toFixed(2).replace(".", ",")}`;
+function getShippingFee() {
+  // supporto: shippingFee, shippingFeeCents
+  if (state.config?.shippingFeeCents != null) return safeNum(state.config.shippingFeeCents, 0) / 100;
+  return safeNum(state.config?.shippingFee, 0);
 }
 
-function parseCart() {
-  try { return JSON.parse(localStorage.getItem("cart") || "{}") || {}; }
-  catch { return {}; }
-}
-function saveCart() { localStorage.setItem("cart", JSON.stringify(state.cart)); }
-function cartCount() { return Object.values(state.cart).reduce((a, b) => a + b, 0); }
-function updateCartBadge() { const el = $("#cartCount"); if (el) el.textContent = cartCount(); }
-
-function productPriceCents(p) {
-  return (Number(p.price_from) || 0) * 100;
+function getFreeOver() {
+  // supporto: freeShippingOver, freeOverCents
+  if (state.config?.freeOverCents != null) return safeNum(state.config.freeOverCents, 0) / 100;
+  return safeNum(state.config?.freeShippingOver, 0);
 }
 
-// ---- Image helpers ----
-function getFileName(anyPath) {
-  const p = String(anyPath || "").trim();
-  if (!p) return "";
-  if (/^https?:\/\//i.test(p)) return p; // absolute URL
-  return p.split("/").pop() || "";
-}
-
-function buildImageCandidates(anyPath) {
-  const file = getFileName(anyPath);
-  if (!file) return [];
-
-  // absolute URL
-  if (/^https?:\/\//i.test(file)) return [file];
-
-  // basic file sanity (allow even if extension missing, but better if present)
-  const candidates = [];
-
-  IMAGE_BASES.forEach(base => candidates.push(base + file));
-
-  // extension fallback jpg/jpeg
-  const lower = file.toLowerCase();
-  if (lower.endsWith(".jpg")) {
-    const alt = file.slice(0, -4) + ".jpeg";
-    IMAGE_BASES.forEach(base => candidates.push(base + alt));
-  } else if (lower.endsWith(".jpeg")) {
-    const alt = file.slice(0, -5) + ".jpg";
-    IMAGE_BASES.forEach(base => candidates.push(base + alt));
-  }
-
-  // remove duplicates
-  return [...new Set(candidates)];
-}
-
-// Called from inline onerror
-window.imgFallback = function (imgEl) {
-  const list = (imgEl.getAttribute("data-fallback") || "").split("||").filter(Boolean);
-  if (!list.length) {
-    // no more candidates -> hide image
-    imgEl.style.display = "none";
-    return;
-  }
-  const next = list.shift();
-  imgEl.setAttribute("data-fallback", list.join("||"));
-  imgEl.src = next;
-};
-
-// ---- Categories / filters ----
+// ===============================
+// UI: CATEGORIES / TABS
+// ===============================
 function buildCategories() {
   const set = new Set(["Tutti"]);
-  state.products.forEach((p) => set.add(p.category || "Da classificare"));
+  state.products.forEach((p) => {
+    const c = String(p.category || "").trim();
+    if (c) set.add(c);
+  });
   state.categories = Array.from(set);
-}
-
-function setActiveCategory(cat) {
-  state.activeCategory = cat;
-  renderTabs();
-  renderGrid();
-}
-
-function matches(p) {
-  const inCat = state.activeCategory === "Tutti" || p.category === state.activeCategory;
-  const text = ((p.title || "") + " " + (p.description || "")).toLowerCase();
-  const inQ = !state.query || text.includes(state.query);
-  return inCat && inQ;
 }
 
 function renderTabs() {
   const tabs = $("#tabs");
   if (!tabs) return;
   tabs.innerHTML = "";
+
   state.categories.forEach((cat) => {
-    const b = document.createElement("button");
-    b.className = "tab" + (cat === state.activeCategory ? " active" : "");
-    b.textContent = cat;
-    b.onclick = () => setActiveCategory(cat);
-    tabs.appendChild(b);
+    const btn = document.createElement("button");
+    btn.className = "tab" + (cat === state.activeCategory ? " active" : "");
+    btn.textContent = cat;
+    btn.onclick = () => {
+      state.activeCategory = cat;
+      renderTabs();
+      renderGrid();
+    };
+    tabs.appendChild(btn);
   });
 }
 
-// ---- Cart ----
-function addToCart(id, qty) {
-  state.cart[id] = (state.cart[id] || 0) + qty;
-  if (state.cart[id] <= 0) delete state.cart[id];
-  saveCart();
-  updateCartBadge();
+function matchProduct(p) {
+  const catOk =
+    state.activeCategory === "Tutti" ||
+    String(p.category || "").trim() === state.activeCategory;
+
+  const text = (String(p.title || "") + " " + String(p.description || "")).toLowerCase();
+  const qOk = !state.searchQuery || text.includes(state.searchQuery);
+
+  return catOk && qOk;
 }
 
-function setQty(id, qty) {
-  if (qty <= 0) delete state.cart[id];
-  else state.cart[id] = qty;
-  saveCart();
-  updateCartBadge();
-  renderCart();
-  renderTotals();
-}
-
-// ---- UI render ----
+// ===============================
+// UI: GRID
+// ===============================
 function renderGrid() {
   const grid = $("#grid");
   if (!grid) return;
-
-  const list = state.products.filter(matches);
   grid.innerHTML = "";
 
+  const list = state.products.filter(matchProduct);
+
   if (!list.length) {
-    grid.innerHTML = `<div style="color:var(--muted); padding:12px;">Nessun prodotto trovato.</div>`;
+    grid.innerHTML = `<div style="padding:12px; opacity:.7;">Nessun prodotto trovato.</div>`;
     return;
   }
+
+  // featured prima
+  list.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
 
   list.forEach((p) => {
     const card = document.createElement("article");
     card.className = "card";
 
-    const cands = buildImageCandidates(p.image);
+    const imgHtml = p.image
+      ? `<img class="card-img" src="${p.image}" alt="${escapeHtml(p.title)}" loading="lazy"
+           onerror="this.style.display='none';" />`
+      : "";
 
-    const imgHtml = cands.length
-      ? `<img loading="lazy"
-              src="${cands[0]}"
-              data-fallback="${escapeHtml(cands.slice(1).join("||"))}"
-              alt="${escapeHtml(p.title)}"
-              onerror="imgFallback(this);" />`
-      : ``;
+    const price = (p.price_from == null) ? 5 : p.price_from;
 
     card.innerHTML = `
       ${imgHtml}
-      <div class="content">
-        <div class="title">${escapeHtml(p.title)}</div>
-        <div class="meta">${escapeHtml(p.category || "")}</div>
-        <div class="price">${euroFromCents(productPriceCents(p))}</div>
-        <div class="row">
-          <div class="qty">
-            <button data-act="minus">-</button>
-            <span data-qty>1</span>
-            <button data-act="plus">+</button>
-          </div>
-          <button class="btn primary" data-buy>Aggiungi</button>
+      <div class="card-body">
+        <div class="card-title">${escapeHtml(p.title)}</div>
+        <div class="card-cat">${escapeHtml(p.category || "")}</div>
+        <div class="card-price">${euro(price)}</div>
+
+        <div class="card-actions">
+          <button class="btn small" data-minus>-</button>
+          <span class="qty" data-qty>1</span>
+          <button class="btn small" data-plus>+</button>
+          <button class="btn primary" data-add>Aggiungi</button>
         </div>
       </div>
     `;
 
     let qty = 1;
     const qtyEl = card.querySelector("[data-qty]");
-    card.querySelector('[data-act="minus"]').onclick = () => {
+    card.querySelector("[data-minus]").onclick = () => {
       qty = Math.max(1, qty - 1);
       qtyEl.textContent = qty;
     };
-    card.querySelector('[data-act="plus"]').onclick = () => {
-      qty = qty + 1;
+    card.querySelector("[data-plus]").onclick = () => {
+      qty++;
       qtyEl.textContent = qty;
     };
-    card.querySelector("[data-buy]").onclick = () => {
+    card.querySelector("[data-add]").onclick = () => {
       addToCart(p.id, qty);
       openCart();
     };
@@ -223,15 +214,100 @@ function renderGrid() {
   });
 }
 
+// ===============================
+// CART
+// ===============================
+function updateCartBadge() {
+  const badge = $("#cartCount");
+  if (!badge) return;
+  badge.textContent = cartCount(state.cart);
+}
+
+function addToCart(id, qty) {
+  state.cart[id] = (state.cart[id] || 0) + qty;
+  if (state.cart[id] <= 0) delete state.cart[id];
+  saveCart(state.cart);
+  updateCartBadge();
+}
+
+function setCartQty(id, qty) {
+  if (qty <= 0) delete state.cart[id];
+  else state.cart[id] = qty;
+
+  saveCart(state.cart);
+  updateCartBadge();
+  renderCart();
+  renderTotals();
+}
+
+function computeSubtotal() {
+  let sum = 0;
+  for (const [id, qty] of Object.entries(state.cart)) {
+    const p = state.products.find((x) => x.id === id);
+    if (!p) continue;
+    const price = (p.price_from == null) ? 5 : safeNum(p.price_from, 5);
+    sum += price * safeNum(qty, 0);
+  }
+  return sum;
+}
+
+function currentDelivery() {
+  return document.querySelector('input[name="delivery"]:checked')?.value || "shipping";
+}
+
+function computeShipping(subtotal) {
+  if (currentDelivery() !== "shipping") return 0;
+
+  const fee = getShippingFee();
+  const freeOver = getFreeOver();
+  if (freeOver > 0 && subtotal >= freeOver) return 0;
+
+  return fee;
+}
+
+function renderShippingHint(sub, ship) {
+  const hint = $("#shippingHint");
+  if (!hint) return;
+
+  if (currentDelivery() !== "shipping") {
+    hint.textContent = "";
+    return;
+  }
+
+  const freeOver = getFreeOver();
+  if (freeOver > 0) {
+    if (sub >= freeOver) {
+      hint.textContent = "Spedizione gratis applicata.";
+    } else {
+      const diff = freeOver - sub;
+      hint.textContent = `Mancano ${euro(diff)} per la spedizione gratis.`;
+    }
+  } else {
+    hint.textContent = ship > 0 ? `Spedizione: ${euro(ship)}` : "";
+  }
+}
+
+function renderTotals() {
+  const sub = computeSubtotal();
+  const ship = computeShipping(sub);
+  const tot = sub + ship;
+
+  $("#subtotal").textContent = euro(sub);
+  $("#shipping").textContent = euro(ship);
+  $("#total").textContent = euro(tot);
+
+  renderShippingHint(sub, ship);
+}
+
 function renderCart() {
   const wrap = $("#cartItems");
   if (!wrap) return;
 
   wrap.innerHTML = "";
-  const ids = Object.keys(state.cart);
 
+  const ids = Object.keys(state.cart);
   if (!ids.length) {
-    wrap.innerHTML = `<div style="color:var(--muted); padding:10px;">Carrello vuoto.</div>`;
+    wrap.innerHTML = `<div style="padding:10px; opacity:.7;">Carrello vuoto.</div>`;
     return;
   }
 
@@ -239,264 +315,206 @@ function renderCart() {
     const p = state.products.find((x) => x.id === id);
     if (!p) return;
 
-    const qty = state.cart[id] || 0;
+    const qty = state.cart[id];
+    const price = (p.price_from == null) ? 5 : safeNum(p.price_from, 5);
 
-    const cands = buildImageCandidates(p.image);
-    const imgHtml = cands.length
-      ? `<img src="${cands[0]}"
-              data-fallback="${escapeHtml(cands.slice(1).join("||"))}"
-              alt="${escapeHtml(p.title)}"
-              onerror="imgFallback(this);" />`
-      : ``;
-
-    const div = document.createElement("div");
-    div.className = "cart-item";
-    div.innerHTML = `
-      ${imgHtml}
-      <div>
+    const row = document.createElement("div");
+    row.className = "cart-item";
+    row.innerHTML = `
+      ${p.image ? `<img src="${p.image}" onerror="this.style.display='none';" />` : ""}
+      <div class="ci-info">
         <div class="ci-title">${escapeHtml(p.title)}</div>
         <div class="ci-meta">${escapeHtml(p.category || "")}</div>
-        <div class="ci-price">${euroFromCents(productPriceCents(p))}</div>
+        <div class="ci-price">${euro(price)}</div>
       </div>
-      <div class="qty" style="justify-content:flex-end; align-self:center;">
-        <button data-minus>-</button>
+      <div class="ci-qty">
+        <button class="btn small" data-minus>-</button>
         <span>${qty}</span>
-        <button data-plus>+</button>
+        <button class="btn small" data-plus>+</button>
       </div>
     `;
-    div.querySelector("[data-minus]").onclick = () => setQty(id, qty - 1);
-    div.querySelector("[data-plus]").onclick = () => setQty(id, qty + 1);
-    wrap.appendChild(div);
+
+    row.querySelector("[data-minus]").onclick = () => setCartQty(id, qty - 1);
+    row.querySelector("[data-plus]").onclick = () => setCartQty(id, qty + 1);
+
+    wrap.appendChild(row);
   });
 }
 
-function computeSubtotalCents() {
-  let sum = 0;
-  for (const [id, qty] of Object.entries(state.cart)) {
-    const p = state.products.find((x) => x.id === id);
-    if (!p) continue;
-    sum += productPriceCents(p) * qty;
-  }
-  return sum;
-}
-
-function isShipping() {
-  return document.querySelector('input[name="delivery"]:checked')?.value === "shipping";
-}
-
-function computeShippingCents(sub) {
-  if (!isShipping()) return 0;
-  const fee = Number(state.config.shippingFeeCents || 0);
-  const freeOver = Number(state.config.freeOverCents || 0);
-  if (freeOver > 0 && sub >= freeOver) return 0;
-  return fee;
-}
-
-function renderTotals() {
-  const sub = computeSubtotalCents();
-  const ship = computeShippingCents(sub);
-  const tot = sub + ship;
-
-  $("#subtotal").textContent = euroFromCents(sub);
-  $("#shipping").textContent = euroFromCents(ship);
-  $("#total").textContent = euroFromCents(tot);
-
-  const hint = $("#shippingHint");
-  const freeOver = Number(state.config.freeOverCents || 0);
-
-  if (isShipping() && freeOver > 0 && sub < freeOver) {
-    hint.textContent = `Spedizione gratis sopra ${euroFromCents(freeOver)}. Mancano ${euroFromCents(freeOver - sub)}.`;
-  } else if (isShipping() && freeOver > 0) {
-    hint.textContent = `Spedizione gratis attiva ✅`;
-  } else {
-    hint.textContent = "";
-  }
-
-  const sf = $("#shippingFields");
-  if (sf) sf.style.display = isShipping() ? "block" : "none";
-}
-
+// ===============================
+// CART OPEN/CLOSE
+// ===============================
 function openCart() {
-  $("#drawer").classList.remove("hidden");
-  $("#drawerBackdrop").classList.remove("hidden");
+  $("#drawer")?.classList.remove("hidden");
+  $("#drawerBackdrop")?.classList.remove("hidden");
   renderCart();
   renderTotals();
 }
 function closeCart() {
-  $("#drawer").classList.add("hidden");
-  $("#drawerBackdrop").classList.add("hidden");
+  $("#drawer")?.classList.add("hidden");
+  $("#drawerBackdrop")?.classList.add("hidden");
 }
 
-// ---- WhatsApp order ----
-function buildOrderId() {
-  const s = Date.now().toString();
-  return "AE-" + s.slice(-6);
+// ===============================
+// DELIVERY UI (mostra/nasconde campi spedizione)
+// ===============================
+function updateDeliveryFields() {
+  const wrap = $("#shippingFields");
+  if (!wrap) return;
+  wrap.style.display = currentDelivery() === "shipping" ? "" : "none";
+  renderTotals();
 }
 
+// ===============================
+// WHATSAPP ORDER (ADATTATO AL TUO HTML)
+// ===============================
 function buildOrderMessage() {
-  const name = ($("#name").value || "").trim() || "Cliente";
-  const notes = ($("#notes").value || "").trim();
+  const name = $("#name")?.value.trim() || "";
+  const street = $("#street")?.value.trim() || "";
+  const cap = $("#cap")?.value.trim() || "";
+  const city = $("#city")?.value.trim() || "";
+  const notes = $("#notes")?.value.trim() || "";
 
-  let delivery = isShipping() ? "Spedizione" : "Ritiro / consegna a mano";
-  if (isShipping()) {
-    const street = ($("#street").value || "").trim();
-    const cap = ($("#cap").value || "").trim();
-    const city = ($("#city").value || "").trim();
-    if (!street || !cap || !city) {
-      alert("Per la spedizione inserisci Via, CAP e Città.");
-      return null;
-    }
-    delivery = `Spedizione: ${street}, ${cap} ${city}`;
+  if (!name) {
+    alert("Inserisci Nome e cognome.");
+    return null;
   }
 
-  const orderId = buildOrderId();
-  const lines = [];
-  lines.push(`🧾 ID ORDINE: #${orderId}`);
-  lines.push("");
-  lines.push(`👤 Nome: ${name}`);
-  lines.push(`📦 Consegna: ${delivery}`);
-  lines.push("");
-  lines.push("🛒 Articoli:");
+  const delivery = currentDelivery();
 
+  let text = `Ciao Erika! ✨\nVorrei ordinare:\n\n`;
+
+  let i = 1;
   for (const [id, qty] of Object.entries(state.cart)) {
     const p = state.products.find((x) => x.id === id);
     if (!p) continue;
-    lines.push(`- ${p.title} x${qty} (${euroFromCents(productPriceCents(p))})`);
+
+    const price = (p.price_from == null) ? 5 : safeNum(p.price_from, 5);
+    text += `${i}) ${p.title} x${qty} (${euro(price)})\n`;
+    i++;
   }
 
-  const sub = computeSubtotalCents();
-  const ship = computeShippingCents(sub);
+  const sub = computeSubtotal();
+  const ship = computeShipping(sub);
   const tot = sub + ship;
 
-  lines.push("");
-  lines.push(`Subtotale: ${euroFromCents(sub)}`);
-  lines.push(`Spedizione: ${euroFromCents(ship)}`);
-  lines.push(`Totale: ${euroFromCents(tot)}`);
+  text += `\nConsegna: ${delivery === "shipping" ? "Spedizione" : "Ritiro / consegna a mano"}\n`;
+  text += `Subtotale: ${euro(sub)}\n`;
+  text += `Spedizione: ${euro(ship)}\n`;
+  text += `Totale: ${euro(tot)}\n\n`;
 
-  if (notes) {
-    lines.push("");
-    lines.push(`📝 Note: ${notes}`);
+  text += `Dati:\n`;
+  text += `Nome: ${name}\n`;
+
+  if (delivery === "shipping") {
+    if (!street || !cap || !city) {
+      alert("Per la spedizione compila: Via/indirizzo, CAP e Città.");
+      return null;
+    }
+    text += `Indirizzo: ${street}\n`;
+    text += `CAP: ${cap}\n`;
+    text += `Città: ${city}\n`;
+  } else {
+    text += `Ritiro / consegna a mano\n`;
   }
 
-  return { orderId, text: lines.join("\n") };
+  text += `Note: ${notes || "-"}\n`;
+
+  return text;
 }
 
-function openWhatsApp(text) {
-  const encoded = encodeURIComponent(text);
-  const num = String(state.config.whatsappNumber || "393440260906").replace(/\D/g, "");
-  window.open(`https://wa.me/${num}?text=${encoded}`, "_blank");
+function sendWhatsApp(text) {
+  const num = getWhatsappNumber();
+  if (!num) {
+    alert("Numero WhatsApp non configurato in data/config.json");
+    return;
+  }
+  const url = `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
+  window.open(url, "_blank");
 }
 
-// ---- Load JSON ----
-async function safeFetchJson(path) {
-  const r = await fetch(path, { cache: "no-store" });
-  if (!r.ok) throw new Error(`${path} -> HTTP ${r.status}`);
-  return await r.json();
-}
-
-function showFatal(msg) {
-  const grid = $("#grid");
-  if (!grid) return;
-  grid.innerHTML = `
-    <div style="padding:12px; color:var(--muted);">
-      <b>Errore:</b> ${escapeHtml(msg)}
-      <div style="opacity:.8; font-size:12px; margin-top:6px;">
-        Controlla che esista: <b>data/products.json</b>
-      </div>
-    </div>
-  `;
-}
-
+// ===============================
+// INIT
+// ===============================
 async function init() {
-  // UI listeners
-  state.cart = parseCart();
-  updateCartBadge();
-
-  const search = $("#search");
-  if (search) {
-    search.addEventListener("input", (e) => {
-      state.query = (e.target.value || "").trim().toLowerCase();
-      renderGrid();
-    });
-  }
-
-  const btnCart = $("#btnCart");
-  if (btnCart) btnCart.onclick = openCart;
-
-  const btnCloseCart = $("#btnCloseCart");
-  if (btnCloseCart) btnCloseCart.onclick = closeCart;
-
-  const drawerBackdrop = $("#drawerBackdrop");
-  if (drawerBackdrop) drawerBackdrop.onclick = closeCart;
-
-  document.querySelectorAll('input[name="delivery"]').forEach((r) =>
-    r.addEventListener("change", () => renderTotals())
-  );
-
-  const btnClear = $("#btnClear");
-  if (btnClear) {
-    btnClear.onclick = () => {
-      if (!confirm("Vuoi svuotare il carrello?")) return;
-      state.cart = {};
-      saveCart();
-      updateCartBadge();
-      renderCart();
-      renderTotals();
-    };
-  }
-
-  const btnSend = $("#btnSend");
-  if (btnSend) {
-    btnSend.onclick = () => {
-      if (!Object.keys(state.cart).length) {
-        alert("Carrello vuoto.");
-        return;
-      }
-      const o = buildOrderMessage();
-      if (!o) return;
-      localStorage.setItem("lastOrderId", o.orderId);
-      openWhatsApp(o.text);
-    };
-  }
-
-  const btnCustom = $("#btnCustom");
-  if (btnCustom) {
-    btnCustom.onclick = () => {
-      const msg =
-        "Ciao Erika! Vorrei un ACCHIAPPASOGNI PERSONALIZZATO ✨\n\n" +
-        "1) Evento/occasione (es. regalo, battesimo, matrimonio):\n" +
-        "2) Colori preferiti:\n" +
-        "3) Nome o scritta (se vuoi):\n" +
-        "4) Misura (piccolo/medio/grande):\n" +
-        "5) Budget indicativo:\n" +
-        "6) Data entro cui ti serve:\n\n" +
-        "Grazie! 😊";
-      openWhatsApp(msg);
-    };
-  }
-
-  // Load data
   try {
-    const products = await safeFetchJson("data/products.json");
-    if (!Array.isArray(products)) throw new Error("products.json non è un array");
-    state.products = products;
+    const configRes = await fetch(CONFIG_URL + "?t=" + Date.now(), { cache: "no-store" });
+    state.config = await configRes.json();
 
-    // config optional (if fails, app still works)
-    try {
-      const cfg = await safeFetchJson("data/config.json");
-      state.config = { ...state.config, ...(cfg || {}) };
-    } catch {}
+    state.products = await fetchProductsWithLocalOverride();
 
-    const brand = $("#brandName");
-    if (brand) brand.textContent = state.config.brandName || "Acchiappasogni di Erika";
+    // default: se price_from non esiste, metti 5
+    state.products = state.products.map((p) => ({
+      ...p,
+      price_from: (p.price_from === undefined || p.price_from === null) ? 5 : p.price_from,
+    }));
+
+    if ($("#brandName")) $("#brandName").textContent = state.config.brandName || "Acchiappasogni di Erika";
 
     buildCategories();
     renderTabs();
     renderGrid();
-  } catch (e) {
-    console.error(e);
-    showFatal(e.message || String(e));
+
+    // search
+    $("#search")?.addEventListener("input", (e) => {
+      state.searchQuery = String(e.target.value || "").trim().toLowerCase();
+      renderGrid();
+    });
+
+    // cart open/close
+    $("#btnCart")?.addEventListener("click", openCart);
+    $("#btnCloseCart")?.addEventListener("click", closeCart);
+    $("#drawerBackdrop")?.addEventListener("click", closeCart);
+
+    // delivery toggle
+    document.querySelectorAll('input[name="delivery"]').forEach((r) => {
+      r.addEventListener("change", updateDeliveryFields);
+    });
+    updateDeliveryFields();
+
+    // clear cart
+    $("#btnClear")?.addEventListener("click", () => {
+      if (!confirm("Vuoi svuotare il carrello?")) return;
+      state.cart = {};
+      saveCart(state.cart);
+      updateCartBadge();
+      renderCart();
+      renderTotals();
+    });
+
+    // send order
+    $("#btnSend")?.addEventListener("click", () => {
+      if (!Object.keys(state.cart).length) {
+        alert("Carrello vuoto.");
+        return;
+      }
+      const msg = buildOrderMessage();
+      if (!msg) return;
+      sendWhatsApp(msg);
+    });
+
+    // custom
+    $("#btnCustom")?.addEventListener("click", () => {
+      const msg =
+        "Ciao Erika! ✨\n" +
+        "Vorrei un ACCHIAPPASOGNI PERSONALIZZATO.\n\n" +
+        "1) Evento/occasione:\n" +
+        "2) Colori preferiti:\n" +
+        "3) Nome o scritta:\n" +
+        "4) Misura (piccolo/medio/grande):\n" +
+        "5) Budget indicativo:\n" +
+        "6) Data entro cui ti serve:\n\n" +
+        "Grazie 😊";
+      sendWhatsApp(msg);
+    });
+
+    updateCartBadge();
+    renderTotals();
+  } catch (err) {
+    console.error(err);
+    alert("Errore caricamento dati. Controlla console.");
   }
 }
 
 init();
+```1
