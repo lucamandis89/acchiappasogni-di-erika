@@ -1,22 +1,20 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Acchiappasogni di Erika</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>Acchiappasogni di Erika — Catalogo</title>
   <style>
     :root{
       --bg:#0b1027;
+      --panel:#0f1636;
       --card:#111a3f;
-      --card2:#0f1636;
       --line:rgba(255,255,255,.10);
       --text:#eef2ff;
       --muted:#b9c3ff;
       --accent:#7c5cff;
       --accent2:#2dd4bf;
-      --danger:#ff4d6d;
-      --ok:#00e5a8;
-      --shadow: 0 12px 40px rgba(0,0,0,.35);
+      --shadow:0 12px 40px rgba(0,0,0,.35);
       --r:16px;
       --r2:22px;
     }
@@ -33,229 +31,66 @@
       text-rendering:optimizeLegibility;
     }
     header{
-      position:sticky;
-      top:0;
-      z-index:10;
-      padding:14px 14px 12px;
+      position:sticky; top:0; z-index:20;
+      padding:12px 12px 10px;
       border-bottom:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(11,16,39,.90), rgba(11,16,39,.55));
+      background: linear-gradient(180deg, rgba(11,16,39,.92), rgba(11,16,39,.60));
       backdrop-filter: blur(12px);
     }
-    .hrow{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
+    .top{
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
     }
-    h1{
-      margin:0;
-      font-size:16px;
-      font-weight:900;
-      letter-spacing:.2px;
+    .brand{
+      display:flex; flex-direction:column; gap:4px; min-width:0;
     }
-    .sub{
-      margin-top:4px;
-      font-size:12px;
-      color:var(--muted);
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
+    .brand h1{
+      margin:0; font-size:14px; font-weight:900; letter-spacing:.2px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
-    .pill{
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      color:var(--muted);
-      font-size:12px;
-      font-weight:700;
+    .brand .sub{
+      font-size:12px; color:var(--muted); display:flex; gap:10px; flex-wrap:wrap; align-items:center;
     }
     .btn{
-      border:none;
-      cursor:pointer;
-      padding:10px 12px;
-      border-radius:12px;
-      font-weight:900;
-      font-size:13px;
-      color:var(--text);
+      border:none; cursor:pointer;
+      padding:10px 12px; border-radius:12px;
+      font-weight:900; font-size:13px; color:var(--text);
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.06);
       user-select:none;
       transition: transform .06s ease, background .15s ease;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
+      display:inline-flex; align-items:center; gap:8px;
     }
     .btn:active{transform: translateY(1px)}
     .btn.primary{
       background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(45,212,191,.55));
       border-color: rgba(255,255,255,.16);
     }
-    .btn.ok{
-      background: rgba(0,229,168,.12);
-      border-color: rgba(0,229,168,.35);
-      color:#c9fff2;
-    }
-    .btn.danger{
-      background: rgba(255,77,109,.12);
-      border-color: rgba(255,77,109,.35);
-      color:#ffd6de;
-    }
-    .btn.small{padding:8px 10px; font-size:12px; border-radius:10px;}
-    main{
-      padding:14px;
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap:14px;
-      align-items:start;
-    }
-    @media (max-width: 980px){
-      main{grid-template-columns: 1fr;}
-    }
-    .card{
-      border:1px solid var(--line);
-      border-radius: var(--r2);
-      background: linear-gradient(180deg, rgba(17,26,63,.55), rgba(15,22,54,.55));
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .head{
-      padding:14px 14px 10px;
-      border-bottom:1px solid var(--line);
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-    .head h2{margin:0; font-size:18px; letter-spacing:.2px}
-    .hint{
-      margin:0;
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.35;
-    }
-    .body{padding:12px 14px 14px}
-    .toolbar{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
-    }
-    .toolGroup{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      padding:8px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-    }
-    .status{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      font-size:12px;
-      color:var(--muted);
-    }
-    .stage{
-      width:100%;
-      aspect-ratio: 1 / 1;
-      position:relative;
-      border-radius:22px;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-      background:
-        radial-gradient(600px 600px at 50% 30%, rgba(255,255,255,.06), transparent 60%),
-        radial-gradient(1000px 800px at 30% 90%, rgba(45,212,191,.10), transparent 55%),
-        rgba(255,255,255,.03);
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,.2);
-    }
-    .stage .bgPhoto{
-      position:absolute;
-      inset:0;
-      background-size:cover;
-      background-position:center;
-      opacity:.25;
-      filter: saturate(1.05) contrast(1.05);
-      pointer-events:none;
-    }
-    .stage svg{
-      width:100%;
-      height:100%;
-      display:block;
-      touch-action:none;
-    }
-    .tabs{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      padding:10px 10px 0;
-    }
-    .tab{
-      padding:10px 12px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      color:var(--muted);
-      font-weight:900;
-      font-size:12px;
-      cursor:pointer;
-      user-select:none;
-    }
-    .tab.active{
-      background: linear-gradient(135deg, rgba(124,92,255,.38), rgba(45,212,191,.18));
+    .btn.ghost{background:transparent}
+    .badge{
+      display:inline-grid; place-items:center;
+      min-width:22px; height:22px; padding:0 6px;
+      border-radius:999px; font-weight:1000;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.28);
       color:var(--text);
-      border-color: rgba(255,255,255,.18);
-    }
-    .section{display:none; gap:12px;}
-    .section.active{display:grid;}
-    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
-    .grid2{display:grid; grid-template-columns: 1fr 1fr; gap:10px;}
-    @media (max-width: 520px){
-      .grid2{grid-template-columns:1fr;}
-    }
-    label{
       font-size:12px;
-      color:var(--muted);
-      font-weight:900;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
     }
-    input[type="text"], input[type="number"], select{
-      width:100%;
-      padding:10px 12px;
-      border-radius:12px;
+
+    main{padding:12px; display:grid; gap:12px}
+    .searchRow{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    }
+    input[type="search"]{
+      flex:1 1 260px;
+      padding:12px 12px;
+      border-radius:14px;
       border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.20);
+      background: rgba(0,0,0,.18);
       color:var(--text);
-      outline:none;
       font-weight:800;
-      font-size:13px;
+      outline:none;
     }
-    input[type="color"]{
-      width:100%;
-      height:42px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.20);
-      padding:0;
-    }
-    .note{
-      padding:10px 12px;
-      border-radius:16px;
-      border:1px dashed rgba(255,255,255,.18);
-      color:var(--muted);
-      background: rgba(255,255,255,.03);
-      font-size:12px;
-      line-height:1.35;
-    }
-    .chipRow{display:flex; flex-wrap:wrap; gap:8px;}
+    .chips{display:flex; gap:8px; flex-wrap:wrap;}
     .chip{
       padding:9px 10px;
       border-radius:999px;
@@ -271,2061 +106,312 @@
       background: rgba(124,92,255,.22);
       border-color: rgba(124,92,255,.45);
     }
-    .list{
-      list-style:none;
-      margin:0;
-      padding:0;
+
+    .grid{
       display:grid;
-      gap:8px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:12px;
     }
-    .item{
+    @media (min-width: 860px){
+      .grid{grid-template-columns: repeat(3, minmax(0, 1fr));}
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius: var(--r2);
+      background: linear-gradient(180deg, rgba(17,26,63,.55), rgba(15,22,54,.55));
+      box-shadow: var(--shadow);
+      overflow:hidden;
       display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:10px 10px;
+      flex-direction:column;
     }
-    .item .left{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      min-width:0;
-    }
-    .badge{
-      width:34px;
-      height:34px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.15);
+    .img{
+      aspect-ratio: 4 / 3;
+      background: rgba(255,255,255,.06);
       display:grid;
       place-items:center;
-      font-weight:1000;
-      color:var(--muted);
-      flex:0 0 auto;
-    }
-    .item .title{
-      margin:0;
-      font-weight:1000;
-      font-size:13px;
-      white-space:nowrap;
       overflow:hidden;
-      text-overflow:ellipsis;
     }
-    .item .meta{
-      margin:2px 0 0;
-      font-size:11px;
-      color:var(--muted);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
+    .img img{
+      width:100%; height:100%; object-fit:cover; display:block;
     }
-    .gallery{
-      display:grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap:10px;
+    .img .ph{
+      color:rgba(255,255,255,.55);
+      font-weight:900;
+      font-size:12px;
+      padding:16px;
+      text-align:center;
     }
-    .gimg{
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      overflow:hidden;
-      background: rgba(255,255,255,.03);
-      aspect-ratio: 3 / 4;
-      position:relative;
+    .cbody{padding:10px 10px 12px; display:grid; gap:10px;}
+    .title{margin:0; font-weight:1000; font-size:13px; line-height:1.2;}
+    .meta{margin:0; color:var(--muted); font-size:11px;}
+    .price{font-weight:1000; font-size:13px;}
+    .qtyRow{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
-    .gimg img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-      opacity:.95;
+    .qty{
+      display:flex; align-items:center; gap:8px;
     }
-    .gimg .x{
-      position:absolute;
-      top:8px;
-      right:8px;
-      border-radius:12px;
-      padding:8px 10px;
-      background: rgba(0,0,0,.45);
-      border:1px solid rgba(255,255,255,.15);
-      color:#fff;
+    .qbtn{
+      width:34px; height:34px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
       font-weight:1000;
       cursor:pointer;
     }
-    .selOutline{
-      fill:none;
-      stroke: rgba(124,92,255,.95);
-      stroke-width:2.2;
-      stroke-dasharray:5 4;
-      pointer-events:none;
-      filter: drop-shadow(0 2px 6px rgba(124,92,255,.20));
-    }
-    @keyframes blink { 0%, 55%{opacity:1} 56%, 75%{opacity:.25} 76%, 100%{opacity:1} }
-    .modalBack{
-      position:fixed;
-      inset:0;
-      background: rgba(0,0,0,.55);
-      display:none;
-      place-items:center;
-      padding:16px;
-      z-index:50;
-    }
-    .modalBack.on{display:grid;}
-    .modal{
-      width:min(560px, 100%);
-      border-radius:22px;
-      border:1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(17,26,63,.92), rgba(15,22,54,.92));
-      box-shadow: 0 20px 60px rgba(0,0,0,.55);
-      overflow:hidden;
-    }
-    .mhead{
-      padding:14px 14px 10px;
-      border-bottom:1px solid rgba(255,255,255,.12);
+    .qnum{min-width:18px; text-align:center; font-weight:1000;}
+    .footerBar{
+      position:sticky; bottom:0; z-index:30;
+      padding:10px 12px;
+      border-top:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(15,22,54,.0), rgba(15,22,54,.86));
+      backdrop-filter: blur(10px);
       display:flex;
+      gap:10px;
       align-items:center;
       justify-content:space-between;
-      gap:10px;
-    }
-    .mhead h3{margin:0; font-size:16px}
-    .mbody{padding:14px}
-    .mfoot{
-      padding:12px 14px 14px;
-      border-top:1px solid rgba(255,255,255,.12);
-      display:flex;
-      justify-content:flex-end;
-      gap:10px;
       flex-wrap:wrap;
     }
+    .small{font-size:12px; color:var(--muted); font-weight:900;}
+    .sum{font-weight:1000}
   </style>
 </head>
 
 <body>
 <header>
-  <div class="hrow">
-    <div>
+  <div class="top">
+    <div class="brand">
       <h1>Acchiappasogni di Erika</h1>
       <div class="sub">
-        <span>Configura • Salva • Invia su WhatsApp</span>
-        <span class="pill" id="modePill">🟢 Modalità: <b style="color:var(--text)">Facile</b></span>
+        <span>Catalogo • Ordina su WhatsApp</span>
       </div>
     </div>
-    <div class="row">
-      <button class="btn" id="btnCreaDaFoto">📷 Crea da foto</button>
-      <button class="btn" id="btnSalva">📌 Salva progetto</button>
-      <button class="btn primary" id="btnInvia">💬 Invia su WhatsApp</button>
+
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+      <button class="btn primary" id="goCustomizer">✨ CREA IL TUO ACCHIAPPASOGNI</button>
+      <button class="btn ghost" id="goCart">🛒 Carrello <span class="badge" id="cartBadge">0</span></button>
     </div>
+  </div>
+
+  <div class="searchRow" style="margin-top:10px">
+    <input id="search" type="search" placeholder="Cerca (nome o descrizione)…" />
+    <div class="chips" id="chips"></div>
   </div>
 </header>
 
 <main>
-  <!-- LEFT -->
-  <section class="card">
-    <div class="head">
-      <h2>Anteprima</h2>
-      <p class="hint">Tocca un elemento per selezionarlo • Trascina per spostare • Usa i pulsanti per allineare / portare avanti / eliminare.</p>
-
-      <div class="toolbar">
-        <div class="toolGroup">
-          <button class="btn small" id="btnUndo">↩️ Annulla</button>
-          <button class="btn small" id="btnRedo">↪️ Ripeti</button>
-          <button class="btn small" id="btnCenter">🎯 Allinea al centro</button>
-          <button class="btn small" id="btnDistribute">📏 Distribuisci</button>
-          <button class="btn small" id="btnMirror">🪞 Specchia S/D</button>
-          <button class="btn small" id="btnLock">🔒 Blocca posizione</button>
-        </div>
-        <div class="toolGroup">
-          <button class="btn small" id="btnBack">⬇️ Indietro</button>
-          <button class="btn small" id="btnFront">⬆️ Avanti</button>
-          <button class="btn small danger" id="btnDelete">🗑️ Elimina</button>
-        </div>
-      </div>
-
-      <div class="status">
-        <span>Selezione: <b id="selName">nessuna</b></span>
-        <span>•</span>
-        <span>Totale stimato: <b id="totalPrice">0,00€</b></span>
-      </div>
-    </div>
-
-    <div class="body">
-      <div class="stage" id="stage">
-        <div class="bgPhoto" id="bgPhoto" aria-hidden="true"></div>
-        <svg id="svg" viewBox="0 0 1000 1000" aria-label="Anteprima configuratore" role="img">
-          <defs>
-            <filter id="softShadow">
-              <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity=".35"/>
-            </filter>
-            <filter id="ringShadow">
-              <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000" flood-opacity=".35"/>
-            </filter>
-            <filter id="rope">
-              <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="2" result="noise"/>
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2" xChannelSelector="R" yChannelSelector="G"/>
-            </filter>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="3.2" result="b"/>
-              <feMerge>
-                <feMergeNode in="b"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-          </defs>
-
-          <g id="scene">
-            <g id="baseModel"></g>
-            <g id="lightsLayer"></g>
-            <g id="accessoriesLayer"></g>
-            <g id="textLayer"></g>
-            <g id="uiLayer"></g>
-          </g>
-        </svg>
-      </div>
-    </div>
-  </section>
-
-  <!-- RIGHT -->
-  <aside class="card">
-    <div class="head">
-      <h2>Controlli</h2>
-      <p class="hint">Scegli un modello pronto e poi personalizza cerchi, tessitura, accessori, scritta e luci.</p>
-    </div>
-
-    <div class="tabs" id="tabs">
-      <div class="tab active" data-tab="modello">1) Modello</div>
-      <div class="tab" data-tab="cerchi">2) Cerchi</div>
-      <div class="tab" data-tab="tessitura">3) Tessitura</div>
-      <div class="tab" data-tab="accessori">4) Accessori</div>
-      <div class="tab" data-tab="scritta">5) Scritta</div>
-      <div class="tab" data-tab="luci">6) Luci LED</div>
-      <div class="tab" data-tab="salva">7) Salva/Scarica</div>
-      <div class="tab" data-tab="prezzi">8) Prezzi</div>
-      <div class="tab" data-tab="vetrina">9) I miei lavori</div>
-    </div>
-
-    <div class="body">
-      <!-- MODELLO -->
-      <div class="section active" id="sec-modello">
-        <div class="note">
-          ✅ Scegli un modello già pronto (classico, triplo, luna, albero, mini) e poi personalizza.
-        </div>
-
-        <div class="grid2">
-          <label>
-            Modello
-            <select id="modelSelect">
-              <option value="classic" selected>Classico (1 cerchio + piume)</option>
-              <option value="triple">Triplo (1 grande + 2 piccoli)</option>
-              <option value="moon">Luna</option>
-              <option value="tree">Albero (multi cerchi)</option>
-              <option value="mini">Mini (piccolo semplice)</option>
-            </select>
-          </label>
-
-          <label>
-            Colore cerchio
-            <input type="color" id="ringColor" value="#b6936a" />
-          </label>
-        </div>
-
-        <div class="grid2">
-          <label>
-            Colore rete
-            <input type="color" id="webColor" value="#f2f2f2" />
-          </label>
-          <label>
-            Perla centrale
-            <input type="color" id="centerBeadColor" value="#d7d7d7" />
-          </label>
-        </div>
-
-        <div class="row">
-          <button class="btn ok" id="btnApplyModel">✨ Applica modello</button>
-          <button class="btn" id="btnReset">🔄 Riparti pulito</button>
-        </div>
-
-        <div class="note">
-          📌 “Crea da foto” carica un’immagine e usala sotto l’anteprima come riferimento.
-        </div>
-      </div>
-
-      <!-- CERCHI -->
-      <div class="section" id="sec-cerchi">
-        <div class="note">Imposta dimensioni e numero cerchi. Puoi poi scegliere tessitura per ogni cerchio nella sezione 3.</div>
-
-        <div class="grid2">
-          <label>
-            Cerchio grande (diametro)
-            <input type="number" id="bigRing" min="200" max="780" step="10" value="520" />
-          </label>
-          <label>
-            Spessore corda
-            <input type="number" id="ringStroke" min="6" max="26" step="1" value="16" />
-          </label>
-        </div>
-
-        <div class="grid2">
-          <label>
-            Cerchi piccoli (quantità)
-            <select id="smallCount">
-              <option value="0">0</option>
-              <option value="1">1</option>
-              <option value="2" selected>2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-            </select>
-          </label>
-          <label>
-            Cerchio piccolo (diametro)
-            <input type="number" id="smallRing" min="120" max="420" step="10" value="220" />
-          </label>
-        </div>
-
-        <div class="row">
-          <button class="btn ok" id="btnApplyRings">✅ Aggiorna cerchi</button>
-          <button class="btn" id="btnAutoLayout">📐 Auto allineamento</button>
-        </div>
-      </div>
-
-      <!-- TESSITURA -->
-      <div class="section" id="sec-tessitura">
-        <div class="note">Scegli la tessitura (rete) per ogni cerchio. Puoi applicarla a uno o a tutti.</div>
-
-        <label>
-          Cerchio da modificare
-          <select id="weaveRingSelect"></select>
-        </label>
-
-        <div class="grid2">
-          <label>
-            Tipo tessitura
-            <select id="weaveType">
-              <option value="spider" selected>Ragnatela classica</option>
-              <option value="star">Stella</option>
-              <option value="flower">Fiore</option>
-              <option value="spiral">Spirale</option>
-              <option value="simple">Semplice</option>
-            </select>
-          </label>
-
-          <label>
-            Densità
-            <input type="number" id="weaveDensity" min="3" max="14" step="1" value="9" />
-          </label>
-        </div>
-
-        <div class="row">
-          <button class="btn ok" id="btnApplyWeave">🧵 Applica tessitura</button>
-          <button class="btn" id="btnWeaveAll">✨ Applica a tutti</button>
-        </div>
-      </div>
-
-      <!-- ACCESSORI -->
-      <div class="section" id="sec-accessori">
-        <div class="note">Scegli un tema per filtrare e aggiungi accessori con un tap.</div>
-
-        <div class="chipRow" id="themeChips"></div>
-
-        <div class="grid2">
-          <label>
-            Colore accessorio
-            <input type="color" id="accColor" value="#ffffff" />
-          </label>
-          <label>
-            Dimensione
-            <select id="accSize">
-              <option value="0.8">Piccola</option>
-              <option value="1" selected>Normale</option>
-              <option value="1.25">Grande</option>
-            </select>
-          </label>
-        </div>
-
-        <ul class="list" id="accList"></ul>
-      </div>
-
-      <!-- SCRITTA -->
-      <div class="section" id="sec-scritta">
-        <div class="note">Aggiungi una scritta personalizzata (nome, dedica, ecc.).</div>
-
-        <label>
-          Testo scritta
-          <input type="text" id="textValue" placeholder="Es: Buone Feste / Nome..." />
-        </label>
-
-        <div class="grid2">
-          <label>
-            Colore scritta
-            <input type="color" id="textColor" value="#ffd34d" />
-          </label>
-          <label>
-            Font
-            <select id="textFont">
-              <option value="serif">Elegante (serif)</option>
-              <option value="sans" selected>Moderno (sans)</option>
-              <option value="script">Corsivo (script)</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="grid2">
-          <label>
-            Dimensione
-            <input type="number" id="textSize" min="18" max="120" step="2" value="56" />
-          </label>
-          <label>
-            Ombra
-            <select id="textShadow">
-              <option value="on" selected>On</option>
-              <option value="off">Off</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="row">
-          <button class="btn ok" id="btnAddText">✍️ Aggiungi/aggiorna</button>
-          <button class="btn danger" id="btnRemoveText">🗑️ Rimuovi</button>
-        </div>
-      </div>
-
-      <!-- LUCI -->
-      <div class="section" id="sec-luci">
-        <div class="note">Effetto luci LED grafico per rendere l’anteprima più realistica.</div>
-
-        <div class="grid2">
-          <label>
-            Luci
-            <select id="lightsOn">
-              <option value="off" selected>Off</option>
-              <option value="on">On</option>
-            </select>
-          </label>
-          <label>
-            Colore luci
-            <select id="lightsColor">
-              <option value="multicolor" selected>Multicolor</option>
-              <option value="#ffffff">Bianco</option>
-              <option value="#6aa9ff">Blu</option>
-              <option value="#ff3b7b">Rosa</option>
-              <option value="#7cffb7">Verde</option>
-              <option value="#ffd34d">Oro</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="grid2">
-          <label>
-            Intensità
-            <input type="number" id="lightsIntensity" min="20" max="100" step="5" value="75" />
-          </label>
-          <label>
-            Modalità
-            <select id="lightsMode">
-              <option value="steady" selected>Fissa</option>
-              <option value="blink">Lampeggio</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="row">
-          <button class="btn ok" id="btnApplyLights">💡 Applica luci</button>
-          <button class="btn" id="btnLightsAuto">✨ Auto</button>
-        </div>
-      </div>
-
-      <!-- SALVA -->
-      <div class="section" id="sec-salva">
-        <div class="note">Salva il progetto, scarica PNG o JSON e invia su WhatsApp.</div>
-
-        <div class="grid2">
-          <label>
-            Nome progetto
-            <input type="text" id="projectName" placeholder="Es: Natale Rosso..." />
-          </label>
-          <label>
-            Numero WhatsApp (tuo)
-            <input type="text" id="waNumber" placeholder="Es: 39333..." />
-          </label>
-        </div>
-
-        <div class="row">
-          <button class="btn ok" id="btnDownloadPNG">📥 Scarica PNG</button>
-          <button class="btn" id="btnDownloadJSON">📌 Scarica JSON</button>
-          <label style="margin:0">
-            <span style="font-size:12px; color:var(--muted); font-weight:900; margin-bottom:6px; display:block">📂 Carica JSON</span>
-            <input type="file" id="fileLoadJSON" accept="application/json" />
-          </label>
-        </div>
-
-        <div class="row">
-          <button class="btn primary" id="btnInvia2">💬 Invia su WhatsApp</button>
-        </div>
-      </div>
-
-      <!-- PREZZI -->
-      <div class="section" id="sec-prezzi">
-        <div class="note">Prezzi base modificabili dalla tua area privata.</div>
-
-        <div class="row">
-          <button class="btn" id="btnAreaPrivata">🔐 Area privata</button>
-          <button class="btn" id="btnResetPrices">↩️ Ripristina</button>
-        </div>
-
-        <div class="note" id="priceSummary"></div>
-      </div>
-
-      <!-- VETRINA -->
-      <div class="section" id="sec-vetrina">
-        <div class="note">Carica foto dei tuoi lavori per creare fiducia (salvate sul dispositivo).</div>
-
-        <div class="row">
-          <label style="margin:0">
-            <span style="font-size:12px; color:var(--muted); font-weight:900; margin-bottom:6px; display:block">➕ Aggiungi foto</span>
-            <input type="file" id="galleryAdd" accept="image/*" multiple />
-          </label>
-          <button class="btn danger" id="btnClearGallery">🗑️ Svuota</button>
-        </div>
-
-        <div class="gallery" id="gallery"></div>
-      </div>
-    </div>
-  </aside>
+  <div class="grid" id="grid"></div>
 </main>
 
-<!-- MODAL FOTO -->
-<div class="modalBack" id="photoModal">
-  <div class="modal">
-    <div class="mhead">
-      <h3>📷 Crea da foto (riferimento)</h3>
-      <button class="btn small" id="closePhoto">✖</button>
-    </div>
-    <div class="mbody">
-      <div class="note">
-        Carica una foto: verrà messa sotto l’anteprima come sfondo semitrasparente.
-      </div>
-      <label>
-        Seleziona foto
-        <input type="file" id="photoFile" accept="image/*" />
-      </label>
-      <div class="grid2">
-        <label>
-          Opacità sfondo (%)
-          <input type="number" id="photoOpacity" min="5" max="60" step="5" value="25" />
-        </label>
-        <label>
-          Colore base automatico
-          <select id="autoColor">
-            <option value="off" selected>Off</option>
-            <option value="ring">Imposta colore cerchio</option>
-            <option value="web">Imposta colore rete</option>
-          </select>
-        </label>
-      </div>
-    </div>
-    <div class="mfoot">
-      <button class="btn" id="btnRemovePhoto">Rimuovi</button>
-      <button class="btn ok" id="btnApplyPhoto">Applica</button>
-    </div>
+<div class="footerBar">
+  <div class="small">
+    Totale carrello: <span class="sum" id="cartTotal">0,00€</span>
   </div>
-</div>
-
-<!-- MODAL PRIVATA -->
-<div class="modalBack" id="privateModal">
-  <div class="modal">
-    <div class="mhead">
-      <h3>🔐 Area privata</h3>
-      <button class="btn small" id="closePrivate">✖</button>
-    </div>
-    <div class="mbody" id="privateBody"></div>
-    <div class="mfoot">
-      <button class="btn" id="btnPrivateCancel">Chiudi</button>
-      <button class="btn ok" id="btnPrivateSave">Salva</button>
-    </div>
+  <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+    <button class="btn" id="btnClear">🧹 Svuota</button>
+    <button class="btn primary" id="btnWhatsApp">💬 Ordina su WhatsApp</button>
   </div>
 </div>
 
 <script>
-/* ===========================
-   CONFIG / DATA
-=========================== */
-const STORAGE_KEY = "ery_configurator_v1";
-const STORAGE_GALLERY = "ery_gallery_v1";
-const STORAGE_PRICES = "ery_prices_v1";
-const STORAGE_PIN = "ery_pin_v1";
-const DEFAULT_PIN = "1234";
+  // ===== CONFIG =====
+  const STORAGE_CART = "ery_cart_v1";
+  // Metti qui il numero WhatsApp (con prefisso paese, senza +)
+  // Esempio Italia: 393440260906
+  const WA_NUMBER = ""; // <-- se vuoi lo imposto tu: scrivi qui il numero
 
-const DEFAULT_PRICES = {
-  ring_big: 4.00,
-  ring_small: 2.00,
-  weave: 0.00,
-  feather: 0.50,
-  bead: 0.20,
-  charm: 1.50,
-  flower: 1.50,
-  bow: 2.00,
-  gnome: 2.50,
-  text: 3.00,
-  lights: 4.00
-};
+  const CATEGORIES = ["Tutti","Acchiappasogni Classici","Natale","Nascita","Matrimonio"];
 
-const ACCESSORIES = [
-  { id:"feather",  label:"Piuma",          icon:"🪶", themes:["Classico","Nascita","Matrimonio"], priceKey:"feather", colorable:true,  kind:"feather" },
-  { id:"bead",     label:"Perlina",        icon:"🫧", themes:["Classico","Nascita","Matrimonio","Natale"], priceKey:"bead", colorable:true, kind:"bead" },
-  { id:"star",     label:"Stellina",       icon:"⭐", themes:["Natale","Nascita"], priceKey:"charm", colorable:true, kind:"charm" },
-  { id:"heart",    label:"Cuore",          icon:"❤️", themes:["Matrimonio","Nascita"], priceKey:"charm", colorable:true, kind:"charm" },
-  { id:"snow",     label:"Fiocco di neve", icon:"❄️", themes:["Natale"], priceKey:"charm", colorable:true, kind:"charm" },
-  { id:"holly",    label:"Agrifoglio",     icon:"🍃", themes:["Natale"], priceKey:"charm", colorable:true, kind:"charm" },
-  { id:"flower",   label:"Fiore",          icon:"🌸", themes:["Matrimonio","Nascita","Classico"], priceKey:"flower", colorable:true, kind:"flower" },
-  { id:"bow",      label:"Fiocco",         icon:"🎀", themes:["Natale","Matrimonio","Nascita"], priceKey:"bow", colorable:true, kind:"bow" },
-  { id:"gnome",    label:"Gnomo",          icon:"🧑‍🎄", themes:["Natale"], priceKey:"gnome", colorable:false, kind:"gnome" },
-  { id:"initials", label:"Iniziali",       icon:"🔤", themes:["Matrimonio","Nascita"], priceKey:"text", colorable:true, kind:"miniText" }
-];
+  // Prodotti esempio (puoi cambiare immagini e nomi quando vuoi)
+  // Per le immagini: usa URL oppure lascia vuoto per placeholder.
+  const PRODUCTS = [
+    { id:"m3",  name:"Acchiappasogni - Modello 3",  cat:"Acchiappasogni Classici", price:5.00, img:"" },
+    { id:"m4",  name:"Acchiappasogni - Modello 4",  cat:"Acchiappasogni Classici", price:5.00, img:"" },
+    { id:"m5",  name:"Acchiappasogni - Modello 5",  cat:"Acchiappasogni Classici", price:5.00, img:"" },
+    { id:"m6",  name:"Acchiappasogni - Modello 6",  cat:"Acchiappasogni Classici", price:5.00, img:"" },
+    { id:"m7",  name:"Acchiappasogni - Modello 7",  cat:"Acchiappasogni Classici", price:5.00, img:"" },
+    { id:"m8",  name:"Acchiappasogni - Modello 8",  cat:"Acchiappasogni Classici", price:5.00, img:"" },
+    { id:"m9",  name:"Acchiappasogni - Modello 9",  cat:"Acchiappasogni Classici", price:5.00, img:"" },
+    { id:"m31", name:"Acchiappasogni - Modello 31", cat:"Natale", price:5.00, img:"" },
+    { id:"m32", name:"Acchiappasogni - Modello 32", cat:"Acchiappasogni Classici", price:5.00, img:"" },
+    { id:"m33", name:"Acchiappasogni - Modello 33", cat:"Natale", price:5.00, img:"" },
+    { id:"m34", name:"Acchiappasogni - Modello 34", cat:"Natale", price:5.00, img:"" },
+    { id:"m35", name:"Acchiappasogni - Modello 35", cat:"Natale", price:5.00, img:"" },
+  ];
 
-const THEMES = ["Tutti","Classico","Natale","Matrimonio","Nascita"];
+  // ===== STATE =====
+  let currentCat = "Tutti";
+  let q = "";
+  let cart = loadCart();
 
-/* ===========================
-   STATE
-=========================== */
-const state = {
-  model: "classic",
-  ringColor: "#b6936a",
-  webColor: "#f2f2f2",
-  centerBeadColor: "#d7d7d7",
-  rings: { bigDiameter: 520, smallDiameter: 220, smallCount: 2, ringStroke: 16 },
-  weaves: {},
-  lights: { on:false, color:"multicolor", intensity:75, mode:"steady" },
-  text: { on:false, value:"", color:"#ffd34d", font:"sans", size:56, shadow:true },
-  selectedId: null,
-  elements: [],
-  history: [],
-  future: [],
-  photoBg: { dataUrl:null, opacity:0.25 },
-  waNumber: "",
-  projectName: ""
-};
-
-let prices = loadPrices();
-
-/* ===========================
-   HELPERS
-=========================== */
-const $ = (q)=>document.querySelector(q);
-const svg = $("#svg");
-const baseModel = $("#baseModel");
-const lightsLayer = $("#lightsLayer");
-const accessoriesLayer = $("#accessoriesLayer");
-const textLayer = $("#textLayer");
-const uiLayer = $("#uiLayer");
-const bgPhoto = $("#bgPhoto");
-
-function euro(n){
-  const s = (Math.round(n*100)/100).toFixed(2).replace(".", ",");
-  return s + "€";
-}
-function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
-function uid(prefix="el"){ return prefix+"_"+Math.random().toString(16).slice(2)+"_"+Date.now().toString(16).slice(2); }
-function deepClone(o){ return JSON.parse(JSON.stringify(o)); }
-
-function saveToHistory(){
-  state.history.push(snapshot());
-  if(state.history.length>60) state.history.shift();
-  state.future = [];
-}
-function snapshot(){
-  return {
-    model: state.model,
-    ringColor: state.ringColor,
-    webColor: state.webColor,
-    centerBeadColor: state.centerBeadColor,
-    rings: deepClone(state.rings),
-    weaves: deepClone(state.weaves),
-    lights: deepClone(state.lights),
-    text: deepClone(state.text),
-    elements: deepClone(state.elements),
-    photoBg: deepClone(state.photoBg),
-    waNumber: state.waNumber,
-    projectName: state.projectName
-  };
-}
-function restore(snap){
-  state.model = snap.model;
-  state.ringColor = snap.ringColor;
-  state.webColor = snap.webColor;
-  state.centerBeadColor = snap.centerBeadColor;
-  state.rings = deepClone(snap.rings);
-  state.weaves = deepClone(snap.weaves);
-  state.lights = deepClone(snap.lights);
-  state.text = deepClone(snap.text);
-  state.elements = deepClone(snap.elements);
-  state.photoBg = deepClone(snap.photoBg);
-  state.waNumber = snap.waNumber || "";
-  state.projectName = snap.projectName || "";
-  state.selectedId = null;
-  syncInputs();
-  rebuildAll();
-}
-
-function svgEl(name, attrs={}){
-  const el = document.createElementNS("http://www.w3.org/2000/svg", name);
-  Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k, v));
-  return el;
-}
-function clearNode(node){ while(node.firstChild) node.removeChild(node.firstChild); }
-
-/* ===========================
-   TABS
-=========================== */
-$("#tabs").addEventListener("click", (e)=>{
-  const tab = e.target.closest(".tab");
-  if(!tab) return;
-  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-  tab.classList.add("active");
-  const key = tab.dataset.tab;
-  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-  $("#sec-"+key).classList.add("active");
-});
-
-/* ===========================
-   BUILD (rings + weave)
-=========================== */
-function weavePath(cx, cy, radius, type="spider", density=9){
-  density = clamp(density, 3, 14);
-
-  if(type === "simple"){
-    const spokes = Math.max(6, density);
-    let d = "";
-    for(let i=0;i<spokes;i++){
-      const a = (Math.PI*2/spokes)*i - Math.PI/2;
-      const x = cx + Math.cos(a)*radius;
-      const y = cy + Math.sin(a)*radius;
-      d += `M ${cx} ${cy} L ${x} ${y} `;
+  // ===== HELPERS =====
+  function euro(n){
+    const s = (Math.round(n*100)/100).toFixed(2).replace(".", ",");
+    return s + "€";
+  }
+  function loadCart(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_CART) || "{}"); }
+    catch(e){ return {}; }
+  }
+  function saveCart(){
+    localStorage.setItem(STORAGE_CART, JSON.stringify(cart));
+  }
+  function cartCount(){
+    return Object.values(cart).reduce((a,b)=>a+b,0);
+  }
+  function cartTotal(){
+    let t = 0;
+    for(const [id, qty] of Object.entries(cart)){
+      const p = PRODUCTS.find(x=>x.id===id);
+      if(p) t += p.price * qty;
     }
-    return svgEl("path", { d });
+    return t;
   }
 
-  if(type === "star"){
-    const points = Math.max(5, Math.min(10, density));
-    let d = "";
-    for(let i=0;i<points;i++){
-      const a = (Math.PI*2/points)*i - Math.PI/2;
-      const x = cx + Math.cos(a)*radius;
-      const y = cy + Math.sin(a)*radius;
-      d += `M ${cx} ${cy} L ${x} ${y} `;
-    }
-    for(let k=1;k<=3;k++){
-      const rr = radius*(0.25 + k*0.17);
-      let pts = [];
-      for(let i=0;i<points;i++){
-        const a = (Math.PI*2/points)*i - Math.PI/2;
-        pts.push([cx + Math.cos(a)*rr, cy + Math.sin(a)*rr]);
-      }
-      d += `M ${pts[0][0]} ${pts[0][1]} `;
-      for(let i=1;i<pts.length;i++) d += `L ${pts[i][0]} ${pts[i][1]} `;
-      d += "Z ";
-    }
-    return svgEl("path", { d });
-  }
+  // ===== UI RENDER =====
+  const chipsEl = document.getElementById("chips");
+  const gridEl = document.getElementById("grid");
 
-  if(type === "flower"){
-    const petals = Math.max(6, Math.min(14, density+2));
-    let d = "";
-    for(let i=0;i<petals;i++){
-      const a = (Math.PI*2/petals)*i - Math.PI/2;
-      const x1 = cx + Math.cos(a)*radius;
-      const y1 = cy + Math.sin(a)*radius;
-      const a2 = a + (Math.PI*2/petals)*0.45;
-      const x2 = cx + Math.cos(a2)*(radius*0.55);
-      const y2 = cy + Math.sin(a2)*(radius*0.55);
-      d += `M ${cx} ${cy} Q ${x2} ${y2} ${x1} ${y1} `;
-    }
-    const rr = radius*0.45;
-    d += `M ${cx+rr} ${cy} A ${rr} ${rr} 0 1 0 ${cx-rr} ${cy} A ${rr} ${rr} 0 1 0 ${cx+rr} ${cy} `;
-    return svgEl("path", { d });
-  }
-
-  if(type === "spiral"){
-    const turns = density;
-    const steps = turns*22;
-    let d = "";
-    for(let i=0;i<=steps;i++){
-      const t = i/steps;
-      const a = t*turns*Math.PI*2 - Math.PI/2;
-      const rr = t*radius;
-      const x = cx + Math.cos(a)*rr;
-      const y = cy + Math.sin(a)*rr;
-      d += (i===0?`M ${x} ${y} `:`L ${x} ${y} `);
-    }
-    for(let i=0;i<8;i++){
-      const a = (Math.PI*2/8)*i - Math.PI/2;
-      const x = cx + Math.cos(a)*radius;
-      const y = cy + Math.sin(a)*radius;
-      d += `M ${cx} ${cy} L ${x} ${y} `;
-    }
-    return svgEl("path", { d });
-  }
-
-  const rings = Math.max(4, density);
-  const spokes = 12;
-  let d = "";
-
-  for(let i=0;i<spokes;i++){
-    const a = (Math.PI*2/spokes)*i - Math.PI/2;
-    const x = cx + Math.cos(a)*radius;
-    const y = cy + Math.sin(a)*radius;
-    d += `M ${cx} ${cy} L ${x} ${y} `;
-  }
-  for(let r=1;r<=rings;r++){
-    const rr = radius*(r/(rings+0.5));
-    let pts = [];
-    for(let i=0;i<spokes;i++){
-      const a = (Math.PI*2/spokes)*i - Math.PI/2;
-      const wobble = (Math.sin(i*1.7 + r*0.8) * 0.03 + 0.02) * radius;
-      pts.push([cx + Math.cos(a)*(rr+wobble), cy + Math.sin(a)*(rr+wobble)]);
-    }
-    d += `M ${pts[0][0]} ${pts[0][1]} `;
-    for(let i=1;i<pts.length;i++) d += `L ${pts[i][0]} ${pts[i][1]} `;
-    d += "Z ";
-  }
-  return svgEl("path", { d });
-}
-
-function registerRingOption(ringId, label){
-  const sel = $("#weaveRingSelect");
-  if(![...sel.options].some(o=>o.value===ringId)){
-    const opt = document.createElement("option");
-    opt.value = ringId;
-    opt.textContent = label;
-    sel.appendChild(opt);
-  }
-  if(!state.weaves[ringId]) state.weaves[ringId] = { type:"spider", density:9 };
-}
-
-function buildCrescentPath(cx, cy, rOuter, rInner){
-  const shift = rOuter*0.35;
-  const x1 = cx, y1 = cy;
-  const x2 = cx + shift, y2 = cy;
-  const p1 = [x1, y1 - rOuter];
-  const p2 = [x1, y1 + rOuter];
-  const p3 = [x2, y2 + rInner];
-  const p4 = [x2, y2 - rInner];
-
-  return [
-    `M ${p1[0]} ${p1[1]}`,
-    `A ${rOuter} ${rOuter} 0 1 1 ${p2[0]} ${p2[1]}`,
-    `A ${rOuter} ${rOuter} 0 1 1 ${p1[0]} ${p1[1]}`,
-    `Z`,
-    `M ${p3[0]} ${p3[1]}`,
-    `A ${rInner} ${rInner} 0 1 0 ${p4[0]} ${p4[1]}`,
-    `A ${rInner} ${rInner} 0 1 0 ${p3[0]} ${p3[1]}`,
-    `Z`
-  ].join(" ");
-}
-
-function buildBase(){
-  clearNode(baseModel);
-  const cX=500, cY=420;
-  const bigR = state.rings.bigDiameter/2;
-  const ringStroke = state.rings.ringStroke;
-
-  const rings = [];
-
-  if(state.model==="tree"){
-    const sizes = [220,260,300,340,380,420,460];
-    const positions = [
-      [500,190],[380,310],[620,310],[300,450],[500,450],[700,450],
-      [220,610],[380,610],[540,610],[700,610],[860,610]
-    ];
-    positions.forEach((p,i)=>{
-      const d = sizes[Math.min(sizes.length-1, Math.floor(i/2)+1)];
-      rings.push({id:"r"+(i+1), x:p[0], y:p[1], r:d/2, kind:"small"});
+  function renderChips(){
+    chipsEl.innerHTML = "";
+    CATEGORIES.forEach(cat=>{
+      const d = document.createElement("div");
+      d.className = "chip" + (cat===currentCat ? " on" : "");
+      d.textContent = cat;
+      d.onclick = ()=>{ currentCat = cat; renderAll(); };
+      chipsEl.appendChild(d);
     });
-  } else if(state.model==="moon"){
-    rings.push({id:"moon", x:cX, y:cY, r:bigR, kind:"moon"});
-  } else {
-    rings.push({id:"big", x:cX, y:cY, r:bigR, kind:"big"});
-    const sc = state.rings.smallCount;
-    const sr = state.rings.smallDiameter/2;
-    if(sc>0){
-      const startY = cY + bigR + 110;
-      if(sc===1){
-        rings.push({id:"s1", x:cX, y:startY, r:sr, kind:"small"});
-      } else if(sc===2){
-        rings.push({id:"s1", x:cX - sr - 40, y:startY, r:sr, kind:"small"});
-        rings.push({id:"s2", x:cX + sr + 40, y:startY, r:sr, kind:"small"});
-      } else {
-        const spacing = (sr*2 + 36);
-        const startX = cX - ((sc-1)/2)*spacing;
-        for(let i=0;i<sc;i++){
-          rings.push({id:"s"+(i+1), x:startX + i*spacing, y:startY, r:sr, kind:"small"});
+  }
+
+  function filteredProducts(){
+    return PRODUCTS.filter(p=>{
+      const okCat = (currentCat==="Tutti") || (p.cat===currentCat);
+      const text = (p.name + " " + (p.cat||"")).toLowerCase();
+      const okQ = !q || text.includes(q);
+      return okCat && okQ;
+    });
+  }
+
+  function renderGrid(){
+    const items = filteredProducts();
+    gridEl.innerHTML = "";
+
+    items.forEach(p=>{
+      const qty = cart[p.id] || 0;
+
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="img">
+          ${
+            p.img
+              ? `<img src="${p.img}" alt="${p.name}">`
+              : `<div class="ph">Immagine non trovata</div>`
+          }
+        </div>
+        <div class="cbody">
+          <div>
+            <p class="title">${p.name}</p>
+            <p class="meta">${p.cat}</p>
+          </div>
+          <div class="qtyRow">
+            <div>
+              <div class="price">${euro(p.price)}</div>
+            </div>
+            <div class="qty">
+              <button class="qbtn" data-a="minus" data-id="${p.id}">-</button>
+              <div class="qnum" id="q_${p.id}">${qty}</div>
+              <button class="qbtn" data-a="plus" data-id="${p.id}">+</button>
+            </div>
+          </div>
+          <button class="btn primary" data-a="add" data-id="${p.id}">Aggiungi</button>
+        </div>
+      `;
+
+      card.addEventListener("click", (e)=>{
+        const btn = e.target.closest("[data-a]");
+        if(!btn) return;
+        const id = btn.dataset.id;
+        const a = btn.dataset.a;
+
+        if(a==="minus"){
+          cart[id] = Math.max(0, (cart[id]||0)-1);
+          if(cart[id]===0) delete cart[id];
+        } else if(a==="plus" || a==="add"){
+          cart[id] = (cart[id]||0) + 1;
         }
-      }
+        saveCart();
+        updateCartUI();
+        const qn = document.getElementById("q_"+id);
+        if(qn) qn.textContent = cart[id] || 0;
+        e.stopPropagation();
+      });
+
+      gridEl.appendChild(card);
+    });
+
+    if(items.length===0){
+      gridEl.innerHTML = `<div style="color:var(--muted); font-weight:900">Nessun prodotto trovato.</div>`;
     }
   }
 
-  // fill weave select
-  $("#weaveRingSelect").innerHTML = "";
+  function updateCartUI(){
+    document.getElementById("cartBadge").textContent = cartCount();
+    document.getElementById("cartTotal").textContent = euro(cartTotal());
+  }
 
-  rings.forEach(r=>{
-    if(r.kind==="moon"){
-      const g = svgEl("g", {"data-id":"moon", "data-type":"ring", "filter":"url(#ringShadow)"});
-      const crescent = buildCrescentPath(r.x, r.y, r.r, r.r*0.68);
-      const path = svgEl("path", {d:crescent, fill:"none", stroke:state.ringColor, "stroke-width":ringStroke, "stroke-linecap":"round", "stroke-linejoin":"round", filter:"url(#rope)"});
-      g.appendChild(path);
+  // ===== ACTIONS =====
+  document.getElementById("search").addEventListener("input", (e)=>{
+    q = (e.target.value || "").trim().toLowerCase();
+    renderGrid();
+  });
 
-      const defs = svg.querySelector("defs");
-      const clipId = "clipMoon";
-      const old = document.getElementById(clipId);
-      if(old) old.remove();
-      const clip = svgEl("clipPath", {id:clipId});
-      clip.appendChild(svgEl("path", {d:crescent}));
-      defs.appendChild(clip);
+  document.getElementById("btnClear").onclick = ()=>{
+    if(!confirm("Svuotare il carrello?")) return;
+    cart = {};
+    saveCart();
+    renderGrid();
+    updateCartUI();
+  };
 
-      const wg = svgEl("g", {"clip-path":`url(#${clipId})`});
-      const web = weavePath(r.x, r.y, r.r*0.85, "spider", 9);
-      web.setAttribute("stroke", state.webColor);
-      web.setAttribute("stroke-width", "2.2");
-      web.setAttribute("opacity", "0.95");
-      web.setAttribute("filter", "url(#softShadow)");
-      wg.appendChild(web);
-      g.appendChild(wg);
-
-      g.appendChild(svgEl("circle", {cx:r.x, cy:r.y, r:10, fill:state.centerBeadColor, filter:"url(#softShadow)"}));
-      baseModel.appendChild(g);
-
-      registerRingOption("moon", "Luna (tessitura interna)");
+  document.getElementById("btnWhatsApp").onclick = ()=>{
+    if(cartCount()===0){
+      alert("Il carrello è vuoto.");
       return;
     }
-
-    const g = svgEl("g", {"data-id":r.id, "data-type":"ring", "filter":"url(#ringShadow)"});
-    g.appendChild(svgEl("circle", {cx:r.x, cy:r.y, r:r.r, fill:"none", stroke:state.ringColor, "stroke-width":ringStroke, filter:"url(#rope)"}));
-
-    const wc = state.weaves[r.id] || {type:"spider", density:9};
-    state.weaves[r.id] = wc;
-    const web = weavePath(r.x, r.y, r.r - ringStroke*0.9, wc.type, wc.density);
-    web.setAttribute("stroke", state.webColor);
-    web.setAttribute("stroke-width", "2.2");
-    web.setAttribute("opacity", "0.95");
-    web.setAttribute("filter", "url(#softShadow)");
-    g.appendChild(web);
-
-    g.appendChild(svgEl("circle", {cx:r.x, cy:r.y, r:(r.kind==="big"?10:8), fill:state.centerBeadColor, filter:"url(#softShadow)"}));
-    baseModel.appendChild(g);
-
-    const label = (r.id==="big") ? "Cerchio grande" : (r.id.startsWith("s") ? ("Cerchio "+r.id.toUpperCase()) : ("Cerchio "+r.id));
-    registerRingOption(r.id, label);
-  });
-
-  // default items if empty
-  ensureDefaultFeathers();
-  rebuildLights();
-  rebuildAccessories();
-  rebuildText();
-  updateSelectionUI();
-  updatePrice();
-}
-
-/* ===========================
-   ELEMENTS / ACCESSORIES
-=========================== */
-function getRingById(id){
-  if(state.model==="moon"){
-    if(id==="moon") return {id:"moon", x:500, y:420, r:state.rings.bigDiameter/2};
-    return null;
-  }
-  if(state.model==="tree"){
-    // for tree we don't need ring info in this simple version
-    return null;
-  }
-  if(id==="big") return {id:"big", x:500, y:420, r:state.rings.bigDiameter/2};
-
-  if(id && id.startsWith("s")){
-    const sc = state.rings.smallCount;
-    const sr = state.rings.smallDiameter/2;
-    const cX=500, cY=420;
-    const bigR = state.rings.bigDiameter/2;
-    const startY = cY + bigR + 110;
-    const idx = parseInt(id.slice(1),10);
-    if(sc===1) return {id, x:cX, y:startY, r:sr};
-    if(sc===2){
-      if(idx===1) return {id, x:cX - sr - 40, y:startY, r:sr};
-      if(idx===2) return {id, x:cX + sr + 40, y:startY, r:sr};
+    const lines = [];
+    lines.push("Ciao! 😊 Vorrei ordinare questi acchiappasogni:");
+    for(const [id, qty] of Object.entries(cart)){
+      const p = PRODUCTS.find(x=>x.id===id);
+      if(p) lines.push(`- ${p.name} x${qty} (${euro(p.price)})`);
     }
-    const spacing = (sr*2 + 36);
-    const startX = cX - ((sc-1)/2)*spacing;
-    return {id, x:startX + (idx-1)*spacing, y:startY, r:sr};
-  }
-  return null;
-}
+    lines.push(`Totale: ${euro(cartTotal())}`);
+    lines.push("Grazie! 🙏");
 
-function addAccessory(accId){
-  const def = ACCESSORIES.find(a=>a.id===accId);
-  if(!def) return;
-  saveToHistory();
+    const msg = encodeURIComponent(lines.join("\n"));
 
-  const el = {
-    id: uid("a"),
-    accId,
-    kind: def.kind,
-    label: def.label,
-    x: 500,
-    y: 650,
-    rot: 0,
-    scale: parseFloat($("#accSize").value || "1"),
-    color: $("#accColor").value || "#ffffff",
-    locked:false,
-    z: Date.now()
+    // se non hai messo il numero, apre WhatsApp senza numero (condividi manualmente)
+    const url = WA_NUMBER
+      ? `https://wa.me/${WA_NUMBER}?text=${msg}`
+      : `https://wa.me/?text=${msg}`;
+
+    window.open(url, "_blank");
   };
 
-  // place near selected ring
-  if(state.selectedId && state.selectedId.startsWith("ring:")){
-    const rid = state.selectedId.split(":")[1];
-    const r = getRingById(rid);
-    if(r){
-      el.x = r.x + (Math.random()*80-40);
-      el.y = r.y + r.r + 70 + (Math.random()*70);
-    }
-  }
-
-  if(def.kind==="miniText"){
-    el.text = prompt("Scrivi iniziali / testo breve:", "E&L") || "E&L";
-    el.font = "serif";
-  }
-
-  state.elements.push(el);
-  rebuildAccessories();
-  selectElement(el.id);
-  updatePrice();
-}
-
-function ensureDefaultFeathers(){
-  const hasFeather = state.elements.some(e=>e.kind==="feather");
-  if(hasFeather) return;
-
-  if(state.model!=="classic" && state.model!=="triple" && state.model!=="mini") return;
-
-  const big = getRingById("big");
-  if(!big) return;
-
-  const startX = big.x - 170;
-  const y = big.y + big.r + 190;
-  for(let i=0;i<6;i++){
-    state.elements.push({
-      id: uid("a"),
-      accId: "feather",
-      kind: "feather",
-      label: "Piuma",
-      x: startX + i*70,
-      y: y + Math.sin(i)*10,
-      rot: (-15 + i*6),
-      scale: 1.05,
-      color: "#ffffff",
-      locked:false,
-      z: Date.now() + i
-    });
-  }
-}
-
-function accessorySVG(el){
-  const g = svgEl("g", {"data-id":el.id, "data-type":"acc", cursor:"grab"});
-  g.setAttribute("transform", `translate(${el.x} ${el.y}) rotate(${el.rot}) scale(${el.scale})`);
-
-  const color = el.color || "#fff";
-
-  if(el.kind==="feather"){
-    const p = svgEl("path", {
-      d:"M 0 0 C 40 -20 70 -5 90 10 C 70 25 40 35 0 18 C 18 25 40 30 65 35 C 45 20 25 10 0 0 Z",
-      fill: color,
-      opacity:"0.92",
-      filter:"url(#softShadow)"
-    });
-    const line = svgEl("path", {d:"M 8 8 C 30 18 55 28 78 30", fill:"none", stroke:"rgba(0,0,0,.25)", "stroke-width":"2"});
-    g.appendChild(p);
-    g.appendChild(line);
-  } else if(el.kind==="bead"){
-    g.appendChild(svgEl("circle", {cx:0, cy:0, r:12, fill:color, filter:"url(#softShadow)"}));
-    g.appendChild(svgEl("circle", {cx:-4, cy:-5, r:4, fill:"rgba(255,255,255,.55)"}));
-  } else if(el.kind==="charm"){
-    g.appendChild(svgEl("circle", {cx:0, cy:0, r:14, fill:color, filter:"url(#softShadow)"}));
-    g.appendChild(svgEl("circle", {cx:0, cy:0, r:6, fill:"rgba(255,255,255,.22)"}));
-  } else if(el.kind==="flower"){
-    for(let i=0;i<7;i++){
-      const a = (Math.PI*2/7)*i;
-      const x = Math.cos(a)*16;
-      const y = Math.sin(a)*16;
-      g.appendChild(svgEl("circle", {cx:x, cy:y, r:10, fill:color, opacity:"0.9", filter:"url(#softShadow)"}));
-    }
-    g.appendChild(svgEl("circle", {cx:0, cy:0, r:8, fill:"rgba(255,255,255,.35)"}));
-  } else if(el.kind==="bow"){
-    const left = svgEl("path", {d:"M 0 0 C -28 -16 -48 -4 -50 10 C -40 18 -20 16 0 0 Z", fill:color, filter:"url(#softShadow)"});
-    const right = svgEl("path", {d:"M 0 0 C 28 -16 48 -4 50 10 C 40 18 20 16 0 0 Z", fill:color, filter:"url(#softShadow)"});
-    const knot = svgEl("circle", {cx:0, cy:0, r:9, fill:"rgba(0,0,0,.15)"});
-    g.appendChild(left); g.appendChild(right); g.appendChild(knot);
-  } else if(el.kind==="gnome"){
-    g.appendChild(svgEl("path", {d:"M -28 10 C -20 -25 20 -25 28 10 Z", fill:"#ff3b7b", filter:"url(#softShadow)"}));
-    g.appendChild(svgEl("circle", {cx:0, cy:14, r:14, fill:"#f4d7c7", filter:"url(#softShadow)"}));
-    g.appendChild(svgEl("path", {d:"M -18 34 C -10 10 10 10 18 34 Z", fill:"#ffffff", filter:"url(#softShadow)"}));
-    g.appendChild(svgEl("circle", {cx:0, cy:18, r:4, fill:"#ffd34d"}));
-  } else if(el.kind==="miniText"){
-    const t = svgEl("text", {x:0, y:0, "text-anchor":"middle", "dominant-baseline":"middle", fill:color, "font-size":"30", "font-weight":"900"});
-    t.textContent = el.text || "E&L";
-    g.appendChild(t);
-  }
-
-  return g;
-}
-
-function rebuildAccessories(){
-  clearNode(accessoriesLayer);
-  const els = [...state.elements].sort((a,b)=> (a.z||0) - (b.z||0));
-  els.forEach(el=>{
-    accessoriesLayer.appendChild(accessorySVG(el));
-  });
-}
-
-function rebuildText(){
-  clearNode(textLayer);
-  if(!state.text.on || !state.text.value) return;
-  const t = svgEl("text", {
-    "data-id":"mainText",
-    "data-type":"text",
-    x: 500,
-    y: 140,
-    "text-anchor":"middle",
-    "dominant-baseline":"middle",
-    fill: state.text.color,
-    "font-size": state.text.size,
-    "font-weight":"900",
-    "font-family": (state.text.font==="script" ? "cursive" : (state.text.font==="serif" ? "serif" : "sans-serif"))
-  });
-  t.textContent = state.text.value;
-  if(state.text.shadow){
-    t.setAttribute("filter","url(#softShadow)");
-  }
-  textLayer.appendChild(t);
-}
-
-function rebuildLights(){
-  clearNode(lightsLayer);
-  if(!state.lights.on) return;
-
-  // put small dots around big ring
-  const ring = getRingById(state.model==="moon" ? "moon" : "big");
-  if(!ring) return;
-
-  const count = 30;
-  const r = ring.r + state.rings.ringStroke*0.5;
-  const intensity = clamp(state.lights.intensity, 20, 100)/100;
-
-  for(let i=0;i<count;i++){
-    const a = (Math.PI*2/count)*i - Math.PI/2;
-    const x = ring.x + Math.cos(a)*r;
-    const y = ring.y + Math.sin(a)*r;
-
-    let c = state.lights.color;
-    if(c==="multicolor"){
-      const palette = ["#ffffff","#ffd34d","#ff3b7b","#7cffb7","#6aa9ff","#c084fc"];
-      c = palette[i % palette.length];
-    }
-
-    const dot = svgEl("circle", {cx:x, cy:y, r:6, fill:c, opacity:String(0.5 + intensity*0.5), filter:"url(#glow)"});
-    if(state.lights.mode==="blink"){
-      dot.style.animation = `blink 1.2s ${ (i%6)*0.08 }s infinite`;
-    }
-    lightsLayer.appendChild(dot);
-  }
-}
-
-function updateSelectionUI(){
-  clearNode(uiLayer);
-  const nameEl = $("#selName");
-
-  if(!state.selectedId){
-    nameEl.textContent = "nessuna";
-    return;
-  }
-
-  if(state.selectedId.startsWith("ring:")){
-    const rid = state.selectedId.split(":")[1];
-    nameEl.textContent = "Cerchio " + rid;
-    // outline around ring
-    const ringNode = [...baseModel.querySelectorAll('g[data-type="ring"]')].find(g=>g.getAttribute("data-id")===rid);
-    if(ringNode){
-      // find circle or path
-      const c = ringNode.querySelector("circle");
-      if(c){
-        uiLayer.appendChild(svgEl("circle", {
-          cx: c.getAttribute("cx"),
-          cy: c.getAttribute("cy"),
-          r: c.getAttribute("r"),
-          class:"selOutline"
-        }));
-      } else {
-        const p = ringNode.querySelector("path");
-        if(p){
-          const clone = p.cloneNode(true);
-          clone.removeAttribute("filter");
-          clone.setAttribute("class","selOutline");
-          clone.setAttribute("stroke-width","3");
-          uiLayer.appendChild(clone);
-        }
-      }
-    }
-    return;
-  }
-
-  if(state.selectedId==="text"){
-    nameEl.textContent = "Scritta";
-    const t = textLayer.querySelector('text[data-type="text"]');
-    if(t){
-      // simple bbox outline
-      try{
-        const bb = t.getBBox();
-        uiLayer.appendChild(svgEl("rect", {x:bb.x-8, y:bb.y-8, width:bb.width+16, height:bb.height+16, rx:14, class:"selOutline"}));
-      }catch(e){}
-    }
-    return;
-  }
-
-  const el = state.elements.find(e=>e.id===state.selectedId);
-  nameEl.textContent = el ? (el.label || el.kind) : "elemento";
-  if(el){
-    uiLayer.appendChild(svgEl("rect", {x:el.x-40, y:el.y-40, width:80, height:80, rx:16, class:"selOutline"}));
-  }
-}
-
-function selectElement(id){
-  state.selectedId = id;
-  updateSelectionUI();
-}
-
-/* ===========================
-   DRAG / CLICK
-=========================== */
-let drag = null;
-
-function getPoint(evt){
-  const pt = svg.createSVGPoint();
-  const e = evt.touches ? evt.touches[0] : evt;
-  pt.x = e.clientX; pt.y = e.clientY;
-  const m = svg.getScreenCTM().inverse();
-  return pt.matrixTransform(m);
-}
-
-svg.addEventListener("pointerdown", (e)=>{
-  const target = e.target.closest("[data-type]");
-  if(!target) {
-    state.selectedId = null;
-    updateSelectionUI();
-    return;
-  }
-
-  const type = target.getAttribute("data-type");
-  const id = target.getAttribute("data-id");
-
-  if(type==="ring"){
-    selectElement("ring:"+id);
-    return;
-  }
-
-  if(type==="text"){
-    selectElement("text");
-    const p = getPoint(e);
-    drag = { kind:"text", start:p };
-    saveToHistory();
-    return;
-  }
-
-  if(type==="acc"){
-    selectElement(id);
-    const el = state.elements.find(x=>x.id===id);
-    if(!el || el.locked) return;
-    const p = getPoint(e);
-    drag = { kind:"acc", id, ox: el.x - p.x, oy: el.y - p.y };
-    saveToHistory();
-    return;
-  }
-});
-
-svg.addEventListener("pointermove", (e)=>{
-  if(!drag) return;
-  const p = getPoint(e);
-
-  if(drag.kind==="acc"){
-    const el = state.elements.find(x=>x.id===drag.id);
-    if(!el || el.locked) return;
-    el.x = p.x + drag.ox;
-    el.y = p.y + drag.oy;
-    rebuildAccessories();
-    updateSelectionUI();
-  }
-
-  if(drag.kind==="text"){
-    const t = textLayer.querySelector('text[data-type="text"]');
-    if(!t) return;
-    const dx = p.x - drag.start.x;
-    const dy = p.y - drag.start.y;
-    t.setAttribute("x", (parseFloat(t.getAttribute("x")) + dx));
-    t.setAttribute("y", (parseFloat(t.getAttribute("y")) + dy));
-    drag.start = p;
-    updateSelectionUI();
-  }
-});
-
-window.addEventListener("pointerup", ()=>{
-  drag = null;
-});
-
-/* ===========================
-   ACTION BUTTONS
-=========================== */
-$("#btnDelete").addEventListener("click", ()=>{
-  if(!state.selectedId) return;
-  saveToHistory();
-
-  if(state.selectedId.startsWith("ring:")){
-    // no delete ring
-    return;
-  }
-  if(state.selectedId==="text"){
-    state.text.on = false;
-    state.text.value = "";
-    rebuildText();
-    state.selectedId = null;
-    updateSelectionUI();
-    updatePrice();
-    return;
-  }
-  const idx = state.elements.findIndex(e=>e.id===state.selectedId);
-  if(idx>=0){
-    state.elements.splice(idx,1);
-    state.selectedId = null;
-    rebuildAccessories();
-    updateSelectionUI();
-    updatePrice();
-  }
-});
-
-$("#btnBack").addEventListener("click", ()=>{
-  const el = state.elements.find(e=>e.id===state.selectedId);
-  if(!el) return;
-  saveToHistory();
-  el.z = (el.z||0) - 100000;
-  rebuildAccessories();
-});
-
-$("#btnFront").addEventListener("click", ()=>{
-  const el = state.elements.find(e=>e.id===state.selectedId);
-  if(!el) return;
-  saveToHistory();
-  el.z = (el.z||0) + 100000;
-  rebuildAccessories();
-});
-
-$("#btnCenter").addEventListener("click", ()=>{
-  if(!state.selectedId) return;
-  saveToHistory();
-
-  if(state.selectedId.startsWith("ring:")){
-    // nothing
-    return;
-  }
-  const ring = getRingById(state.model==="moon" ? "moon" : "big") || {x:500,y:420,r:260};
-  if(state.selectedId==="text"){
-    const t = textLayer.querySelector('text[data-type="text"]');
-    if(t){ t.setAttribute("x", ring.x); }
-    updateSelectionUI();
-    return;
-  }
-  const el = state.elements.find(e=>e.id===state.selectedId);
-  if(el){
-    el.x = ring.x;
-    rebuildAccessories();
-    updateSelectionUI();
-  }
-});
-
-$("#btnDistribute").addEventListener("click", ()=>{
-  // distribute feathers horizontally (simple helper)
-  saveToHistory();
-  const feathers = state.elements.filter(e=>e.kind==="feather");
-  if(feathers.length<2) return;
-  feathers.sort((a,b)=>a.x-b.x);
-  const minX = 250;
-  const maxX = 750;
-  const step = (maxX-minX)/(feathers.length-1);
-  feathers.forEach((f,i)=>{ f.x = minX + step*i; });
-  rebuildAccessories();
-  updateSelectionUI();
-});
-
-$("#btnMirror").addEventListener("click", ()=>{
-  const el = state.elements.find(e=>e.id===state.selectedId);
-  if(!el) return;
-  saveToHistory();
-  el.scale = -(el.scale||1);
-  rebuildAccessories();
-  updateSelectionUI();
-});
-
-$("#btnLock").addEventListener("click", ()=>{
-  const el = state.elements.find(e=>e.id===state.selectedId);
-  if(!el) return;
-  saveToHistory();
-  el.locked = !el.locked;
-  alert(el.locked ? "Posizione bloccata ✅" : "Posizione sbloccata 🔓");
-});
-
-$("#btnUndo").addEventListener("click", ()=>{
-  if(state.history.length===0) return;
-  const last = state.history.pop();
-  state.future.push(snapshot());
-  restore(last);
-});
-$("#btnRedo").addEventListener("click", ()=>{
-  if(state.future.length===0) return;
-  const next = state.future.pop();
-  state.history.push(snapshot());
-  restore(next);
-});
-
-/* ===========================
-   UI CONTROLS
-=========================== */
-function syncInputs(){
-  $("#modelSelect").value = state.model;
-  $("#ringColor").value = state.ringColor;
-  $("#webColor").value = state.webColor;
-  $("#centerBeadColor").value = state.centerBeadColor;
-
-  $("#bigRing").value = state.rings.bigDiameter;
-  $("#smallRing").value = state.rings.smallDiameter;
-  $("#smallCount").value = String(state.rings.smallCount);
-  $("#ringStroke").value = state.rings.ringStroke;
-
-  $("#lightsOn").value = state.lights.on ? "on" : "off";
-  $("#lightsColor").value = state.lights.color;
-  $("#lightsIntensity").value = state.lights.intensity;
-  $("#lightsMode").value = state.lights.mode;
-
-  $("#textValue").value = state.text.value;
-  $("#textColor").value = state.text.color;
-  $("#textFont").value = state.text.font;
-  $("#textSize").value = state.text.size;
-  $("#textShadow").value = state.text.shadow ? "on" : "off";
-
-  $("#waNumber").value = state.waNumber || "";
-  $("#projectName").value = state.projectName || "";
-
-  // update weave UI default selection
-  const sel = $("#weaveRingSelect");
-  if(sel.options.length>0 && !sel.value) sel.value = sel.options[0].value;
-  const rid = sel.value;
-  const conf = state.weaves[rid] || {type:"spider", density:9};
-  $("#weaveType").value = conf.type;
-  $("#weaveDensity").value = conf.density;
-}
-
-$("#btnApplyModel").addEventListener("click", ()=>{
-  saveToHistory();
-  state.model = $("#modelSelect").value;
-  state.ringColor = $("#ringColor").value;
-  state.webColor = $("#webColor").value;
-  state.centerBeadColor = $("#centerBeadColor").value;
-  // reset elements lightly when changing model
-  if(state.model==="tree"){
-    state.elements = state.elements.filter(e=>e.kind!=="feather"); // remove auto feathers
-  }
-  buildBase();
-  saveLocal();
-});
-
-$("#btnReset").addEventListener("click", ()=>{
-  if(!confirm("Ripartire pulito?")) return;
-  state.history=[]; state.future=[];
-  state.elements=[];
-  state.weaves={};
-  state.text={ on:false, value:"", color:"#ffd34d", font:"sans", size:56, shadow:true };
-  state.lights={ on:false, color:"multicolor", intensity:75, mode:"steady" };
-  state.photoBg={ dataUrl:null, opacity:0.25 };
-  bgPhoto.style.backgroundImage = "";
-  buildBase();
-  saveLocal();
-});
-
-$("#btnApplyRings").addEventListener("click", ()=>{
-  saveToHistory();
-  state.rings.bigDiameter = parseInt($("#bigRing").value,10);
-  state.rings.smallDiameter = parseInt($("#smallRing").value,10);
-  state.rings.smallCount = parseInt($("#smallCount").value,10);
-  state.rings.ringStroke = parseInt($("#ringStroke").value,10);
-  buildBase();
-  saveLocal();
-});
-
-$("#btnAutoLayout").addEventListener("click", ()=>{
-  // in this version rings auto layout already, just rebuild
-  saveToHistory();
-  buildBase();
-  saveLocal();
-});
-
-$("#btnApplyWeave").addEventListener("click", ()=>{
-  saveToHistory();
-  const rid = $("#weaveRingSelect").value;
-  state.weaves[rid] = { type: $("#weaveType").value, density: parseInt($("#weaveDensity").value,10) };
-  buildBase();
-  saveLocal();
-});
-
-$("#btnWeaveAll").addEventListener("click", ()=>{
-  saveToHistory();
-  const type = $("#weaveType").value;
-  const density = parseInt($("#weaveDensity").value,10);
-  Object.keys(state.weaves).forEach(k=> state.weaves[k] = {type, density});
-  buildBase();
-  saveLocal();
-});
-
-$("#btnApplyLights").addEventListener("click", ()=>{
-  saveToHistory();
-  state.lights.on = $("#lightsOn").value==="on";
-  state.lights.color = $("#lightsColor").value;
-  state.lights.intensity = parseInt($("#lightsIntensity").value,10);
-  state.lights.mode = $("#lightsMode").value;
-  rebuildLights();
-  updatePrice();
-  saveLocal();
-});
-
-$("#btnLightsAuto").addEventListener("click", ()=>{
-  saveToHistory();
-  state.lights.on = true;
-  state.lights.color = "multicolor";
-  state.lights.intensity = 80;
-  state.lights.mode = "blink";
-  syncInputs();
-  rebuildLights();
-  updatePrice();
-  saveLocal();
-});
-
-$("#btnAddText").addEventListener("click", ()=>{
-  saveToHistory();
-  state.text.on = true;
-  state.text.value = $("#textValue").value.trim();
-  state.text.color = $("#textColor").value;
-  state.text.font = $("#textFont").value;
-  state.text.size = parseInt($("#textSize").value,10);
-  state.text.shadow = $("#textShadow").value==="on";
-  rebuildText();
-  selectElement("text");
-  updatePrice();
-  saveLocal();
-});
-
-$("#btnRemoveText").addEventListener("click", ()=>{
-  saveToHistory();
-  state.text.on = false;
-  state.text.value = "";
-  rebuildText();
-  state.selectedId = null;
-  updateSelectionUI();
-  updatePrice();
-  saveLocal();
-});
-
-/* ===========================
-   ACCESSORIES UI
-=========================== */
-let currentTheme = "Tutti";
-
-function renderThemeChips(){
-  const wrap = $("#themeChips");
-  wrap.innerHTML = "";
-  THEMES.forEach(t=>{
-    const chip = document.createElement("div");
-    chip.className = "chip" + (t===currentTheme ? " on" : "");
-    chip.textContent = t;
-    chip.addEventListener("click", ()=>{
-      currentTheme = t;
-      renderThemeChips();
-      renderAccessoryList();
-    });
-    wrap.appendChild(chip);
-  });
-}
-
-function renderAccessoryList(){
-  const list = $("#accList");
-  list.innerHTML = "";
-
-  const filtered = ACCESSORIES.filter(a=>{
-    if(currentTheme==="Tutti") return true;
-    return a.themes.includes(currentTheme);
-  });
-
-  filtered.forEach(a=>{
-    const li = document.createElement("li");
-    li.className = "item";
-    li.innerHTML = `
-      <div class="left">
-        <div class="badge">${a.icon}</div>
-        <div style="min-width:0">
-          <p class="title">${a.label}</p>
-          <p class="meta">${a.themes.join(" • ")}</p>
-        </div>
-      </div>
-      <button class="btn small ok">Aggiungi</button>
-    `;
-    li.querySelector("button").addEventListener("click", ()=>{
-      addAccessory(a.id);
-      saveLocal();
-    });
-    list.appendChild(li);
-  });
-}
-
-/* ===========================
-   PRICES / TOTAL
-=========================== */
-function loadPrices(){
-  try{
-    const s = localStorage.getItem(STORAGE_PRICES);
-    if(!s) return {...DEFAULT_PRICES};
-    const p = JSON.parse(s);
-    return {...DEFAULT_PRICES, ...p};
-  }catch(e){
-    return {...DEFAULT_PRICES};
-  }
-}
-function savePrices(){
-  localStorage.setItem(STORAGE_PRICES, JSON.stringify(prices));
-}
-
-function countAccessories(){
-  const c = { feather:0, bead:0, charm:0, flower:0, bow:0, gnome:0, text:0 };
-  state.elements.forEach(e=>{
-    const def = ACCESSORIES.find(a=>a.id===e.accId);
-    if(!def) return;
-    const key = def.priceKey;
-    if(c[key]===undefined) c[key]=0;
-    c[key] += 1;
-  });
-  if(state.text.on && state.text.value) c.text += 1;
-  return c;
-}
-
-function computeTotal(){
-  let total = 0;
-
-  // rings
-  total += prices.ring_big;
-
-  if(state.model!=="moon" && state.model!=="tree"){
-    total += prices.ring_small * state.rings.smallCount;
-  } else if(state.model==="tree"){
-    // tree uses many rings -> approximate
-    total += prices.ring_small * 10;
-  }
-
-  // lights
-  if(state.lights.on) total += prices.lights;
-
-  // accessories
-  const counts = countAccessories();
-  Object.keys(counts).forEach(k=>{
-    total += (prices[k]||0) * counts[k];
-  });
-
-  // quantity discount by total accessories count (not rings)
-  const accTotal = state.elements.length + ((state.text.on && state.text.value)?1:0);
-  let disc = 0;
-  if(accTotal>=30) disc = 0.15;
-  else if(accTotal>=20) disc = 0.10;
-  else if(accTotal>=10) disc = 0.05;
-
-  total = total * (1 - disc);
-  return { total, disc, accTotal, counts };
-}
-
-function updatePrice(){
-  const res = computeTotal();
-  $("#totalPrice").textContent = euro(res.total);
-
-  const lines = [];
-  lines.push(`Rings: grande ${euro(prices.ring_big)} + piccoli ${state.model==="tree" ? "(stima x10)" : "x"+state.rings.smallCount} (${euro(prices.ring_small)})`);
-  if(state.lights.on) lines.push(`Luci: ${euro(prices.lights)}`);
-  const c = res.counts;
-  lines.push(`Accessori: piume ${c.feather}, perline ${c.bead}, charm ${c.charm}, fiori ${c.flower}, fiocchi ${c.bow}, gnomi ${c.gnome}, testi ${c.text}`);
-  if(res.disc>0) lines.push(`Sconto quantità: -${Math.round(res.disc*100)}%`);
-  $("#priceSummary").innerHTML = lines.join("<br>");
-}
-
-$("#btnResetPrices").addEventListener("click", ()=>{
-  if(!confirm("Ripristinare i prezzi base?")) return;
-  prices = {...DEFAULT_PRICES};
-  savePrices();
-  updatePrice();
-});
-
-/* ===========================
-   PRIVATE AREA (PIN)
-=========================== */
-function openPrivate(){
-  const pinSaved = localStorage.getItem(STORAGE_PIN) || DEFAULT_PIN;
-  const pin = prompt("Inserisci PIN area privata:", "");
-  if(pin !== pinSaved){
-    alert("PIN errato.");
-    return;
-  }
-
-  const body = $("#privateBody");
-  body.innerHTML = "";
-
-  const entries = Object.entries(prices);
-  entries.forEach(([k,v])=>{
-    const lab = document.createElement("label");
-    lab.innerHTML = `${k} <input type="number" step="0.10" value="${v}" data-k="${k}">`;
-    body.appendChild(lab);
-  });
-
-  $("#privateModal").classList.add("on");
-}
-
-$("#btnAreaPrivata").addEventListener("click", openPrivate);
-$("#closePrivate").addEventListener("click", ()=>$("#privateModal").classList.remove("on"));
-$("#btnPrivateCancel").addEventListener("click", ()=>$("#privateModal").classList.remove("on"));
-$("#btnPrivateSave").addEventListener("click", ()=>{
-  const inputs = $("#privateBody").querySelectorAll("input[data-k]");
-  inputs.forEach(inp=>{
-    const k = inp.dataset.k;
-    prices[k] = parseFloat(inp.value || "0");
-  });
-  savePrices();
-  $("#privateModal").classList.remove("on");
-  updatePrice();
-});
-
-/* ===========================
-   PHOTO MODAL
-=========================== */
-$("#btnCreaDaFoto").addEventListener("click", ()=>{
-  $("#photoModal").classList.add("on");
-});
-$("#closePhoto").addEventListener("click", ()=>$("#photoModal").classList.remove("on"));
-$("#btnRemovePhoto").addEventListener("click", ()=>{
-  state.photoBg.dataUrl = null;
-  bgPhoto.style.backgroundImage = "";
-  $("#photoModal").classList.remove("on");
-  saveLocal();
-});
-
-$("#btnApplyPhoto").addEventListener("click", ()=>{
-  const op = clamp(parseInt($("#photoOpacity").value,10), 5, 60);
-  state.photoBg.opacity = op/100;
-  bgPhoto.style.opacity = String(state.photoBg.opacity);
-  $("#photoModal").classList.remove("on");
-  saveLocal();
-});
-
-$("#photoFile").addEventListener("change", (e)=>{
-  const file = e.target.files?.[0];
-  if(!file) return;
-  const r = new FileReader();
-  r.onload = ()=>{
-    state.photoBg.dataUrl = r.result;
-    bgPhoto.style.backgroundImage = `url('${state.photoBg.dataUrl}')`;
-    bgPhoto.style.opacity = String(state.photoBg.opacity);
-
-    // optional auto color
-    const mode = $("#autoColor").value;
-    if(mode!=="off"){
-      // quick avg sampling with canvas
-      const img = new Image();
-      img.onload = ()=>{
-        const c = document.createElement("canvas");
-        c.width = 32; c.height = 32;
-        const ctx = c.getContext("2d");
-        ctx.drawImage(img,0,0,32,32);
-        const data = ctx.getImageData(0,0,32,32).data;
-        let r=0,g=0,b=0,n=0;
-        for(let i=0;i<data.length;i+=4){
-          r += data[i]; g += data[i+1]; b += data[i+2]; n++;
-        }
-        r = Math.round(r/n); g = Math.round(g/n); b = Math.round(b/n);
-        const hex = "#"+[r,g,b].map(x=>x.toString(16).padStart(2,"0")).join("");
-        if(mode==="ring"){ state.ringColor = hex; $("#ringColor").value = hex; }
-        if(mode==="web"){ state.webColor = hex; $("#webColor").value = hex; }
-        buildBase();
-      };
-      img.src = state.photoBg.dataUrl;
-    }
+  // QUI: apre SOLO il configuratore
+  document.getElementById("goCustomizer").onclick = ()=>{
+    window.location.href = "configuratore.html";
   };
-  r.readAsDataURL(file);
-});
 
-/* ===========================
-   SAVE / LOAD PROJECT
-=========================== */
-function saveLocal(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot()));
-  // gallery saved separately
-}
-function loadLocal(){
-  try{
-    const s = localStorage.getItem(STORAGE_KEY);
-    if(!s) return;
-    const snap = JSON.parse(s);
-    restore({...snapshot(), ...snap});
-    // restore bg
-    if(state.photoBg.dataUrl){
-      bgPhoto.style.backgroundImage = `url('${state.photoBg.dataUrl}')`;
-      bgPhoto.style.opacity = String(state.photoBg.opacity || 0.25);
-    }
-  }catch(e){}
-}
-
-$("#btnSalva").addEventListener("click", ()=>{
-  state.waNumber = $("#waNumber").value.trim();
-  state.projectName = $("#projectName").value.trim();
-  saveLocal();
-  alert("Progetto salvato ✅");
-});
-
-$("#btnDownloadJSON").addEventListener("click", ()=>{
-  const data = JSON.stringify(snapshot(), null, 2);
-  const blob = new Blob([data], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = (state.projectName ? state.projectName.replace(/\s+/g,"_") : "progetto") + ".json";
-  a.click();
-});
-
-$("#fileLoadJSON").addEventListener("change", (e)=>{
-  const file = e.target.files?.[0];
-  if(!file) return;
-  const r = new FileReader();
-  r.onload = ()=>{
-    try{
-      const snap = JSON.parse(r.result);
-      restore({...snapshot(), ...snap});
-      if(state.photoBg.dataUrl){
-        bgPhoto.style.backgroundImage = `url('${state.photoBg.dataUrl}')`;
-        bgPhoto.style.opacity = String(state.photoBg.opacity || 0.25);
-      }
-      saveLocal();
-      alert("Progetto caricato ✅");
-    }catch(err){
-      alert("JSON non valido");
-    }
+  // carrello button (solo scroll su fondo, semplice)
+  document.getElementById("goCart").onclick = ()=>{
+    window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
   };
-  r.readAsText(file);
-});
 
-$("#btnDownloadPNG").addEventListener("click", ()=>{
-  // export SVG to PNG
-  const clone = svg.cloneNode(true);
-  // remove selection UI in export
-  const ui = clone.querySelector("#uiLayer");
-  if(ui) ui.innerHTML = "";
-
-  const xml = new XMLSerializer().serializeToString(clone);
-  const svg64 = btoa(unescape(encodeURIComponent(xml)));
-  const image64 = "data:image/svg+xml;base64," + svg64;
-
-  const img = new Image();
-  img.onload = ()=>{
-    const c = document.createElement("canvas");
-    c.width = 1400;
-    c.height = 1400;
-    const ctx = c.getContext("2d");
-
-    // optional background photo
-    if(state.photoBg.dataUrl){
-      const bg = new Image();
-      bg.onload = ()=>{
-        ctx.globalAlpha = state.photoBg.opacity || 0.25;
-        ctx.drawImage(bg, 0, 0, c.width, c.height);
-        ctx.globalAlpha = 1;
-        ctx.drawImage(img, 0, 0, c.width, c.height);
-        downloadCanvas(c);
-      };
-      bg.src = state.photoBg.dataUrl;
-    } else {
-      ctx.drawImage(img, 0, 0, c.width, c.height);
-      downloadCanvas(c);
-    }
-  };
-  img.src = image64;
-});
-
-function downloadCanvas(canvas){
-  canvas.toBlob((blob)=>{
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = (state.projectName ? state.projectName.replace(/\s+/g,"_") : "acchiappasogni") + ".png";
-    a.click();
-  });
-}
-
-/* ===========================
-   WHATSAPP
-=========================== */
-function buildWhatsAppMessage(){
-  const res = computeTotal();
-  const name = ($("#projectName").value || state.projectName || "Progetto").trim();
-  const model = state.model;
-  const rings = (state.model==="tree") ? "Albero (multi cerchi)" : (state.model==="moon" ? "Luna" : (state.model==="triple" ? "Triplo" : (state.model==="mini" ? "Mini" : "Classico")));
-  const counts = res.counts;
-
-  const lines = [];
-  lines.push(`Ciao! 😊 Vorrei un acchiappasogni personalizzato.`);
-  lines.push(`Nome progetto: ${name}`);
-  lines.push(`Modello: ${rings}`);
-  lines.push(`Colori: cerchio ${state.ringColor} • rete ${state.webColor} • perla ${state.centerBeadColor}`);
-  lines.push(`Cerchi: grande ${state.rings.bigDiameter} • piccoli ${state.model==="tree" ? "stima 10" : state.rings.smallCount} (diametro ${state.rings.smallDiameter})`);
-  if(state.text.on && state.text.value) lines.push(`Scritta: "${state.text.value}" (colore ${state.text.color})`);
-  lines.push(`Accessori: piume ${counts.feather}, perline ${counts.bead}, charm ${counts.charm}, fiori ${counts.flower}, fiocchi ${counts.bow}, gnomi ${counts.gnome}`);
-  if(state.lights.on) lines.push(`Luci LED: ON (${state.lights.color}, intensità ${state.lights.intensity}%, ${state.lights.mode})`);
-  if(res.disc>0) lines.push(`Sconto quantità applicato: -${Math.round(res.disc*100)}%`);
-  lines.push(`Totale stimato: ${euro(res.total)}`);
-  lines.push(`Grazie! 🙏`);
-
-  return lines.join("\n");
-}
-
-function openWhatsApp(){
-  const num = ($("#waNumber").value || state.waNumber || "").replace(/\D/g,"");
-  if(!num){
-    alert("Inserisci il tuo numero WhatsApp nella sezione Salva/Scarica.");
-    return;
-  }
-  const msg = encodeURIComponent(buildWhatsAppMessage());
-  // wa.me expects country code included
-  const url = `https://wa.me/${num}?text=${msg}`;
-  window.open(url, "_blank");
-}
-
-$("#btnInvia").addEventListener("click", openWhatsApp);
-$("#btnInvia2").addEventListener("click", openWhatsApp);
-
-/* ===========================
-   GALLERY (My works)
-=========================== */
-function loadGallery(){
-  try{
-    const s = localStorage.getItem(STORAGE_GALLERY);
-    if(!s) return [];
-    return JSON.parse(s);
-  }catch(e){ return []; }
-}
-function saveGallery(arr){
-  localStorage.setItem(STORAGE_GALLERY, JSON.stringify(arr));
-}
-function renderGallery(){
-  const wrap = $("#gallery");
-  wrap.innerHTML = "";
-  const arr = loadGallery();
-  arr.forEach((src, idx)=>{
-    const d = document.createElement("div");
-    d.className = "gimg";
-    d.innerHTML = `<img src="${src}" alt="lavoro ${idx+1}"><button class="x">✖</button>`;
-    d.querySelector("button").addEventListener("click", ()=>{
-      const next = loadGallery();
-      next.splice(idx,1);
-      saveGallery(next);
-      renderGallery();
-    });
-    wrap.appendChild(d);
-  });
-}
-
-$("#galleryAdd").addEventListener("change", (e)=>{
-  const files = [...(e.target.files||[])];
-  if(files.length===0) return;
-
-  const arr = loadGallery();
-  let pending = files.length;
-
-  files.forEach(f=>{
-    const r = new FileReader();
-    r.onload = ()=>{
-      arr.unshift(r.result);
-      pending--;
-      if(pending===0){
-        saveGallery(arr.slice(0,20)); // limit
-        renderGallery();
-      }
-    };
-    r.readAsDataURL(f);
-  });
-});
-
-$("#btnClearGallery").addEventListener("click", ()=>{
-  if(!confirm("Svuotare la vetrina?")) return;
-  saveGallery([]);
-  renderGallery();
-});
-
-/* ===========================
-   INIT
-=========================== */
-function rebuildAll(){
-  buildBase();
-  syncInputs();
-  renderThemeChips();
-  renderAccessoryList();
-  renderGallery();
-  updatePrice();
-}
-
-function init(){
-  renderThemeChips();
-  renderAccessoryList();
-  renderGallery();
-  loadLocal();
-  syncInputs();
-
-  // attach input persistence
-  $("#waNumber").addEventListener("input", ()=>{ state.waNumber=$("#waNumber").value.trim(); saveLocal(); });
-  $("#projectName").addEventListener("input", ()=>{ state.projectName=$("#projectName").value.trim(); saveLocal(); });
-
-  // weave ring select change
-  $("#weaveRingSelect").addEventListener("change", ()=>{
-    const rid = $("#weaveRingSelect").value;
-    const conf = state.weaves[rid] || {type:"spider", density:9};
-    $("#weaveType").value = conf.type;
-    $("#weaveDensity").value = conf.density;
-  });
-
-  // select ring by clicking base model group is already handled in pointerdown
-
-  // add data-type for text
-  // we add it when rebuilding
-  buildBase();
-
-  // set photo
-  if(state.photoBg.dataUrl){
-    bgPhoto.style.backgroundImage = `url('${state.photoBg.dataUrl}')`;
-    bgPhoto.style.opacity = String(state.photoBg.opacity || 0.25);
-  }
-
-  updatePrice();
-}
-
-init();
-
-/* mark data-type for text when exists */
-const observer = new MutationObserver(()=>{
-  const t = textLayer.querySelector("text");
-  if(t){
-    t.setAttribute("data-type","text");
-    t.setAttribute("data-id","text");
-  }
-});
-observer.observe(textLayer, {childList:true, subtree:true});
+  // INIT
+  renderChips();
+  renderGrid();
+  updateCartUI();
 </script>
 </body>
 </html>
