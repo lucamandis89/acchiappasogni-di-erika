@@ -549,57 +549,65 @@
 }
 
 
-/* ===== Studio mode (builder lite) ===== */
-body.builderlite-open{ overflow: hidden !important; }
-.modal-back.studio{
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: 9999 !important;
-  background: rgba(0,0,0,.86) !important;
+/* --- STUDIO MODE: configuratore "da app" su mobile --- */
+body.studio-mode{
+  overscroll-behavior: none;
 }
-.modal-back.studio .modal{
-  width: 100% !important;
-  max-width: 100% !important;
-  height: 100% !important;
-  max-height: 100% !important;
+#builderLiteBack.studio-mode{
+  align-items: stretch !important;
+  justify-content: stretch !important;
+}
+#builderLiteBack.studio-mode .modal{
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
   border-radius: 0 !important;
 }
-.modal-back.studio .modal-body{
-  height: calc(100% - 64px) !important;
+#builderLiteBack.studio-mode .modal-body{
+  height: calc(100vh - 64px) !important; /* header */
   overflow: hidden !important;
 }
-.modal-back.studio .lite-grid{
-  height: 100% !important;
-  overflow: hidden !important;
+#builderLiteBack.studio-mode .lite-grid{
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 14px;
 }
-.modal-back.studio .lite-grid > .box{
-  height: 100% !important;
-  overflow: auto !important;
+/* Colonna destra scrollabile */
+#builderLiteBack.studio-mode .lite-grid > .box:last-child{
+  overflow: auto;
+  max-height: 100%;
+  -webkit-overflow-scrolling: touch;
 }
-.modal-back.studio #dlStage{
-  height: min(62vh, 560px) !important;
+/* Stage più grande e centrato */
+#builderLiteBack.studio-mode #dlStage{
+  height: min(72vh, 620px) !important;
+  max-height: 72vh !important;
+  touch-action: none;
 }
-
-/* Prefer 2 columns in landscape to mimic "rotate" workspace */
-@media (orientation: landscape) and (max-width: 1100px){
-  .modal-back.studio .lite-grid{
-    grid-template-columns: 1.25fr .75fr !important;
-    align-items: start;
+/* Su schermi stretti: layout a colonna */
+@media (max-width: 820px){
+  #builderLiteBack.studio-mode .lite-grid{
+    grid-template-columns: 1fr;
   }
-  .modal-back.studio #dlStage{
-    height: calc(100vh - 180px) !important;
-    max-height: 100% !important;
+  #builderLiteBack.studio-mode #dlStage{
+    height: 56vh !important;
+    max-height: 56vh !important;
   }
 }
-
-/* In portrait, keep single column but give the stage more space */
-@media (orientation: portrait) and (max-width: 900px){
-  .modal-back.studio .lite-grid{
-    grid-template-columns: 1fr !important;
-  }
-  .modal-back.studio #dlStage{
-    height: min(68vh, 640px) !important;
-  }
+/* Fallback fullscreen (quando API non disponibile) */
+#builderLiteBack.fs-fallback{
+  position: fixed !important;
+  inset: 0 !important;
+  display: flex !important;
+  background: rgba(0,0,0,.55);
+  z-index: 9999 !important;
+}
+#builderLiteBack.fs-fallback .modal{
+  width: 100vw !important;
+  height: 100vh !important;
+  border-radius: 0 !important;
+  max-width: none !important;
 }
 
 </style>
@@ -2132,7 +2140,43 @@ function getAdminPass(){ return localStorage.getItem(K.adminPass) || ADMIN_PASS_
     }
     function saveLiteProjects(arr){ localStorage.setItem(K_LITE.projects, JSON.stringify(arr)); }
 
-    function openBuilderLite(){
+    
+    // --- STUDIO MODE (fullscreen + layout ottimizzato mobile) ---
+    function enterStudioMode(){
+      // aggiunge classi per layout "da app"
+      document.body.classList.add("studio-mode");
+      builderLiteBack.classList.add("studio-mode");
+      // prova a nascondere la barra indirizzi: scroll top
+      try{ window.scrollTo({top:0, left:0, behavior:"instant"}); }catch(e){ window.scrollTo(0,0); }
+
+      // prova a forzare landscape (se supportato); altrimenti nessun errore
+      const so = screen.orientation || screen.mozOrientation || screen.msOrientation;
+      if(so && so.lock){
+        so.lock("landscape").catch(()=>{});
+      }
+      // prova fullscreen API sul modal; fallback CSS se negato
+      const target = builderLiteBack;
+      const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+      if(!isFs){
+        (target.requestFullscreen?.() || target.webkitRequestFullscreen?.()).catch(()=> {
+          builderLiteBack.classList.add("fs-fallback");
+        });
+      }
+    }
+    function exitStudioMode(){
+      document.body.classList.remove("studio-mode");
+      builderLiteBack.classList.remove("studio-mode");
+      builderLiteBack.classList.remove("fs-fallback");
+      const so = screen.orientation || screen.mozOrientation || screen.msOrientation;
+      if(so && so.unlock){
+        try{ so.unlock(); }catch(e){}
+      }
+      const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+      if(isFs){
+        (document.exitFullscreen?.() || document.webkitExitFullscreen?.()).catch(()=>{});
+      }
+    }
+function openBuilderLite(){
       lite = {
         id: uid(),
         created_at: new Date().toISOString(),
@@ -2166,9 +2210,11 @@ function getAdminPass(){ return localStorage.getItem(K.adminPass) || ADMIN_PASS_
       seedLiteByModel(dlModel.value);
 
       builderLiteBack.style.display = "flex";
+          enterStudioMode();
     }
 
     function closeBuilderLite(){
+      exitStudioMode();
       builderLiteBack.style.display = "none";
       liteSelectedId = null;
     }
@@ -2617,18 +2663,20 @@ const WEAVE_TEMPLATES = {
       };
 
       dlStage.addEventListener("pointerdown", (ev)=>{
-        // Non blocchiamo il drag normale sull'elemento (che è gestito dal nodo).
-        // Qui ci interessa soprattutto il pinch con 2 dita, quindi attiviamo solo se si usano 2 dita.
+        // Non interferire col drag dell'elemento (gestito dal nodo .dl-el)
+        if(ev.target && ev.target.closest && ev.target.closest(".dl-el")) return;
+
+        // Qui ci interessa il pinch con 2 dita sullo stage
         const sel = getSelectedEl();
         if(!sel) return;
 
-        // Evita lo zoom pagina del browser
-        ev.preventDefault();
-
         st.pointers.set(ev.pointerId, toStage(ev));
-        dlStage.setPointerCapture(ev.pointerId);
 
+        // Attiva solo quando arrivano 2 dita
         if(st.pointers.size === 2){
+          // Evita lo zoom pagina del browser
+          ev.preventDefault();
+          dlStage.setPointerCapture(ev.pointerId);
           st.mode = "transform";
           const pts = Array.from(st.pointers.values());
           st.tf.startDist = Math.max(10, dist(pts[0], pts[1]));
@@ -2925,27 +2973,11 @@ function selectLite(id){
     const btnDlFs = document.getElementById("dlFullscreen");
     if(btnDlFs){
       btnDlFs.onclick = async ()=>{
-        const back = document.getElementById("builderModalBack");
-        if(!back) return;
-
-        // Prefer real Fullscreen API when available
-        const isFs = document.fullscreenElement || document.webkitFullscreenElement;
-        if(isFs){
-          try{
-            await (document.exitFullscreen?.() || document.webkitExitFullscreen?.());
-          }catch(e){
-            // fallback
-            back.classList.remove("fs-fallback");
-          }
-          return;
-        }
-
-        // Try requestFullscreen on the modal container; if denied, use CSS fallback
-        const target = back;
-        try{
-          await (target.requestFullscreen?.() || target.webkitRequestFullscreen?.());
-        }catch(e){
-          back.classList.toggle("fs-fallback");
+        // Toggle modalità studio
+        if(document.body.classList.contains("studio-mode")){
+          exitStudioMode();
+        }else{
+          enterStudioMode();
         }
       };
     }
@@ -3779,7 +3811,7 @@ function selectLite(id){
   <!-- html2canvas per condividere l’anteprima su WhatsApp -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script>
-// Studio mode (fullscreen + landscape lock when possible) for Dreamcatcher builder
+// Fullscreen toggle for Dreamcatcher builder
 (function(){
   const back = document.getElementById('builderLiteBack');
   const btn = document.getElementById('dlFullscreen');
@@ -3787,120 +3819,57 @@ function selectLite(id){
   if(!back || !btn) return;
 
   function isFs(){
-    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+    return document.fullscreenElement || document.webkitFullscreenElement;
   }
-
-  async function tryLockLandscape(){
-    try{
-      if(screen.orientation && screen.orientation.lock){
-        await screen.orientation.lock('landscape');
-      }
-    }catch(e){ /* ignore */ }
-  }
-  function tryUnlock(){
-    try{
-      if(screen.orientation && screen.orientation.unlock){
-        screen.orientation.unlock();
-      }
-    }catch(e){ /* ignore */ }
-  }
-
-  function setUi(on){
-    back.classList.toggle('studio', on);
-    document.body.classList.toggle('builderlite-open', on);
-    btn.textContent = on ? '🗗 Esci' : '⛶ Schermo intero';
-  }
-
-  async function enterStudio(){
-    // 1) Try true fullscreen (best chance to allow orientation lock)
+  async function enterFs(){
     const target = back.querySelector('.modal') || back;
-    let fsOk = false;
-
-    try{
-      if(target.requestFullscreen){
-        await target.requestFullscreen();
-        fsOk = true;
-      } else if(target.webkitRequestFullscreen){
-        target.webkitRequestFullscreen();
-        fsOk = true;
-      }
-    }catch(e){ /* ignore */ }
-
-    // 2) Fallback CSS fullscreen if browser blocks it
-    if(!fsOk && !isFs()){
-      back.classList.add('fs-fallback');
+    if(target.requestFullscreen){
+      await target.requestFullscreen();
+      return true;
     }
-    setUi(true);
-
-    // 3) Try landscape lock (works only on some browsers, usually while fullscreen)
-    await tryLockLandscape();
+    if(target.webkitRequestFullscreen){
+      target.webkitRequestFullscreen();
+      return true;
+    }
+    // fallback CSS
+    back.classList.add('fs-fallback');
+    return false;
   }
-
-  async function exitStudio(){
-    setUi(false);
+  async function exitFs(){
+    if(document.exitFullscreen){
+      try{ await document.exitFullscreen(); } catch(e){}
+    } else if(document.webkitExitFullscreen){
+      try{ document.webkitExitFullscreen(); } catch(e){}
+    }
     back.classList.remove('fs-fallback');
-
-    // Exit fullscreen if active
-    try{
-      if(document.exitFullscreen){
-        await document.exitFullscreen();
-      } else if(document.webkitExitFullscreen){
-        document.webkitExitFullscreen();
-      }
-    }catch(e){ /* ignore */ }
-
-    tryUnlock();
   }
 
   btn.addEventListener('click', async (e)=>{
     e.preventDefault();
-    const on = back.classList.contains('studio') || back.classList.contains('fs-fallback') || isFs();
-    if(on){
-      await exitStudio();
+    if(isFs() || back.classList.contains('fs-fallback')){
+      await exitFs();
+      btn.textContent = '⛶ Schermo intero';
     } else {
-      await enterStudio();
+      await enterFs();
+      btn.textContent = '🗗 Esci';
     }
   });
 
-  // Auto-enter studio when opening the modal (user gesture comes from the click on "Personalizza")
-  if(typeof window.openBuilderLite === 'function'){
-    const _open = window.openBuilderLite;
-    window.openBuilderLite = function(){
-      const r = _open.apply(this, arguments);
-      // The modal is now visible; try to enter studio.
-      setTimeout(()=>{ 
-        if(back.style.display === 'flex'){
-          enterStudio();
-        }
-      }, 50);
-      return r;
-    };
-  }
-
-  // Ensure we exit studio when closing modal
-  async function hardExit(){
-    await exitStudio();
-    btn.textContent = '⛶ Schermo intero';
-  }
-
+  // Ensure we exit fullscreen when closing modal
   if(closeBtn){
-    closeBtn.addEventListener('click', ()=>{ hardExit(); }, {capture:true});
+    closeBtn.addEventListener('click', ()=>{ exitFs(); btn.textContent='⛶ Schermo intero'; }, {capture:true});
   }
-
   back.addEventListener('click', (e)=>{
-    // If tap outside modal closes, also exit
-    if(e.target === back){ hardExit(); }
+    // if tap outside modal closes, also exit
+    if(e.target === back){ exitFs(); btn.textContent='⛶ Schermo intero'; }
   });
 
   document.addEventListener('fullscreenchange', ()=>{
-    // Keep button label coherent
-    if(isFs() || back.classList.contains('fs-fallback') || back.classList.contains('studio')){
-      btn.textContent = '🗗 Esci';
-    } else {
-      btn.textContent = '⛶ Schermo intero';
-    }
+    if(!isFs()){ btn.textContent='⛶ Schermo intero'; }
+    else { btn.textContent='🗗 Esci'; }
   });
 })();
+
 </script>
  </body>
 </html>
