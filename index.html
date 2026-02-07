@@ -4,98 +4,1079 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Acchiappasogni di Erika</title>
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+    :root{
+      --bg1:#070a12;
+      --bg2:#0b1430;
+      --card:#0f1b33cc;
+      --card2:#0f1b33f2;
+      --stroke:#23365f;
+      --text:#e9efff;
+      --muted:#b9c6ffcc;
+      --accent:#7c5cff;
+      --accent2:#6ee7ff;
+      --danger:#ff4d6d;
+      --ok:#35d07f;
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 700px at 20% 0%, rgba(124,92,255,.18), transparent 55%),
+        radial-gradient(1000px 600px at 90% 30%, rgba(110,231,255,.12), transparent 55%),
+        linear-gradient(180deg, var(--bg2), var(--bg1));
+      min-height:100vh;
+    }
+    .wrap{max-width:1200px;margin:0 auto;padding:14px 12px 80px}
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(7,10,18,.92), rgba(7,10,18,.65));
+      border-bottom:1px solid rgba(35,54,95,.45);
+    }
+    .topbar-inner{max-width:1200px;margin:0 auto;padding:10px 12px; display:flex; gap:10px; align-items:center;}
+    .brand{display:flex; gap:10px; align-items:center; min-width: 210px;}
+    .logo{
+      width:28px;height:28px;border-radius:10px;
+      background: radial-gradient(circle at 30% 30%, rgba(110,231,255,.9), rgba(124,92,255,.7));
+      box-shadow: 0 10px 30px rgba(124,92,255,.25);
+      display:flex;align-items:center;justify-content:center;
+      font-weight:800;
+    }
+    .brand h1{font-size:14px;margin:0;line-height:1.05}
+    .brand small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+    .btn{
+      border:1px solid rgba(35,54,95,.65);
+      background: rgba(15,27,51,.55);
+      color:var(--text);
+      padding:8px 10px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-weight:700;
+      font-size:12px;
+      display:inline-flex; align-items:center; gap:8px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.18);
+      user-select:none;
+      transition: transform .06s ease, background .2s ease, border .2s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{background: rgba(15,27,51,.85); border-color: rgba(124,92,255,.5)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{
+      border-color: rgba(124,92,255,.75);
+      background: linear-gradient(180deg, rgba(124,92,255,.9), rgba(124,92,255,.55));
+    }
+    .btn.danger{
+      border-color: rgba(255,77,109,.65);
+      background: rgba(255,77,109,.12);
+    }
+    .spacer{flex:1}
+    .pill{
+      padding:6px 10px;
+      border-radius: 999px;
+      background: rgba(15,27,51,.55);
+      border:1px solid rgba(35,54,95,.55);
+      font-size:12px;
+      color:var(--muted);
+      display:flex; gap:8px; align-items:center;
+    }
+
+    .search-row{padding:12px 0 10px}
+    .search{
+      width:100%;
+      border-radius: 14px;
+      border:1px solid rgba(35,54,95,.55);
+      background: rgba(15,27,51,.55);
+      color:var(--text);
+      padding:12px 12px;
+      outline:none;
+      box-shadow: var(--shadow);
+    }
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .chip{
+      padding:7px 10px;border-radius:999px;
+      border:1px solid rgba(35,54,95,.55);
+      background: rgba(15,27,51,.45);
+      color: var(--muted);
+      cursor:pointer;
+      font-weight:800;
+      font-size:12px;
+      user-select:none;
+    }
+    .chip.active{
+      background: rgba(124,92,255,.22);
+      border-color: rgba(124,92,255,.65);
+      color: var(--text);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap:12px;
+      margin-top:12px;
+    }
+    @media (max-width: 980px){ .grid{grid-template-columns: repeat(2, minmax(0, 1fr));} .brand{min-width: 0;} }
+    @media (max-width: 560px){ .grid{grid-template-columns: 1fr;} }
+
+    .card{
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(15,27,51,.88), rgba(15,27,51,.55));
+      border: 1px solid rgba(35,54,95,.6);
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      display:flex;
+      flex-direction:column;
+      min-height: 250px;
+    }
+    .img{
+      position:relative;
+      width:100%;
+      aspect-ratio: 4 / 3;
+      background: rgba(255,255,255,.04);
+      overflow:hidden;
+    }
+    .img img{
+      width:100%; height:100%;
+      object-fit: cover;
+      display:block;
+      filter: saturate(1.02) contrast(1.02);
+    }
+    .img .badge{
+      position:absolute; top:10px; left:10px;
+      padding:6px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.12);
+      font-size:12px;
+      font-weight:900;
+    }
+    .content{padding:12px 12px 10px; display:flex; flex-direction:column; gap:8px; flex:1}
+    .title{font-weight:900; font-size:14px; line-height:1.2}
+    .meta{display:flex; flex-wrap:wrap; gap:8px; align-items:center; color:var(--muted); font-size:12px}
+    .price{font-weight:900; color: #ffffff; font-size:14px}
+    .row{display:flex; align-items:center; gap:8px; margin-top:auto}
+    .qty{
+      display:flex; align-items:center; gap:8px;
+      border:1px solid rgba(35,54,95,.6);
+      border-radius: 999px;
+      padding:6px 8px;
+      background: rgba(7,10,18,.35);
+      color:var(--text);
+      font-weight:900;
+      min-width: 110px;
+      justify-content:space-between;
+    }
+    .qbtn{
+      width:26px;height:26px;border-radius:999px;
+      display:flex;align-items:center;justify-content:center;
+      border:1px solid rgba(35,54,95,.6);
+      background: rgba(15,27,51,.7);
+      cursor:pointer;
+      user-select:none;
+    }
+    .qbtn:active{transform: translateY(1px)}
+    .add{flex:1; justify-content:center}
+    .footerbar{
+      position:fixed; left:0; right:0; bottom:0; z-index:80;
+      background: rgba(7,10,18,.9);
+      border-top:1px solid rgba(35,54,95,.45);
+      backdrop-filter: blur(10px);
+    }
+    .footerbar-inner{
+      max-width:1200px;margin:0 auto;padding:10px 12px;
+      display:flex; gap:10px; align-items:center;
+    }
+
+    /* Modal */
+    .modal-back{
+      position:fixed; inset:0; z-index:200;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center; justify-content:center;
+      padding: 14px;
+    }
+    .modal{
+      width:min(920px, 100%);
+      background: linear-gradient(180deg, rgba(15,27,51,.98), rgba(15,27,51,.86));
+      border:1px solid rgba(35,54,95,.7);
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+      overflow:hidden;
+    }
+    .modal-head{
+      display:flex; align-items:center; gap:10px;
+      padding:12px 12px;
+      border-bottom:1px solid rgba(35,54,95,.55);
+    }
+    .modal-head h2{margin:0;font-size:14px}
+    .modal-body{padding:12px}
+    .form{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 720px){ .form{grid-template-columns:1fr;} }
+    label{font-size:12px;color:var(--muted);font-weight:800}
+    input, select, textarea{
+      width:100%;
+      border-radius: 12px;
+      border:1px solid rgba(35,54,95,.6);
+      background: rgba(7,10,18,.35);
+      color: var(--text);
+      padding:10px 10px;
+      outline:none;
+    }
+    textarea{min-height:84px; resize:vertical}
+    .hint{font-size:12px;color:var(--muted);margin-top:6px}
+    .hr{height:1px;background: rgba(35,54,95,.5); margin:12px 0}
+    .admin-list{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:8px;
+      max-height: 320px;
+      overflow:auto;
+      padding-right:6px;
+    }
+    .admin-item{
+      display:flex; gap:10px; align-items:center;
+      padding:10px;
+      border:1px solid rgba(35,54,95,.6);
+      border-radius: 14px;
+      background: rgba(7,10,18,.28);
+    }
+    .thumb{width:54px;height:54px;border-radius:12px;overflow:hidden;background: rgba(255,255,255,.06); flex:0 0 auto}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .admin-item .info{flex:1; min-width:0}
+    .admin-item .info b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .admin-item .info small{display:block;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .admin-item .actions{display:flex; gap:8px; align-items:center}
+    .mini{padding:8px 10px; font-size:12px}
+  </style>
 </head>
+
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo">✨</div>
-      <div class="brandText">
-        <div id="brandName" class="brandName">Acchiappasogni di Erika</div>
-        <div id="brandTag" class="brandTag">Catalogo - Ordina su WhatsApp</div>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button id="btnCatalog" class="btn ghost active">Catalogo</button>
-      <button id="btnCustom" class="btn ghost">Personalizzato</button>
-      <button id="btnSettings" class="btn ghost">Impostazioni</button>
-      <button id="btnCart" class="btn">Carrello <span id="cartCount" class="badge">0</span></button>
-    </div>
-  </header>
-
-  <main class="wrap">
-    <div class="searchWrap">
-      <input id="search" class="search" placeholder="Cerca (nome o descrizione)..." />
-    </div>
-
-    <div id="catalogPanel">
-      <div id="tabs" class="tabs"></div>
-      <section id="grid" class="grid"></section>
-    </div>
-
-    <div id="customPanel" class="hidden">
-      <div class="panel">
-        <h2>Progetto personalizzato</h2>
-        <p>Scrivi cosa vorresti e invia la richiesta su WhatsApp (dal carrello).</p>
-      </div>
-    </div>
-  </main>
-
-  <!-- Carrello -->
-  <div id="cartModal" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="modal-card">
-      <div class="modal-head">
-        <div class="modal-title">Carrello</div>
-        <button id="cartClose" class="icon-btn" aria-label="Chiudi">✕</button>
-      </div>
-
-      <div id="cartItems" class="cartItems"></div>
-
-      <div class="cartFoot">
-        <div class="totalRow">
-          <span>Totale</span>
-          <b id="cartTotal">€ 0,00</b>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="logo">✦</div>
+        <div>
+          <h1>Acchiappasogni di Erika</h1>
+          <small>Catalogo • Ordina su WhatsApp</small>
         </div>
-        <button id="cartSend" class="btn">Invia su WhatsApp</button>
       </div>
+
+      <button class="btn primary" id="btnCustomizer">🪄 CREA IL TUO ACCHIAPPASOGNI</button>
+
+      <div class="spacer"></div>
+
+      <button class="btn" id="btnSettings">⚙️ Impostazioni</button>
+      <button class="btn" id="btnCart">🛒 Carrello <span class="pill" id="cartCount">0</span></button>
     </div>
   </div>
 
-  <!-- Admin Modal -->
-  <div id="adminModal" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="modal-card">
+  <div class="wrap">
+    <div class="search-row">
+      <input class="search" id="search" placeholder="Cerca (nome o categoria)..." />
+      <div class="filters" id="filters"></div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="footerbar">
+    <div class="footerbar-inner">
+      <div class="pill">Totale: <b id="cartTotal">€ 0,00</b></div>
+      <div class="spacer"></div>
+      <button class="btn primary" id="btnWhatsApp">📲 Ordina su WhatsApp</button>
+    </div>
+  </div>
+
+  <!-- MODAL: CARRELLO -->
+  <div class="modal-back" id="cartModalBack">
+    <div class="modal">
       <div class="modal-head">
-        <div class="modal-title">Impostazioni</div>
-        <button id="adminClose" class="icon-btn" aria-label="Chiudi">✕</button>
+        <h2>🛒 Carrello</h2>
+        <div class="spacer"></div>
+        <button class="btn" id="btnCloseCart">✖ Chiudi</button>
       </div>
-
-      <div id="adminLogin" class="admin-login">
-        <p class="muted">Inserisci la password per accedere alle impostazioni.</p>
-        <div class="row">
-          <input id="adminPass" type="password" placeholder="Password" />
-          <button id="adminEnter" class="btn">Entra</button>
-        </div>
-        <p id="adminErr" class="error hidden">Password errata.</p>
-      </div>
-
-      <div id="adminPanel" class="admin-panel hidden">
-        <div class="admin-actions">
-          <button id="adminResetOverride" class="btn ghost">Ripristina catalogo originale</button>
-          <button id="adminSetAllPrice5" class="btn ghost">Imposta €5 su tutti</button>
-          <button id="adminAddNew" class="btn">+ Nuovo progetto</button>
-        </div>
-
-        <div id="adminEditor" class="admin-editor hidden"></div>
-
-        <div class="admin-list-wrap">
-          <div class="admin-list-title">Progetti</div>
-          <div id="adminList" class="admin-list"></div>
+      <div class="modal-body">
+        <div id="cartList" class="admin-list"></div>
+        <div class="hr"></div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <div class="pill">Totale: <b id="cartTotal2">€ 0,00</b></div>
+          <div class="spacer"></div>
+          <button class="btn danger" id="btnClearCart">🗑 Svuota</button>
+          <button class="btn primary" id="btnWhatsApp2">📲 Ordina su WhatsApp</button>
         </div>
       </div>
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <!-- MODAL: SETTINGS / ADMIN -->
+  <div class="modal-back" id="adminModalBack">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>⚙️ Impostazioni (Admin)</h2>
+        <div class="spacer"></div>
+        <button class="btn" id="btnCloseAdmin">✖ Chiudi</button>
+      </div>
+
+      <div class="modal-body" id="adminBody">
+        <!-- login -->
+        <div id="adminLogin">
+          <div class="hint" style="margin-bottom:10px">
+            Inserisci password per accedere alle impostazioni (default: <b>1234</b>)
+          </div>
+          <div class="form">
+            <div>
+              <label>Password</label>
+              <input id="adminPass" type="password" placeholder="1234" />
+              <div class="hint">Suggerimento: puoi cambiarla dopo l’accesso.</div>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:10px">
+              <button class="btn primary" id="btnAdminLogin">🔓 Entra</button>
+              <button class="btn" id="btnAdminCancel">Annulla</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- panel -->
+        <div id="adminPanel" style="display:none">
+          <div class="form">
+            <div>
+              <label>Password Admin (cambia)</label>
+              <input id="newAdminPass" type="password" placeholder="Nuova password" />
+              <div class="hint">Se lasci vuoto, non cambia.</div>
+            </div>
+
+            <div>
+              <label>WhatsApp numero (formato +39...)</label>
+              <input id="waNumber" placeholder="+39XXXXXXXXXX" />
+              <div class="hint">Serve per inviare l’ordine su WhatsApp.</div>
+            </div>
+
+            <div>
+              <label>Prezzo rapido per TUTTI</label>
+              <div style="display:flex; gap:8px">
+                <input id="bulkPrice" type="number" step="0.01" placeholder="5" />
+                <button class="btn primary" id="btnBulkApply">✅ Applica</button>
+              </div>
+              <div class="hint">Esempio: 5 → tutti i prodotti diventano € 5.</div>
+            </div>
+
+            <div>
+              <label>Ripristina catalogo originale</label>
+              <button class="btn danger" id="btnResetAll">♻️ Reset completo</button>
+              <div class="hint">Cancella le modifiche salvate nel telefono.</div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <h3 style="margin:0 0 10px 0;font-size:13px">📦 Prodotti (aggiungi / modifica / elimina)</h3>
+
+          <div class="form">
+            <div>
+              <label>Seleziona prodotto da modificare</label>
+              <select id="editSelect"></select>
+              <div class="hint">Oppure crea un nuovo prodotto qui sotto.</div>
+            </div>
+
+            <div style="display:flex;align-items:flex-end;gap:10px">
+              <button class="btn" id="btnLoadToForm">✍️ Carica in form</button>
+              <button class="btn danger" id="btnDeleteSelected">🗑 Elimina</button>
+            </div>
+
+            <div>
+              <label>Titolo</label>
+              <input id="fTitle" placeholder="Acchiappasogni - Modello X" />
+            </div>
+
+            <div>
+              <label>Categoria</label>
+              <input id="fCategory" placeholder="Acchiappasogni Classici" />
+            </div>
+
+            <div>
+              <label>Prezzo (€)</label>
+              <input id="fPrice" type="number" step="0.01" placeholder="5" />
+            </div>
+
+            <div>
+              <label>Foto (dal telefono / galleria)</label>
+              <input id="fImageFile" type="file" accept="image/*" />
+              <div class="hint">
+                Se carichi da galleria: viene salvata nel telefono (localStorage).  
+                Se vuoi che si veda su TUTTI i telefoni, carica la foto nel repo e poi metti il percorso nel campo sotto.
+              </div>
+            </div>
+
+            <div style="grid-column:1 / -1">
+              <label>Oppure percorso immagine (GitHub)</label>
+              <input id="fImagePath" placeholder="assets/assets/images/assets/images/acchiappasogni_hd/FB_IMG_xxx.jpg" />
+              <div class="hint">Se metti un percorso qui, verrà usato al posto della foto caricata.</div>
+            </div>
+
+            <div style="display:flex;gap:10px;align-items:flex-end">
+              <button class="btn primary" id="btnSaveProduct">💾 Salva (aggiungi/modifica)</button>
+              <button class="btn" id="btnNewProduct">➕ Nuovo</button>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+          <div class="hint">
+            ✅ Le immagini che NON si aprono vengono eliminate automaticamente dal catalogo (non le vedi).<br/>
+            ✅ Tutte le modifiche restano salvate sul telefono.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========= CONFIG =========
+    const DEFAULT_WA = "+393440260906"; // cambialo dal pannello admin se vuoi
+    const ADMIN_PASS_DEFAULT = "1234";
+    const PRODUCTS_URL = "data/products.json"; // nel tuo repo: /data/products.json
+
+    // ========= STORAGE KEYS =========
+    const K = {
+      adminPass: "ae_admin_pass",
+      wa: "ae_wa_number",
+      productsOverride: "ae_products_override",
+      cart: "ae_cart_v1"
+    };
+
+    // ========= UTILS =========
+    const euro = (n) => {
+      const v = Number(n || 0);
+      return v.toLocaleString("it-IT", { style: "currency", currency: "EUR" });
+    };
+
+    const uid = () => "P-" + Math.random().toString(16).slice(2) + "-" + Date.now().toString(16);
+
+    function getAdminPass(){
+      return localStorage.getItem(K.adminPass) || ADMIN_PASS_DEFAULT;
+    }
+    function setAdminPass(p){
+      localStorage.setItem(K.adminPass, p);
+    }
+    function getWa(){
+      return localStorage.getItem(K.wa) || DEFAULT_WA;
+    }
+    function setWa(v){
+      localStorage.setItem(K.wa, v);
+    }
+
+    function loadCart(){
+      try { return JSON.parse(localStorage.getItem(K.cart) || "{}"); } catch { return {}; }
+    }
+    function saveCart(c){
+      localStorage.setItem(K.cart, JSON.stringify(c));
+    }
+
+    // ========= PRODUCTS (base + override) =========
+    async function fetchBaseProducts(){
+      const r = await fetch(PRODUCTS_URL, { cache: "no-store" });
+      if(!r.ok) throw new Error("Impossibile caricare " + PRODUCTS_URL);
+      const data = await r.json();
+      return Array.isArray(data) ? data : [];
+    }
+
+    function loadOverride(){
+      try { return JSON.parse(localStorage.getItem(K.productsOverride) || "[]"); } catch { return []; }
+    }
+    function saveOverride(list){
+      localStorage.setItem(K.productsOverride, JSON.stringify(list));
+    }
+
+    // Merge: se un prodotto esiste in override (stesso id) lo sostituisce; se override ha nuovi prodotti li aggiunge
+    async function fetchProductsWithLocalOverride(){
+      const base = await fetchBaseProducts();
+      const over = loadOverride();
+
+      const map = new Map(base.map(p => [p.id, p]));
+      for(const p of over){
+        map.set(p.id, p);
+      }
+      return Array.from(map.values());
+    }
+
+    // ========= APP STATE =========
+    let allProducts = [];
+    let visibleProducts = [];
+    let categories = [];
+    let activeCategory = "Tutti";
+    let q = "";
+    let cart = loadCart();
+
+    // ========= DOM =========
+    const grid = document.getElementById("grid");
+    const search = document.getElementById("search");
+    const filters = document.getElementById("filters");
+    const cartCount = document.getElementById("cartCount");
+    const cartTotal = document.getElementById("cartTotal");
+    const cartTotal2 = document.getElementById("cartTotal2");
+
+    // Modals
+    const cartModalBack = document.getElementById("cartModalBack");
+    const adminModalBack = document.getElementById("adminModalBack");
+
+    // ========= RENDER FILTERS =========
+    function rebuildCategories(){
+      const set = new Set(allProducts.map(p => p.category || "Altro"));
+      categories = ["Tutti", ...Array.from(set).sort((a,b)=>a.localeCompare(b,"it"))];
+    }
+
+    function renderFilters(){
+      filters.innerHTML = "";
+      for(const c of categories){
+        const b = document.createElement("div");
+        b.className = "chip" + (c === activeCategory ? " active" : "");
+        b.textContent = c;
+        b.onclick = () => { activeCategory = c; applyFilters(); };
+        filters.appendChild(b);
+      }
+    }
+
+    // ========= APPLY FILTERS =========
+    function applyFilters(){
+      const s = (q || "").trim().toLowerCase();
+      visibleProducts = allProducts.filter(p => {
+        const catOk = (activeCategory === "Tutti") || ((p.category || "Altro") === activeCategory);
+        const text = ((p.title || "") + " " + (p.category || "")).toLowerCase();
+        const searchOk = !s || text.includes(s);
+        return catOk && searchOk;
+      });
+      renderGrid();
+    }
+
+    // ========= IMAGE FAIL → REMOVE PRODUCT COMPLETELY =========
+    // Se l'immagine non si carica: la card non compare e il prodotto viene escluso dalla lista visibile.
+    function removeProductById(id){
+      allProducts = allProducts.filter(p => p.id !== id);
+      visibleProducts = visibleProducts.filter(p => p.id !== id);
+      // NON tocchiamo products.json: solo lato client. Se vuoi rimuoverlo anche dal file, me lo chiedi e te lo preparo.
+      renderFilters();
+      renderGrid();
+    }
+
+    // ========= GRID =========
+    function renderGrid(){
+      grid.innerHTML = "";
+      for(const p of visibleProducts){
+        const cardEl = document.createElement("div");
+        cardEl.className = "card";
+
+        const imgWrap = document.createElement("div");
+        imgWrap.className = "img";
+
+        const img = document.createElement("img");
+        img.alt = p.title || "";
+        img.loading = "lazy";
+        img.decoding = "async";
+        img.src = p.image || "";
+
+        img.onerror = () => {
+          // elimina completamente dal catalogo se la foto è rotta
+          removeProductById(p.id);
+        };
+
+        const badge = document.createElement("div");
+        badge.className = "badge";
+        badge.textContent = (p.category || "Altro");
+
+        imgWrap.appendChild(img);
+        imgWrap.appendChild(badge);
+
+        const content = document.createElement("div");
+        content.className = "content";
+
+        const title = document.createElement("div");
+        title.className = "title";
+        title.textContent = p.title || "";
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+
+        const price = document.createElement("div");
+        price.className = "price";
+        price.textContent = euro(p.price_from ?? 0);
+
+        meta.appendChild(price);
+
+        const row = document.createElement("div");
+        row.className = "row";
+
+        const qtyWrap = document.createElement("div");
+        qtyWrap.className = "qty";
+
+        const minus = document.createElement("div");
+        minus.className = "qbtn";
+        minus.textContent = "−";
+
+        const count = document.createElement("div");
+        count.textContent = String(cart[p.id] || 0);
+
+        const plus = document.createElement("div");
+        plus.className = "qbtn";
+        plus.textContent = "+";
+
+        minus.onclick = () => {
+          const cur = cart[p.id] || 0;
+          if(cur <= 0) return;
+          cart[p.id] = cur - 1;
+          if(cart[p.id] <= 0) delete cart[p.id];
+          saveCart(cart);
+          count.textContent = String(cart[p.id] || 0);
+          updateCartUI();
+        };
+
+        plus.onclick = () => {
+          const cur = cart[p.id] || 0;
+          cart[p.id] = cur + 1;
+          saveCart(cart);
+          count.textContent = String(cart[p.id] || 0);
+          updateCartUI();
+        };
+
+        qtyWrap.appendChild(minus);
+        qtyWrap.appendChild(count);
+        qtyWrap.appendChild(plus);
+
+        const add = document.createElement("button");
+        add.className = "btn primary add";
+        add.textContent = "Aggiungi";
+        add.onclick = () => {
+          const cur = cart[p.id] || 0;
+          cart[p.id] = cur + 1;
+          saveCart(cart);
+          count.textContent = String(cart[p.id] || 0);
+          updateCartUI();
+        };
+
+        row.appendChild(qtyWrap);
+        row.appendChild(add);
+
+        content.appendChild(title);
+        content.appendChild(meta);
+        content.appendChild(row);
+
+        cardEl.appendChild(imgWrap);
+        cardEl.appendChild(content);
+
+        grid.appendChild(cardEl);
+      }
+    }
+
+    // ========= CART =========
+    function cartTotals(){
+      let items = 0;
+      let tot = 0;
+      const byId = new Map(allProducts.map(p => [p.id, p]));
+      for(const [id, qty] of Object.entries(cart)){
+        const p = byId.get(id);
+        if(!p) continue;
+        items += qty;
+        tot += (Number(p.price_from || 0) * qty);
+      }
+      return { items, tot };
+    }
+
+    function updateCartUI(){
+      const { items, tot } = cartTotals();
+      cartCount.textContent = String(items);
+      cartTotal.textContent = euro(tot);
+      cartTotal2.textContent = euro(tot);
+    }
+
+    function openCart(){
+      renderCartModal();
+      cartModalBack.style.display = "flex";
+    }
+    function closeCart(){
+      cartModalBack.style.display = "none";
+    }
+
+    function renderCartModal(){
+      const list = document.getElementById("cartList");
+      list.innerHTML = "";
+      const byId = new Map(allProducts.map(p => [p.id, p]));
+
+      const ids = Object.keys(cart);
+      if(ids.length === 0){
+        const empty = document.createElement("div");
+        empty.className = "hint";
+        empty.textContent = "Carrello vuoto.";
+        list.appendChild(empty);
+        updateCartUI();
+        return;
+      }
+
+      for(const id of ids){
+        const p = byId.get(id);
+        if(!p) continue;
+
+        const qty = cart[id];
+
+        const item = document.createElement("div");
+        item.className = "admin-item";
+
+        const th = document.createElement("div");
+        th.className = "thumb";
+        const im = document.createElement("img");
+        im.src = p.image || "";
+        im.onerror = () => { th.style.display="none"; };
+        th.appendChild(im);
+
+        const info = document.createElement("div");
+        info.className = "info";
+        info.innerHTML = `<b>${escapeHtml(p.title||"")}</b><small>${escapeHtml(p.category||"")} • ${euro(p.price_from||0)} × ${qty}</small>`;
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const m = document.createElement("button");
+        m.className = "btn mini";
+        m.textContent = "−";
+        m.onclick = () => {
+          const cur = cart[id] || 0;
+          if(cur <= 1) delete cart[id];
+          else cart[id] = cur - 1;
+          saveCart(cart);
+          renderCartModal();
+          updateCartUI();
+          applyFilters();
+        };
+
+        const pbtn = document.createElement("button");
+        pbtn.className = "btn mini";
+        pbtn.textContent = "+";
+        pbtn.onclick = () => {
+          cart[id] = (cart[id] || 0) + 1;
+          saveCart(cart);
+          renderCartModal();
+          updateCartUI();
+          applyFilters();
+        };
+
+        const del = document.createElement("button");
+        del.className = "btn danger mini";
+        del.textContent = "Rimuovi";
+        del.onclick = () => {
+          delete cart[id];
+          saveCart(cart);
+          renderCartModal();
+          updateCartUI();
+          applyFilters();
+        };
+
+        actions.appendChild(m);
+        actions.appendChild(pbtn);
+        actions.appendChild(del);
+
+        item.appendChild(th);
+        item.appendChild(info);
+        item.appendChild(actions);
+
+        list.appendChild(item);
+      }
+      updateCartUI();
+    }
+
+    function buildWhatsAppMessage(){
+      const byId = new Map(allProducts.map(p => [p.id, p]));
+      let lines = [];
+      lines.push("Ciao! Vorrei ordinare:");
+      let tot = 0;
+
+      for(const [id, qty] of Object.entries(cart)){
+        const p = byId.get(id);
+        if(!p) continue;
+        const price = Number(p.price_from || 0);
+        const sub = price * qty;
+        tot += sub;
+        lines.push(`- ${p.title} × ${qty} = ${euro(sub)}`);
+      }
+      lines.push("");
+      lines.push(`Totale: ${euro(tot)}`);
+      lines.push("Grazie!");
+      return lines.join("\n");
+    }
+
+    function openWhatsApp(){
+      const { items } = cartTotals();
+      if(items <= 0){
+        alert("Il carrello è vuoto.");
+        return;
+      }
+      const number = getWa();
+      const msg = buildWhatsAppMessage();
+      const url = `https://wa.me/${encodeURIComponent(number.replace(/\s+/g,""))}?text=${encodeURIComponent(msg)}`;
+      window.open(url, "_blank");
+    }
+
+    // ========= CUSTOMIZER BUTTON =========
+    document.getElementById("btnCustomizer").onclick = () => {
+      alert("Qui possiamo mettere una pagina/box per richieste personalizzate (nome, colori, dimensione). Se vuoi te la preparo.");
+    };
+
+    // ========= SETTINGS / ADMIN =========
+    function openAdmin(){
+      // reset view
+      document.getElementById("adminLogin").style.display = "block";
+      document.getElementById("adminPanel").style.display = "none";
+      document.getElementById("adminPass").value = "";
+      adminModalBack.style.display = "flex";
+    }
+    function closeAdmin(){
+      adminModalBack.style.display = "none";
+    }
+
+    function adminLogin(){
+      const pass = document.getElementById("adminPass").value || "";
+      if(pass !== getAdminPass()){
+        alert("Password errata.");
+        return;
+      }
+      // show panel
+      document.getElementById("adminLogin").style.display = "none";
+      document.getElementById("adminPanel").style.display = "block";
+      // fill config
+      document.getElementById("waNumber").value = getWa();
+      document.getElementById("newAdminPass").value = "";
+      rebuildEditSelect();
+    }
+
+    function rebuildEditSelect(){
+      const sel = document.getElementById("editSelect");
+      sel.innerHTML = "";
+      const sorted = [...allProducts].sort((a,b)=>(a.title||"").localeCompare(b.title||"","it"));
+      for(const p of sorted){
+        const o = document.createElement("option");
+        o.value = p.id;
+        o.textContent = `${p.title || p.id}`;
+        sel.appendChild(o);
+      }
+    }
+
+    function loadSelectedToForm(){
+      const id = document.getElementById("editSelect").value;
+      const p = allProducts.find(x => x.id === id);
+      if(!p){ alert("Prodotto non trovato"); return; }
+      document.getElementById("fTitle").value = p.title || "";
+      document.getElementById("fCategory").value = p.category || "";
+      document.getElementById("fPrice").value = Number(p.price_from || 0);
+      document.getElementById("fImagePath").value = (p.image && !p.image.startsWith("data:")) ? p.image : "";
+      document.getElementById("fImageFile").value = "";
+    }
+
+    function clearFormForNew(){
+      document.getElementById("editSelect").value = "";
+      document.getElementById("fTitle").value = "";
+      document.getElementById("fCategory").value = "Acchiappasogni Classici";
+      document.getElementById("fPrice").value = 5;
+      document.getElementById("fImagePath").value = "";
+      document.getElementById("fImageFile").value = "";
+    }
+
+    async function fileToDataUrl(file){
+      return new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(String(r.result || ""));
+        r.onerror = reject;
+        r.readAsDataURL(file);
+      });
+    }
+
+    async function saveProduct(){
+      const title = document.getElementById("fTitle").value.trim();
+      const category = document.getElementById("fCategory").value.trim() || "Altro";
+      const price = Number(document.getElementById("fPrice").value || 0);
+      const path = document.getElementById("fImagePath").value.trim();
+      const file = document.getElementById("fImageFile").files?.[0] || null;
+
+      if(!title){
+        alert("Metti un titolo.");
+        return;
+      }
+
+      let image = path || "";
+      if(file){
+        // Foto dalla galleria (telefono)
+        image = await fileToDataUrl(file);
+      }
+      if(!image){
+        alert("Seleziona una foto (galleria) oppure inserisci il percorso GitHub.");
+        return;
+      }
+
+      // se stai modificando un prodotto selezionato, usa quell'id, altrimenti crea nuovo
+      let id = document.getElementById("editSelect").value;
+      if(!id){
+        id = uid();
+      }
+
+      const newP = { id, title, category, price_from: price, image, featured: false };
+
+      // salva in override
+      const over = loadOverride();
+      const idx = over.findIndex(x => x.id === id);
+      if(idx >= 0) over[idx] = newP;
+      else over.push(newP);
+      saveOverride(over);
+
+      // ricarica tutto
+      await reloadProducts();
+      rebuildEditSelect();
+      // seleziona quello salvato
+      document.getElementById("editSelect").value = id;
+      alert("Salvato!");
+    }
+
+    async function deleteSelected(){
+      const id = document.getElementById("editSelect").value;
+      if(!id){ alert("Seleziona un prodotto"); return; }
+      if(!confirm("Eliminare questo prodotto?")) return;
+
+      // Per eliminare: mettiamo un tombstone in override che lo rimuove dal catalogo
+      // (più semplice: salviamo in override una lista 'deleted', ma qui facciamo: rimuoviamo da base + override lato client)
+      // Quindi: aggiungiamo a override un record speciale? NO: meglio salvare una lista di id eliminati.
+      const delKey = "ae_deleted_ids";
+      let dels = [];
+      try{ dels = JSON.parse(localStorage.getItem(delKey) || "[]"); }catch{ dels=[]; }
+      if(!dels.includes(id)) dels.push(id);
+      localStorage.setItem(delKey, JSON.stringify(dels));
+
+      // rimuovi anche dal carrello
+      delete cart[id];
+      saveCart(cart);
+
+      await reloadProducts();
+      rebuildEditSelect();
+      alert("Eliminato!");
+    }
+
+    async function applyBulkPrice(){
+      const v = Number(document.getElementById("bulkPrice").value || 0);
+      if(!v || v < 0){ alert("Inserisci un prezzo valido."); return; }
+      // applichiamo su override per tutti i prodotti correnti
+      const over = loadOverride();
+      const overMap = new Map(over.map(p => [p.id, p]));
+      const nextOver = [];
+
+      for(const p of allProducts){
+        const base = overMap.get(p.id) || p;
+        nextOver.push({ ...base, price_from: v });
+      }
+      saveOverride(nextOver);
+      await reloadProducts();
+      alert("Prezzi aggiornati!");
+    }
+
+    async function resetAll(){
+      if(!confirm("Reset completo? Cancella modifiche e torna al catalogo originale.")) return;
+      localStorage.removeItem(K.productsOverride);
+      localStorage.removeItem("ae_deleted_ids");
+      // non tocco password e whatsapp
+      await reloadProducts();
+      alert("Ripristinato!");
+    }
+
+    function applyDeleted(products){
+      const delKey = "ae_deleted_ids";
+      let dels = [];
+      try{ dels = JSON.parse(localStorage.getItem(delKey) || "[]"); }catch{ dels=[]; }
+      if(!Array.isArray(dels) || dels.length === 0) return products;
+      return products.filter(p => !dels.includes(p.id));
+    }
+
+    // ========= EVENTS =========
+    document.getElementById("btnCart").onclick = openCart;
+    document.getElementById("btnCloseCart").onclick = closeCart;
+    cartModalBack.addEventListener("click", (e)=>{ if(e.target === cartModalBack) closeCart(); });
+
+    document.getElementById("btnWhatsApp").onclick = openWhatsApp;
+    document.getElementById("btnWhatsApp2").onclick = openWhatsApp;
+
+    document.getElementById("btnClearCart").onclick = () => {
+      if(!confirm("Svuotare il carrello?")) return;
+      cart = {};
+      saveCart(cart);
+      renderCartModal();
+      updateCartUI();
+      applyFilters();
+    };
+
+    document.getElementById("btnSettings").onclick = openAdmin;
+    document.getElementById("btnCloseAdmin").onclick = closeAdmin;
+    adminModalBack.addEventListener("click", (e)=>{ if(e.target === adminModalBack) closeAdmin(); });
+
+    document.getElementById("btnAdminLogin").onclick = adminLogin;
+    document.getElementById("btnAdminCancel").onclick = closeAdmin;
+
+    document.getElementById("btnLoadToForm").onclick = loadSelectedToForm;
+    document.getElementById("btnNewProduct").onclick = clearFormForNew;
+    document.getElementById("btnSaveProduct").onclick = saveProduct;
+    document.getElementById("btnDeleteSelected").onclick = deleteSelected;
+
+    document.getElementById("btnBulkApply").onclick = applyBulkPrice;
+    document.getElementById("btnResetAll").onclick = resetAll;
+
+    document.getElementById("waNumber").addEventListener("change", (e)=> setWa(e.target.value.trim()));
+    document.getElementById("newAdminPass").addEventListener("change", (e)=>{
+      const v = e.target.value.trim();
+      if(v){
+        setAdminPass(v);
+        alert("Password aggiornata!");
+        e.target.value = "";
+      }
+    });
+
+    search.addEventListener("input", (e)=>{
+      q = e.target.value;
+      applyFilters();
+    });
+
+    // ========= INIT =========
+    async function reloadProducts(){
+      const products = await fetchProductsWithLocalOverride(); // <-- come mi hai chiesto
+      // applica eliminati
+      allProducts = applyDeleted(products);
+
+      // sicurezza: normalizza campi minimi
+      allProducts = allProducts.map(p => ({
+        id: String(p.id || uid()),
+        title: String(p.title || ""),
+        category: String(p.category || "Altro"),
+        price_from: Number(p.price_from ?? 0),
+        image: String(p.image || ""),
+        featured: !!p.featured
+      }));
+
+      rebuildCategories();
+      renderFilters();
+      applyFilters();
+      updateCartUI();
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    reloadProducts().catch(err=>{
+      console.error(err);
+      alert("Errore caricamento catalogo: " + err.message);
+    });
+  </script>
 </body>
 </html>
