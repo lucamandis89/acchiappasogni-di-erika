@@ -680,27 +680,26 @@ body.studio-mode{
     display: block !important;
     height: 100% !important;
   }
-  /* box sinistro occupa tutta l'altezza disponibile */
+  /* box sinistro: NON clippare lo stage (taglio cerchio) */
   #builderLiteBack.studio-mode .lite-grid > .box:first-child{
-    height: calc(100vh - var(--studioSheetH, 30vh) - 120px) !important;
-    overflow: hidden !important;
-    padding-bottom: 10px !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding-bottom: calc(var(--studioSheetH, 30vh) + 16px) !important; /* evita che il foglio copra i controlli sotto */
   }
-  #builderLiteBack.studio-mode #dlStage{height: auto !important; max-height: calc(100vh - var(--studioSheetH, 30vh) - 160px) !important;}
 
-  /* stage: contenuto e centrato, mai clippato */
+  /* stage: quadrato, centrato, dimensione calcolata in JS per non essere mai tagliato */
   #builderLiteBack.studio-mode #dlStageWrap{
     display:flex;
-    align-items:center;
+    align-items:flex-start;
     justify-content:center;
     overflow: visible !important;
     padding: 10px !important;
   }
   #builderLiteBack.studio-mode #dlStage{
-    width: 100% !important;
-    height: auto !important;
-    max-height: 56vh !important; /* lascia spazio al cassetto */
-    object-fit: contain !important;
+    width: var(--studioStageSize, min(92vw, 420px)) !important;
+    height: var(--studioStageSize, min(92vw, 420px)) !important;
+    max-width: 100% !important;
+    max-height: none !important;
   }
 }
 
@@ -4010,6 +4009,32 @@ function selectLite(id){
       function setSheetVars(){
         const h = sheetBox.getBoundingClientRect().height;
         document.documentElement.style.setProperty('--studioSheetH', Math.round(h) + 'px');
+        updateStudioStageSize();
+      }
+
+      // calcola una dimensione "sicura" per lo stage (quadrato) in base allo spazio sopra al cassetto
+      function updateStudioStageSize(){
+        try{
+          if(!builderLiteBack || !builderLiteBack.classList.contains('studio-mode')) return;
+          const stage = document.getElementById('dlStage');
+          if(!stage) return;
+
+          const sheet = sheetBox; // è già il foglio
+          const sheetTop = sheet.getBoundingClientRect().top;
+
+          // spazio disponibile tra top stage e top del foglio (meno padding)
+          const stageRect = stage.getBoundingClientRect();
+          const availH = Math.max(220, (sheetTop - stageRect.top - 18));
+
+          // larghezza disponibile dentro il box (meno padding)
+          const stageWrap = stage.parentElement;
+          const wrapRect = stageWrap.getBoundingClientRect();
+          const availW = Math.max(220, wrapRect.width - 20);
+
+          const size = Math.floor(Math.min(availH, availW));
+
+          document.documentElement.style.setProperty('--studioStageSize', size + 'px');
+        }catch(e){}
       }
       // inizializza
       setSheetVars();
@@ -4069,6 +4094,10 @@ function selectLite(id){
       const h = sheetBox.getBoundingClientRect().height;
       const maxH = window.innerHeight * 0.75;
       if(h > maxH) sheetBox.style.height = Math.round(maxH) + 'px';
+      // aggiorna variabili e stage
+      const hh = sheetBox.getBoundingClientRect().height;
+      document.documentElement.style.setProperty('--studioSheetH', Math.round(hh) + 'px');
+      try{ updateStudioStageSize(); }catch(e){}
     }
     window.addEventListener('resize', refreshSheetLimits, {passive:true});
     setSheetVars();
