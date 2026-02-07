@@ -696,7 +696,54 @@ body.studio-mode{
     padding: 10px !important;
   }
   #builderLiteBack.studio-mode #dlStage{
-    width: var(--studioStageSize, min(92vw, 420px)) !important;
+    width: var(--
+/* === Studio Mode: miglioramenti leggibilità + adattamento portrait/landscape === */
+#builderLiteBack.studio-mode .studio-sheet .studio-sheet-scroll{
+  font-size: 16px !important;
+  line-height: 1.35 !important;
+}
+#builderLiteBack.studio-mode .studio-sheet .studio-sheet-scroll h2,
+#builderLiteBack.studio-mode .studio-sheet .studio-sheet-scroll h3,
+#builderLiteBack.studio-mode .studio-sheet .studio-sheet-scroll .section-title{
+  font-size: 18px !important;
+}
+#builderLiteBack.studio-mode .studio-sheet .studio-sheet-scroll label,
+#builderLiteBack.studio-mode .studio-sheet .studio-sheet-scroll .muted,
+#builderLiteBack.studio-mode .studio-sheet .studio-sheet-scroll small{
+  font-size: 14px !important;
+}
+#builderLiteBack.studio-mode .studio-sheet .studio-sheet-scroll input,
+#builderLiteBack.studio-mode .studio-sheet .studio-sheet-scroll select,
+#builderLiteBack.studio-mode .studio-sheet .studio-sheet-scroll textarea{
+  font-size: 16px !important;
+}
+#builderLiteBack.studio-mode .studio-sheet .studio-sheet-scroll .btn,
+#builderLiteBack.studio-mode .studio-sheet .studio-sheet-scroll button{
+  font-size: 16px !important;
+}
+
+/* Portrait: cassetto compatto di default, più spazio allo stage */
+@media (max-width: 820px) and (orientation: portrait){
+  #builderLiteBack.studio-mode .studio-sheet{
+    left: 10px !important;
+    right: 10px !important;
+  }
+  #builderLiteBack.studio-mode #dlStageWrap{
+    padding: 6px 10px 10px !important;
+  }
+}
+
+/* Landscape: ancora più spazio allo stage + testo leggermente più grande */
+@media (max-width: 1024px) and (orientation: landscape){
+  #builderLiteBack.studio-mode .studio-sheet .studio-sheet-scroll{
+    font-size: 17px !important;
+  }
+  #builderLiteBack.studio-mode #dlStageWrap{
+    padding: 6px 10px 6px !important;
+  }
+}
+
+studioStageSize, min(92vw, 420px)) !important;
     height: var(--studioStageSize, min(92vw, 420px)) !important;
     max-width: 100% !important;
     max-height: none !important;
@@ -4001,7 +4048,9 @@ function selectLite(id){
       sheetBox.appendChild(scroll);
 
       // altezza iniziale (piccolo, non copre lo stage)
-      sheetBox.style.height = Math.round(window.innerHeight * 0.28) + 'px';
+      const isLand = window.matchMedia && window.matchMedia('(orientation: landscape)').matches;
+      const initK = isLand ? 0.22 : 0.30;
+      sheetBox.style.height = Math.round(window.innerHeight * initK) + 'px';
       sheetBox.style.maxHeight = Math.round(window.innerHeight * 0.75) + 'px';
       sheetBox.style.minHeight = Math.round(window.innerHeight * 0.16) + 'px';
 
@@ -4023,12 +4072,11 @@ function selectLite(id){
           const sheetTop = sheet.getBoundingClientRect().top;
 
           // spazio disponibile tra top stage e top del foglio (meno padding)
-          const stageRect = stage.getBoundingClientRect();
-          const availH = Math.max(220, (sheetTop - stageRect.top - 18));
-
-          // larghezza disponibile dentro il box (meno padding)
           const stageWrap = stage.parentElement;
           const wrapRect = stageWrap.getBoundingClientRect();
+          const availH = Math.max(220, (sheetTop - wrapRect.top - 18));
+
+          // larghezza disponibile dentro il box (meno padding)
           const availW = Math.max(220, wrapRect.width - 20);
 
           const size = Math.floor(Math.min(availH, availW));
