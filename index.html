@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="it">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Acchiappasogni di Erika</title>
   <style>
     :root{
@@ -250,7 +250,7 @@
     .admin-item .info small{display:block;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .admin-item .actions{display:flex; gap:8px; align-items:center}
     .mini{padding:8px 10px; font-size:12px}
-
+  
     /* ====== CONFIGURATORE (UTENTE) ====== */
     .builder-grid{
       display:grid;
@@ -310,366 +310,597 @@
       color: rgba(185,198,255,.95);
       font-size:12px;font-weight:800;
     }
-  </style>
-</head>
 
-<body>
+  
+    /* ====== CONFIGURATORE SEMPLICE (CLIENTI) ====== */
+    .lite-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 860px){ .lite-grid{grid-template-columns:1fr;} }
+    .stage{
+      position:relative;
+      width:100%;
+      height:420px;
+      border-radius:14px;
+      border:1px solid rgba(35,54,95,.55);
+      background:
+        radial-gradient(600px 320px at 30% 20%, rgba(124,92,255,.16), transparent 60%),
+        radial-gradient(520px 280px at 80% 60%, rgba(110,231,255,.12), transparent 60%),
+        rgba(0,0,0,.10);
+      overflow:hidden;
+      touch-action: none;
+      user-select:none;
+    }
+    .stage .base-ring{
+      position:absolute;
+      left:50%; top:34%;
+      width:260px; height:260px;
+      transform: translate(-50%,-50%);
+      border-radius:50%;
+      border:6px solid rgba(233,239,255,.92);
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+      opacity:.95;
+      pointer-events:none;
+      display:none;
+    }
+
+    .stage .base-shape{
+      position:absolute;
+      left:50%; top:34%;
+      width:270px; height:270px;
+      transform: translate(-50%,-50%);
+      pointer-events:none;
+      filter: drop-shadow(0 18px 40px rgba(0,0,0,.35));
+      opacity:.98;
+      color: rgba(233,239,255,.92);
+    }
+    .stage .web{
+      position:absolute;
+      left:50%; top:34%;
+      width:230px; height:230px;
+      transform: translate(-50%,-50%);
+      opacity:.55;
+      pointer-events:none;
+    }
+    .dl-el{
+      position:absolute;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:grab;
+      transform: translate(-50%,-50%);
+      padding:6px;
+      border-radius:12px;
+      border:1px solid rgba(35,54,95,.55);
+      background: rgba(7,10,18,.25);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 12px 26px rgba(0,0,0,.22);
+      touch-action:none;
+    }
+    .dl-el:active{cursor:grabbing}
+    .dl-el.selected{
+      border-color: rgba(124,92,255,.85);
+      box-shadow: 0 0 0 2px rgba(124,92,255,.25), 0 16px 34px rgba(0,0,0,.28);
+    }
+    .dl-el .emoji{font-size:22px; line-height:1}
+    .dl-ring{
+      width:110px;height:110px;border-radius:50%;
+      border:4px solid rgba(233,239,255,.9);
+      background: rgba(255,255,255,.03);
+    }
+    .dl-ring.small{width:78px;height:78px;border-width:3px}
+    .palette{
+      display:flex; gap:8px; flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .palette .chip{
+      display:flex; align-items:center; gap:8px;
+    }
+    .helpbox{
+      color: rgba(185,198,255,.85);
+      font-size:12px;
+      line-height:1.35;
+    }
+    .minirow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+  
+    /* ====== CONFIGURATORE SEMPLICE (CLIENTI) ====== */
+    .lite-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width: 860px){ .lite-grid{grid-template-columns:1fr;} }
+    .stage{
+      position:relative;
+      width:100%;
+      height:380px;
+      border-radius:14px;
+      border:1px solid rgba(35,54,95,.55);
+      background: rgba(0,0,0,.15);
+      overflow:hidden;
+      touch-action:none;
+    }
+    .base-ring{
+      position:absolute; left:50%; top:52%;
+      width: 260px; height:260px;
+      transform: translate(-50%,-50%);
+      border-radius: 999px;
+      border: 10px solid rgba(233,239,255,.92);
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
+      pointer-events:none;
+    }
+    .web{position:absolute; left:50%; top:52%; width:260px; height:260px; transform: translate(-50%,-50%); pointer-events:none; opacity:.95}
+    .dl-el{position:absolute; transform: translate(-50%,-50%); cursor:grab; user-select:none}
+    .dl-el.selected{outline:2px solid rgba(124,92,255,.95); outline-offset: 4px; border-radius: 12px}
+    .dl-ring{width:70px;height:70px;border-radius:999px;border:6px solid rgba(233,239,255,.88); background: rgba(255,255,255,.02)}
+    .dl-ring.small{width:48px;height:48px;border-width:5px}
+    .emoji{font-size:34px; filter: drop-shadow(0 10px 18px rgba(0,0,0,.35))}
+    .minirow{display:flex;gap:8px;flex-wrap:wrap}
+    .helpbox{font-size:12px;color:rgba(185,198,255,.9);line-height:1.35}
+    .palette{display:flex;gap:8px;flex-wrap:wrap}
+    .preset-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    @media (max-width:520px){ .preset-grid{grid-template-columns:1fr;} }
+    .preset{
+      text-align:left;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid rgba(35,54,95,.55);
+      background: rgba(15,27,51,.45);
+      color: var(--text);
+      cursor:pointer;
+      user-select:none;
+    }
+    .preset b{display:block;font-size:12px}
+    .preset small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+    .preset:active{transform: translateY(1px)}
+</style>
+ </head>
+ <body>
   <div class="topbar">
-    <div class="topbar-inner">
-      <div class="brand">
-        <div class="logo">✦</div>
-        <div>
-          <h1>Acchiappasogni di Erika</h1>
-          <small>Catalogo • Ordina su WhatsApp</small>
-        </div>
-      </div>
-
-      <button class="btn primary" id="btnCustomizer">🪄 CREA IL TUO ACCHIAPPASOGNI</button>
-
-      <div class="spacer"></div>
-
-      <button class="btn" id="btnSettings">⚙️ Impostazioni</button>
-      <button class="btn" id="btnCart">🛒 Carrello <span class="pill" id="cartCount">0</span></button>
+   <div class="topbar-inner">
+    <div class="brand">
+     <div class="logo">✦</div>
+     <div>
+      <h1>Acchiappasogni di Erika</h1>
+      <small>Catalogo • Ordina su WhatsApp</small>
+     </div>
     </div>
+    <button class="btn primary" id="btnCustomizer">🪄 CREA IL TUO ACCHIAPPASOGNI</button>
+    <button class="btn" id="btnGifts">🎁 BOMBONIERE &amp; REGALI</button>
+    <div class="spacer"></div>
+    <button class="btn" id="btnSettings">⚙️ Impostazioni</button>
+    <button class="btn" id="btnCart">🛒 Carrello <span class="pill" id="cartCount">0</span></button>
+   </div>
   </div>
-
   <div class="wrap">
-    <div class="search-row">
-      <input class="search" id="search" placeholder="Cerca (nome o categoria)..." />
-      <div class="filters" id="filters"></div>
-    </div>
-
-    <div class="grid" id="grid"></div>
+   <div class="search-row">
+    <input class="search" id="search" placeholder="Cerca (nome o categoria)...">
+    <div class="filters" id="filters"></div>
+   </div>
+   <div class="grid" id="grid"></div>
   </div>
-
   <div class="footerbar">
-    <div class="footerbar-inner">
-      <div class="pill">Totale: <b id="cartTotal">€ 0,00</b></div>
-      <div class="spacer"></div>
-      <button class="btn primary" id="btnWhatsApp">📲 Ordina su WhatsApp</button>
+   <div class="footerbar-inner">
+    <div class="pill">
+     Totale: <b id="cartTotal">€ 0,00</b>
     </div>
+    <div class="spacer"></div>
+    <button class="btn primary" id="btnWhatsApp">📲 Ordina su WhatsApp</button>
+   </div>
   </div>
-
   <!-- MODAL: CARRELLO -->
   <div class="modal-back" id="cartModalBack">
-    <div class="modal">
-      <div class="modal-head">
-        <h2>🛒 Carrello</h2>
-        <div class="spacer"></div>
-        <button class="btn" id="btnCloseCart">✖ Chiudi</button>
-      </div>
-      <div class="modal-body">
-        <div id="cartList" class="admin-list"></div>
-        <div class="hr"></div>
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <div class="pill">Totale: <b id="cartTotal2">€ 0,00</b></div>
-          <div class="spacer"></div>
-          <button class="btn danger" id="btnClearCart">🗑 Svuota</button>
-          <button class="btn primary" id="btnWhatsApp2">📲 Ordina su WhatsApp</button>
-        </div>
-      </div>
+   <div class="modal">
+    <div class="modal-head">
+     <h2>🛒 Carrello</h2>
+     <div class="spacer"></div>
+     <button class="btn" id="btnCloseCart">✖ Chiudi</button>
     </div>
+    <div class="modal-body">
+     <div id="cartList" class="admin-list"></div>
+     <div class="hr"></div>
+     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <div class="pill">
+       Totale: <b id="cartTotal2">€ 0,00</b>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn danger" id="btnClearCart">🗑 Svuota</button>
+      <button class="btn primary" id="btnWhatsApp2">📲 Ordina su WhatsApp</button>
+     </div>
+    </div>
+   </div>
   </div>
-
   <!-- MODAL: SETTINGS / ADMIN -->
   <div class="modal-back" id="adminModalBack">
-    <div class="modal">
-      <div class="modal-head">
-        <h2>⚙️ Impostazioni (Admin)</h2>
-        <div class="spacer"></div>
-        <button class="btn" id="btnCloseAdmin">✖ Chiudi</button>
-      </div>
-
-      <div class="modal-body" id="adminBody">
-        <!-- login -->
-        <div id="adminLogin">
-          <div class="hint" style="margin-bottom:10px">
-            Inserisci password per accedere alle impostazioni (default: <b>1234</b>)
-          </div>
-          <div class="form">
-            <div>
-              <label>Password</label>
-              <input id="adminPass" type="password" placeholder="1234" />
-              <div class="hint">Suggerimento: puoi cambiarla dopo l’accesso.</div>
-            </div>
-            <div style="display:flex;align-items:flex-end;gap:10px">
-              <button class="btn primary" id="btnAdminLogin">🔓 Entra</button>
-              <button class="btn" id="btnAdminCancel">Annulla</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- panel -->
-        <div id="adminPanel" style="display:none">
-          <div class="form">
-            <div>
-              <label>Password Admin (cambia)</label>
-              <input id="newAdminPass" type="password" placeholder="Nuova password" />
-              <div class="hint">Se lasci vuoto, non cambia.</div>
-            </div>
-
-            <div>
-              <label>WhatsApp numero (formato +39...)</label>
-              <input id="waNumber" placeholder="+39XXXXXXXXXX" />
-              <div class="hint">Serve per inviare l’ordine su WhatsApp.</div>
-            </div>
-
-            <div>
-              <label>Prezzo rapido per TUTTI</label>
-              <div style="display:flex; gap:8px">
-                <input id="bulkPrice" type="number" step="0.01" placeholder="5" />
-                <button class="btn primary" id="btnBulkApply">✅ Applica</button>
-              </div>
-              <div class="hint">Esempio: 5 → tutti i prodotti diventano € 5.</div>
-            </div>
-
-            <div>
-              <label>Backup / Import configurazione (per aggiornare tutti via GitHub)</label>
-              <div style="display:flex; gap:8px; flex-wrap:wrap">
-                <button class="btn primary" id="btnExportConfig">📤 Esporta JSON</button>
-                <label class="btn" style="cursor:pointer">
-                  📥 Importa JSON
-                  <input id="importConfigFile" type="file" accept="application/json" style="display:none" />
-                </label>
-              </div>
-              <div class="hint">
-                • <b>Esporta JSON</b> ti scarica un file pronto da caricare su GitHub come <code>data/products.json</code>.<br/>
-                • <b>Importa JSON</b> carica sul tuo telefono una configurazione (override) senza toccare GitHub.
-              </div>
-            </div>
-
-            <div>
-              <label>Ripristina catalogo originale</label>
-              <button class="btn danger" id="btnResetAll">♻️ Reset completo</button>
-              <div class="hint">Cancella le modifiche salvate nel telefono.</div>
-            </div>
-          </div>
-
-          <div class="hr"></div>
-
-          <h3 style="margin:0 0 10px 0;font-size:13px">📦 Prodotti (aggiungi / modifica / elimina)</h3>
-
-          <div class="form">
-            <div>
-              <label>Seleziona prodotto da modificare</label>
-              <select id="editSelect"></select>
-              <div class="hint">Oppure crea un nuovo prodotto qui sotto.</div>
-            </div>
-
-            <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
-              <button class="btn" id="btnLoadToForm">✍️ Carica in form</button>
-              <button class="btn danger" id="btnDeleteSelected">🗑 Elimina prodotto</button>
-              <button class="btn danger" id="btnDeleteCategory">🗑 Elimina categoria</button>
-            </div>
-
-            <div>
-              <label>Titolo</label>
-              <input id="fTitle" placeholder="Acchiappasogni - Modello X" />
-            </div>
-
-            <div>
-              <label>Categoria</label>
-              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
-                <input id="fCategory" list="catDatalist" placeholder="Acchiappasogni Classici" />
-                <button class="btn" id="btnCreateCategory" type="button">➕ Crea categoria</button>
-              </div>
-              <datalist id="catDatalist"></datalist>
-            </div>
-
-            <div style="grid-column:1 / -1">
-              <label>Descrizione (testo sotto al titolo)</label>
-              <textarea id="fDesc" placeholder="Esempio: Fatto a mano, diametro 30 cm, colori personalizzabili..."></textarea>
-            </div>
-
-            <div>
-              <label>Prezzo (€)</label>
-              <input id="fPrice" type="number" step="0.01" placeholder="5" />
-            </div>
-
-            <div>
-              <label>Pubblicazione</label>
-              <div style="display:flex;align-items:center;gap:10px">
-                <input id="fPublished" type="checkbox" style="width:auto" />
-                <div class="hint" style="margin:0">Se attivo, il prodotto si vede nella Home.</div>
-              </div>
-            </div>
-
-            <div>
-              <label>Foto (dal telefono / galleria)</label>
-              <input id="fImageFile" type="file" accept="image/*" />
-              <div class="hint">
-                Se carichi da galleria: viene salvata nel telefono (localStorage).<br/>
-                Se vuoi che si veda su TUTTI i telefoni, carica la foto nel repo e poi metti il percorso nel campo sotto.
-              </div>
-            </div>
-
-            <div style="grid-column:1 / -1">
-              <label>Oppure percorso immagine (GitHub)</label>
-              <input id="fImagePath" placeholder="foto.jpg oppure cartella/foto.jpg" />
-              <div class="hint">Se scrivi solo il nome file (es: foto.jpg) la cerca nella cartella base configurata.</div>
-            </div>
-
-            <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
-              <button class="btn primary" id="btnSaveProduct">💾 Salva (aggiungi/modifica)</button>
-              <button class="btn" id="btnNewProduct">➕ Nuovo</button>
-              <button class="btn primary" id="btnPublishNow">📣 Pubblica in Home</button>
-              <button class="btn" id="btnHideNow">🙈 Nascondi dalla Home</button>
-            </div>
-          </div>
-
-          <div class="hr"></div>
-          <div class="hint">
-            ✅ Le immagini che non si aprono NON vengono mostrate (spariscono).<br/>
-            ✅ Le foto da galleria vengono ottimizzate (più leggere) prima di salvarle.
-          </div>
-        </div>
-      </div>
+   <div class="modal">
+    <div class="modal-head">
+     <h2>⚙️ Impostazioni (Admin)</h2>
+     <div class="spacer"></div>
+     <button class="btn" id="btnCloseAdmin">✖ Chiudi</button>
     </div>
+    <div class="modal-body" id="adminBody">
+     <!-- login -->
+     <div id="adminLogin">
+      <div class="hint" style="margin-bottom:10px">
+       Inserisci password per accedere alle impostazioni (default: <b>1234</b>)
+      </div>
+      <div class="form">
+       <div>
+        <label>Password</label> <input id="adminPass" type="password" placeholder="1234">
+        <div class="hint">Suggerimento: puoi cambiarla dopo l’accesso.</div>
+       </div>
+       <div style="display:flex;align-items:flex-end;gap:10px">
+        <button class="btn primary" id="btnAdminLogin">🔓 Entra</button>
+        <button class="btn" id="btnAdminCancel">Annulla</button>
+       </div>
+      </div>
+     </div>
+     <!-- panel -->
+     <div id="adminPanel" style="display:none">
+      <div class="form">
+       <div>
+        <label>Password Admin (cambia)</label> <input id="newAdminPass" type="password" placeholder="Nuova password">
+        <div class="hint">Se lasci vuoto, non cambia.</div>
+       </div>
+       <div>
+        <label>WhatsApp numero (formato +39...)</label> <input id="waNumber" placeholder="+39XXXXXXXXXX">
+        <div class="hint">Serve per inviare l’ordine su WhatsApp.</div>
+       </div>
+       <div>
+        <label>Prezzo rapido per TUTTI</label>
+        <div style="display:flex; gap:8px">
+         <input id="bulkPrice" type="number" step="0.01" placeholder="5">
+         <button class="btn primary" id="btnBulkApply">✅ Applica</button>
+        </div>
+        <div class="hint">Esempio: 5 → tutti i prodotti diventano € 5.</div>
+       </div>
+       <div>
+        <label>Backup / Import configurazione (per aggiornare tutti via GitHub)</label>
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+         <button class="btn primary" id="btnExportConfig">📤 Esporta JSON</button>
+         <label class="btn" style="cursor:pointer"> 📥 Importa JSON <input id="importConfigFile" type="file" accept="application/json" style="display:none"> </label>
+        </div>
+        <div class="hint">
+         • <b>Esporta JSON</b> ti scarica un file pronto da caricare su GitHub come <code>data/products.json</code>.
+         <br>
+         • <b>Importa JSON</b> carica sul tuo telefono una configurazione (override) senza toccare GitHub.
+        </div>
+       </div>
+       <div>
+        <label>Ripristina catalogo originale</label>
+        <button class="btn danger" id="btnResetAll">♻️ Reset completo</button>
+        <div class="hint">Cancella le modifiche salvate nel telefono.</div>
+       </div>
+      </div>
+      <div class="hr"></div>
+      <h3 style="margin:0 0 10px 0;font-size:13px">📦 Prodotti (aggiungi / modifica / elimina)</h3>
+      <div class="form">
+       <div>
+        <label>Seleziona prodotto da modificare</label> <select id="editSelect"></select>
+        <div class="hint">Oppure crea un nuovo prodotto qui sotto.</div>
+       </div>
+       <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+        <button class="btn" id="btnLoadToForm">✍️ Carica in form</button>
+        <button class="btn danger" id="btnDeleteSelected">🗑 Elimina prodotto</button>
+        <button class="btn danger" id="btnDeleteCategory">🗑 Elimina categoria</button>
+       </div>
+       <div>
+        <label>Titolo</label> <input id="fTitle" placeholder="Acchiappasogni - Modello X">
+       </div>
+       <div>
+        <label>Categoria</label>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+         <input id="fCategory" list="catDatalist" placeholder="Acchiappasogni Classici">
+         <button class="btn" id="btnCreateCategory" type="button">➕ Crea categoria</button>
+        </div>
+        <datalist id="catDatalist"></datalist>
+       </div>
+       <div style="grid-column:1 / -1">
+        <label>Descrizione (testo sotto al titolo)</label> <textarea id="fDesc" placeholder="Esempio: Fatto a mano, diametro 30 cm, colori personalizzabili..."></textarea>
+       </div>
+       <div>
+        <label>Prezzo (€)</label> <input id="fPrice" type="number" step="0.01" placeholder="5">
+       </div>
+       <div>
+        <label>Pubblicazione</label>
+        <div style="display:flex;align-items:center;gap:10px">
+         <input id="fPublished" type="checkbox" style="width:auto">
+         <div class="hint" style="margin:0">Se attivo, il prodotto si vede nella Home.</div>
+        </div>
+       </div>
+       <div>
+        <label>Foto (dal telefono / galleria)</label> <input id="fImageFile" type="file" accept="image/*">
+        <div class="hint">
+         Se carichi da galleria: viene salvata nel telefono (localStorage).
+         <br>
+         Se vuoi che si veda su TUTTI i telefoni, carica la foto nel repo e poi metti il percorso nel campo sotto.
+        </div>
+       </div>
+       <div style="grid-column:1 / -1">
+        <label>Oppure percorso immagine (GitHub)</label> <input id="fImagePath" placeholder="foto.jpg oppure cartella/foto.jpg">
+        <div class="hint">Se scrivi solo il nome file (es: foto.jpg) la cerca nella cartella base configurata.</div>
+       </div>
+       <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+        <button class="btn primary" id="btnSaveProduct">💾 Salva (aggiungi/modifica)</button>
+        <button class="btn" id="btnNewProduct">➕ Nuovo</button>
+        <button class="btn primary" id="btnPublishNow">📣 Pubblica in Home</button>
+        <button class="btn" id="btnHideNow">🙈 Nascondi dalla Home</button>
+       </div>
+      </div>
+      <div class="hr"></div>
+      <div class="hint">
+       ✅ Le immagini che non si aprono NON vengono mostrate (spariscono).
+       <br>
+       ✅ Le foto da galleria vengono ottimizzate (più leggere) prima di salvarle.
+      </div>
+     </div>
+    </div>
+   </div>
   </div>
-
   <!-- MODAL: CONFIGURATORE ACCHIAPPASOGNI (UTENTE) -->
   <div class="modal-back" id="builderModalBack">
-    <div class="modal">
-      <div class="modal-head">
-        <h2>🪄 Crea il tuo Acchiappasogni</h2>
-        <div class="spacer"></div>
-        <button class="btn" id="btnCloseBuilder">✖ Chiudi</button>
-      </div>
-
-      <div class="modal-body">
-        <div class="builder-grid">
-
-          <!-- SINISTRA: FORM -->
-          <div class="box">
-            <h3>1) Base</h3>
-
-            <div class="row2">
-              <div>
-                <label>Modello</label>
-                <select id="bModel">
-                  <option value="Classico (1)">Classico (1)</option>
-                  <option value="Cerchio (2)">Cerchio (2)</option>
-                  <option value="Luna (3)">Luna (3)</option>
-                  <option value="Cuore (4)">Cuore (4)</option>
-                  <option value="Stella (5)">Stella (5)</option>
-                  <option value="Chakra (6)">Chakra (6)</option>
-                  <option value="Yin & Yang (7)">Yin & Yang (7)</option>
-                  <option value="Personalizzato (8)">Personalizzato (8)</option>
-                  <option value="Tema speciale (es. REAL HASTA LA MUERTE)">Tema speciale</option>
-                </select>
-              </div>
-
-              <div>
-                <label>Diametro (cm)</label>
-                <select id="bDiameter">
-                  <option>15</option><option>20</option><option>25</option>
-                  <option selected>30</option><option>35</option><option>40</option><option>50</option>
-                </select>
-              </div>
-
-              <div>
-                <label>Colore cerchio</label>
-                <input id="bRingColor" placeholder="Es: bianco / nero / oro / legno..." />
-              </div>
-
-              <div>
-                <label>Colore piume</label>
-                <input id="bFeatherColor" placeholder="Es: bianco / rosso e nero / azzurro..." />
-              </div>
-            </div>
-
-            <div class="hr2"></div>
-
-            <h3>2) Cerchi (aggiungine quanti vuoi)</h3>
-            <div class="small">Usa “Aggiungi cerchio” per aggiungere cerchi extra (diametro/colore/intreccio/decorazioni).</div>
-            <div class="list" id="bRingsList"></div>
-            <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
-              <button class="btn" id="btnAddRing" type="button">➕ Aggiungi cerchio</button>
-            </div>
-
-            <div class="hr2"></div>
-
-            <h3>3) Piume (gruppi: sinistra/centro/destra)</h3>
-            <div class="list" id="bFeathersList"></div>
-            <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
-              <button class="btn" id="btnAddFeathers" type="button">➕ Aggiungi gruppo piume</button>
-            </div>
-
-            <div class="hr2"></div>
-
-            <h3>4) Accessori (aggiungine quanti vuoi)</h3>
-            <div class="list" id="bAccList"></div>
-            <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
-              <button class="btn" id="btnAddAcc" type="button">➕ Aggiungi accessorio</button>
-            </div>
-
-            <div class="hr2"></div>
-
-            <h3>5) Foto e Note</h3>
-            <div class="row2">
-              <div>
-                <label>Vuoi inserire una foto?</label>
-                <select id="bHasPhoto">
-                  <option value="no" selected>No</option>
-                  <option value="si">Sì</option>
-                </select>
-                <div class="small">Se sì, puoi caricarla qui e vedere l’anteprima.</div>
-              </div>
-              <div>
-                <label>Carica foto (opzionale)</label>
-                <input id="bPhotoFile" type="file" accept="image/*" />
-              </div>
-            </div>
-
-            <div style="margin-top:10px">
-              <label>Scritta (opzionale)</label>
-              <input id="bText" placeholder="Es: Nome, frase, data..." />
-            </div>
-
-            <div style="margin-top:10px">
-              <label>Note extra</label>
-              <textarea id="bNotes" placeholder="Es: perle rosse e nere, brillanti, charm, emoji, ecc..."></textarea>
-            </div>
-
-            <div class="hr2"></div>
-
-            <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <button class="btn" id="btnResumeProject" type="button">↩️ Riprendi ultimo progetto</button>
-              <button class="btn" id="btnSaveProject" type="button">💾 Salva progetto</button>
-              <button class="btn primary" id="btnSendProject" type="button">📲 Invia su WhatsApp</button>
-              <button class="btn primary" id="btnSaveAndSend" type="button">✅ Salva & Invia</button>
-            </div>
-
-            <div class="small" style="margin-top:8px">
-              Nota: WhatsApp non permette di allegare automaticamente la foto dal link, ma nel messaggio ti ricorda di inviarla in chat.
-            </div>
-          </div>
-
-          <!-- DESTRA: ANTEPRIMA + STIMA -->
-          <div class="box">
-            <h3>Anteprima & riepilogo</h3>
-
-            <div class="preview">
-              <div class="preview-inner">
-                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-                  <span class="badge2" id="bEstimate">Totale stimato: € 0,00</span>
-                  <span class="badge2" id="bCode">Codice: —</span>
-                </div>
-
-                <img id="bPhotoPreview" class="preview-img" alt="Anteprima foto" />
-
-                <div class="hr2"></div>
-
-                <div id="bSummary" class="small"></div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
+   <div class="modal">
+    <div class="modal-head">
+     <h2>🪄 Crea il tuo Acchiappasogni</h2>
+     <div class="spacer"></div>
+     <button class="btn" id="btnCloseBuilder">✖ Chiudi</button>
     </div>
+    <div class="modal-body">
+     <div class="builder-grid">
+      <!-- SINISTRA: FORM -->
+      <div class="box">
+       <h3>1) Base</h3>
+       <div class="row2">
+        <div>
+         <label>Modello</label> <select id="bModel"> <option value="Classico (1)">Classico (1)</option> <option value="Cerchio (2)">Cerchio (2)</option> <option value="Luna (3)">Luna (3)</option> <option value="Cuore (4)">Cuore (4)</option> <option value="Stella (5)">Stella (5)</option> <option value="Chakra (6)">Chakra (6)</option> <option value="Yin &amp; Yang (7)">Yin &amp; Yang (7)</option> <option value="Personalizzato (8)">Personalizzato (8)</option> <option value="Tema speciale (es. REAL HASTA LA MUERTE)">Tema speciale</option> </select>
+        </div>
+        <div>
+         <label>Diametro (cm)</label> <select id="bDiameter"> <option>15</option><option>20</option><option>25</option> <option selected>30</option><option>35</option><option>40</option><option>50</option> </select>
+        </div>
+        <div>
+         <label>Colore cerchio</label> <input id="bRingColor" placeholder="Es: bianco / nero / oro / legno...">
+        </div>
+        <div>
+         <label>Colore piume</label> <input id="bFeatherColor" placeholder="Es: bianco / rosso e nero / azzurro...">
+        </div>
+       </div>
+       <div class="hr2"></div>
+       <h3>2) Cerchi (aggiungine quanti vuoi)</h3>
+       <div class="small">Usa “Aggiungi cerchio” per aggiungere cerchi extra (diametro/colore/intreccio/decorazioni).</div>
+       <div class="list" id="bRingsList"></div>
+       <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" id="btnAddRing">➕ Aggiungi cerchio</button>
+       </div>
+       <div class="hr2"></div>
+       <h3>3) Piume (gruppi: sinistra/centro/destra)</h3>
+       <div class="list" id="bFeathersList"></div>
+       <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" id="btnAddFeathers">➕ Aggiungi gruppo piume</button>
+       </div>
+       <div class="hr2"></div>
+       <h3>4) Accessori (aggiungine quanti vuoi)</h3>
+       <div class="list" id="bAccList"></div>
+       <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" id="btnAddAcc">➕ Aggiungi accessorio</button>
+       </div>
+       <div class="hr2"></div>
+       <h3>5) Foto e Note</h3>
+       <div class="row2">
+        <div>
+         <label>Vuoi inserire una foto?</label> <select id="bHasPhoto"> <option value="no" selected>No</option> <option value="si">Sì</option> </select>
+         <div class="small">Se sì, puoi caricarla qui e vedere l’anteprima.</div>
+        </div>
+        <div>
+         <label>Carica foto (opzionale)</label> <input id="bPhotoFile" type="file" accept="image/*">
+        </div>
+       </div>
+       <div style="margin-top:10px">
+        <label>Scritta (opzionale)</label> <input id="bText" placeholder="Es: Nome, frase, data...">
+       </div>
+       <div style="margin-top:10px">
+        <label>Note extra</label> <textarea id="bNotes" placeholder="Es: perle rosse e nere, brillanti, charm, emoji, ecc..."></textarea>
+       </div>
+       <div class="hr2"></div>
+       <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" id="btnResumeProject">↩️ Riprendi ultimo progetto</button>
+        <button class="btn" id="btnSaveProject">💾 Salva progetto</button>
+        <button class="btn primary" id="btnSendProject">📲 Invia su WhatsApp</button>
+        <button class="btn primary" id="btnSaveAndSend">✅ Salva &amp; Invia</button>
+       </div>
+       <div class="small" style="margin-top:8px">Nota: WhatsApp non permette di allegare automaticamente la foto dal link, ma nel messaggio ti ricorda di inviarla in chat.</div>
+      </div>
+      <!-- DESTRA: ANTEPRIMA + STIMA -->
+      <div class="box">
+       <h3>Anteprima &amp; riepilogo</h3>
+       <div class="preview">
+        <div class="preview-inner">
+         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <span class="badge2" id="bEstimate">Totale stimato: € 0,00</span> <span class="badge2" id="bCode">Codice: —</span>
+         </div>
+         <img id="bPhotoPreview" class="preview-img" alt="Anteprima foto">
+         <div class="hr2"></div>
+         <div id="bSummary" class="small"></div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
   </div>
-
+  <!-- MODAL: CONFIGURATORE SEMPLICE (CLIENTI) -->
+  <div class="modal-back" id="builderLiteBack">
+   <div class="modal">
+    <div class="modal-head">
+     <h2>🪄 Personalizza il tuo Acchiappasogni</h2>
+     <div class="spacer"></div>
+     <button class="btn" id="btnCloseBuilderLite">✖ Chiudi</button>
+    </div>
+    <div class="modal-body">
+     <div class="lite-grid">
+      <!-- SINISTRA: STAGE -->
+      <div class="box">
+       <h3>Anteprima (trascina gli accessori)</h3>
+       <div class="stage" id="dlStage">
+        <div class="base-ring" id="dlBaseRing"></div>
+        <svg class="base-shape" id="dlBaseSvg" viewBox="0 0 100 100" aria-hidden="true"></svg>
+        <!-- piccola ragnatela (svg leggero) -->
+        <svg class="web" id="dlWebSvg" viewBox="0 0 100 100" aria-hidden="true">
+         <g fill="none" stroke="rgba(233,239,255,.75)" stroke-width="1.2">
+          <circle cx="50" cy="50" r="45" /> <circle cx="50" cy="50" r="35" /> <circle cx="50" cy="50" r="25" /> <circle cx="50" cy="50" r="15" /> <path d="M50 5 L50 95" /> <path d="M5 50 L95 50" /> <path d="M18 18 L82 82" /> <path d="M82 18 L18 82" />
+         </g>
+        </svg>
+       </div>
+       <div class="hr2"></div>
+       <div class="minirow">
+        <button class="btn" id="dlSelectNone">🖐️ Deseleziona</button>
+        <button class="btn danger" id="dlDelete">🗑 Rimuovi elemento</button>
+        <button class="btn danger" id="dlReset">♻️ Reset</button>
+       </div>
+       <div class="helpbox" style="margin-top:10px">
+        • Premi un accessorio per selezionarlo, poi trascinalo dove vuoi.
+        <br>
+        • Selezionato = bordo viola. “Rimuovi” lo elimina.
+       </div>
+      </div>
+      <!-- DESTRA: SCELTE SEMPLICI -->
+      <div class="box">
+       <h3>Scelte rapide</h3>
+       <div class="row2">
+        <div>
+         <label>Modello</label> <select id="dlModel"> <option value="1">1 • Classico</option> <option value="2">2 • Cerchio</option> <option value="3">3 • Luna</option> <option value="4">4 • Cuore</option> <option value="5">5 • Stella</option> <option value="6">6 • Chakra</option> <option value="7">7 • Yin &amp; Yang</option> <option value="8">8 • Personalizzato</option> </select> 
+        </div>
+        <div>
+         <label>Diametro (cm)</label> <select id="dlDiameter"> <option>15</option><option>20</option><option>25</option> <option selected>30</option><option>35</option><option>40</option><option>50</option> </select>
+        </div>
+        <div>
+         <label>Colore cerchio</label> <input id="dlRingColor" placeholder="Es: bianco / oro / viola / blu...">
+        </div>
+        <div>
+         <label>Colore piume</label> <input id="dlFeatherColor" placeholder="Es: viola / bianco / arcobaleno...">
+        </div>
+       </div>
+       <div class="hr2"></div>
+       <div class="row2">
+        <div>
+         <label>Tessitura cerchio</label> <select id="dlWeave"> <option value="classico" selected>Classica</option> <option value="fitta">Ragnatela fitta</option> <option value="pizzo">Centrino / pizzo</option> <option value="chakra">Chakra (raggi)</option> <option value="yinyang">Yin &amp; Yang</option> <option value="stella">Stella</option> </select>
+         <div class="hint">Cambia solo l’anteprima (non tocca il catalogo).</div>
+        </div>
+        <div>
+         <label>Intreccio (testo)</label> <input id="dlWeaveNote" placeholder="Es: intreccio bianco, pizzo, doppio filo...">
+         <div class="hint">Viene inviato nell’ordine WhatsApp.</div>
+        </div>
+       </div>
+       <div class="hr2"></div>
+       <h3>🔥 Esempi pronti (1 tocco)</h3>
+       <div class="preset-grid" id="dlPresets">
+        <button class="preset" data-preset="viola"><b>Viola Classico</b> <small>Piume viola + cristalli</small></button>
+        <button class="preset" data-preset="oro"><b>Oro &amp; Bianco</b> <small>Elegante + perle oro</small></button>
+        <button class="preset" data-preset="natale"><b>Natale</b> <small>Fiocchi + campanelline</small></button>
+        <button class="preset" data-preset="albero"><b>Albero di cerchi</b> <small>Molti cerchi + luci</small></button>
+        <button class="preset" data-preset="real"><b>REAL HASTA…</b> <small>Rosso/Nero + simboli</small></button>
+       </div>
+       <h3>Accessori (tocca per aggiungere)</h3>
+       <div class="palette">
+        <button class="chip" data-add="feather">🪶 Piuma</button>
+        <button class="chip" data-add="crystal">💎 Cristallo</button>
+        <button class="chip" data-add="bead">⚪ Perla</button>
+        <button class="chip" data-add="bead_red">🔴 Perla rossa</button>
+        <button class="chip" data-add="bead_black">⚫ Perla nera</button>
+        <button class="chip" data-add="bow">🎀 Fiocco</button>
+        <button class="chip" data-add="bell">🔔 Campanella</button>
+        <button class="chip" data-add="snow">❄️ Fiocco neve</button>
+        <button class="chip" data-add="glitter">✨ Brillantini</button>
+        <button class="chip" data-add="orc">👹 Emoji</button>
+        <button class="chip" data-add="symbolA">🅰️ Doppia A</button>
+        <button class="chip" data-add="lace">🧵 Centrino/Pizzo</button>
+        <button class="chip" data-add="light">💡 Luci</button>
+        <button class="chip" data-add="ring_small">⭕ Cerchio piccolo</button>
+       </div>
+       <div class="hr2"></div>
+       <div>
+        <label>Scritta (opzionale)</label> <input id="dlText" placeholder="Es: nome, frase, data...">
+        <div class="hint">La scritta viene inviata nell’ordine WhatsApp.</div>
+       </div>
+       <div style="margin-top:10px">
+        <label>Note extra</label> <textarea id="dlNotes" placeholder="Es: perle rosse e nere, charm specifico, tema, ecc..."></textarea>
+       </div>
+       <div class="hr2"></div>
+       <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" id="dlSave">💾 Salva</button>
+        <button class="btn primary" id="dlSend">📲 Invia su WhatsApp</button>
+        <button class="btn primary" id="dlSaveSend">✅ Salva &amp; Invia</button>
+       </div>
+       <div class="hint" style="margin-top:10px">Nota: l’anteprima è “simbolica” (serve per scegliere la posizione degli accessori).</div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <!-- MODAL: BOMBONIERE & REGALI (CLIENTI) -->
+  <div class="modal-back" id="giftsBack">
+   <div class="modal">
+    <div class="modal-head">
+     <h2>🎁 Bomboniere &amp; Regali</h2>
+     <div class="spacer"></div>
+     <button class="btn" id="btnCloseGifts">✖ Chiudi</button>
+    </div>
+    <div class="modal-body">
+     <div class="builder-grid">
+      <div class="box">
+       <h3>Scelta rapida</h3>
+       <div class="row2">
+        <div>
+         <label>Categoria</label> <select id="gType"> <option value="9">9 • Bomboniera Portachiavi</option> <option value="10">10 • Pendenti</option> <option value="11">11 • Singolo</option> <option value="12">12 • Vasetto</option> <option value="13">13 • Scatola</option> <option value="14">14 • Personalizzato (Evento)</option> <option value="15">15 • Fiocco nascita</option> <option value="16">16 • Nome</option> </select>
+        </div>
+        <div>
+         <label>Occasione</label> <select id="gOcc"> <option>—</option> <option>Battesimo</option> <option>Comunione</option> <option>Matrimonio</option> <option>Compleanno</option> <option>Nascita</option> <option>Laurea</option> <option>Evento</option> </select>
+        </div>
+       </div>
+       <div class="hr2"></div>
+       <h3>🔥 Esempi pronti</h3>
+       <div class="preset-grid" id="gPresets">
+        <button class="preset" data-gpreset="confetti"><b>Con confetti</b><small>Bustina + bigliettino</small></button>
+        <button class="preset" data-gpreset="name"><b>Con Nome</b><small>Scritta frontale</small></button>
+        <button class="preset" data-gpreset="baby"><b>Nascita</b><small>Fiocco + data</small></button>
+        <button class="preset" data-gpreset="event"><b>Evento</b><small>Tema personalizzato</small></button>
+       </div>
+       <div class="hr2"></div>
+       <div class="row2">
+        <div>
+         <label>Nome / Scritta</label> <input id="gName" placeholder="Es: Aurora / Buone Feste / Buon Battesimo...">
+        </div>
+        <div>
+         <label>Data (opzionale)</label> <input id="gDate" placeholder="Es: 12/06/2026">
+        </div>
+        <div>
+         <label>Colori</label> <input id="gColors" placeholder="Es: bianco e oro / rosa / blu e argento...">
+        </div>
+        <div>
+         <label>Dettagli</label> <input id="gDetails" placeholder="Es: confetti, bustina, bigliettino, tema, ecc...">
+        </div>
+       </div>
+       <div class="hr2"></div>
+       <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" id="gReset">♻️ Reset</button>
+        <button class="btn" id="gSave">💾 Salva</button>
+        <button class="btn primary" id="gSend">📲 Invia su WhatsApp</button>
+        <button class="btn primary" id="gSaveSend">✅ Salva &amp; Invia</button>
+       </div>
+      </div>
+      <div class="box">
+       <h3>Riepilogo</h3>
+       <div class="preview">
+        <div class="preview-inner">
+         <span class="badge2" id="gCode">Codice: —</span>
+         <div class="hr2"></div>
+         <div class="small" id="gSummary"></div>
+        </div>
+       </div>
+       <div class="hint" style="margin-top:8px">Nota: questa sezione è separata dal catalogo e non cambia nulla ai prodotti.</div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
   <script>
     const DEFAULT_WA = "+393440260906";
     const ADMIN_PASS_DEFAULT = "1234";
@@ -678,7 +909,7 @@
     const IMAGE_BASE_PATH = "assets/assets/images/assets/images/acchiappasogni_hd/";
 
     const K = {
-      adminPass: "ae_admin_pass",
+adminPass: "ae_admin_pass",
       wa: "ae_wa_number",
       productsOverride: "ae_products_override",
       cart: "ae_cart_v1",
@@ -765,6 +996,7 @@
 
     function rebuildCategories(){
       const set = new Set(allProducts.map(p => p.category || "Altro"));
+      // categorie salvate (anche vuote)
       let saved = [];
       try{ saved = JSON.parse(localStorage.getItem(K.categories) || "[]"); }catch{}
       if(!Array.isArray(saved)) saved = [];
@@ -1054,6 +1286,8 @@
       const url = `https://wa.me/${encodeURIComponent(number.replace(/\s+/g,""))}?text=${encodeURIComponent(msg)}`;
       window.open(url, "_blank");
     }
+
+    /* btnCustomizer: handler impostato dal configuratore */
 
     function openAdmin(){
       document.getElementById("adminLogin").style.display = "block";
@@ -1385,7 +1619,7 @@
         saveOverride(normalized);
         await reloadProducts();
         rebuildEditSelect();
-        injectAdminPricesUI();
+      injectAdminPricesUI();
         alert("Configurazione importata nel telefono ✅");
       }catch(e){
         console.error(e);
@@ -1484,11 +1718,12 @@
       console.error(err);
       alert("Errore caricamento catalogo: " + err.message);
     });
-
+  
     /* =========================================================
        CONFIGURATORE UTENTE + PREZZI (ADMIN) + CATEGORIE SALVATE
        ========================================================= */
 
+    // Prezzi di default (modesti)
     const DEFAULT_PRICES = {
       base_model: 12.00,
       ring_extra: 3.00,
@@ -1520,6 +1755,7 @@
     }
     function saveSavedCategories(arr){ localStorage.setItem(K.categories, JSON.stringify(arr)); }
 
+    // Aggiorna datalist categorie nel form Admin
     function refreshCategoryDatalist(){
       const dl = document.getElementById("catDatalist");
       if(!dl) return;
@@ -1531,6 +1767,7 @@
       }
     }
 
+    // Pulsante "Crea categoria" (Admin)
     const btnCreateCategory = document.getElementById("btnCreateCategory");
     if(btnCreateCategory){
       btnCreateCategory.onclick = () => {
@@ -1539,6 +1776,7 @@
         const clean = name.trim();
         if(!clean) return;
 
+        // normalizza per evitare doppioni
         const norm = clean.toLowerCase();
         const existing = new Set(categories.map(c => String(c).toLowerCase()));
         if(existing.has(norm)){
@@ -1554,6 +1792,7 @@
 
         document.getElementById("fCategory").value = clean;
 
+        // ricostruisci categorie e filtri
         rebuildCategories();
         renderFilters();
         refreshCategoryDatalist();
@@ -1561,6 +1800,9 @@
       };
     }
 
+    /* =========================
+       ADMIN: Sezione prezzi privata
+       ========================= */
     function injectAdminPricesUI(){
       const panel = document.getElementById("adminPanel");
       if(!panel) return;
@@ -1616,6 +1858,805 @@
         updateBuilderSummary();
       };
     }
+
+    /* =========================
+       CONFIGURATORE (UTENTE)
+       ========================= */
+    /* =========================================================
+       CONFIGURATORE SEMPLICE (CLIENTI) - LOGICA (preview + drag)
+       Non tocca carrello/catalogo/admin: è isolato in un modal dedicato.
+       ========================================================= */
+    const builderLiteBack = document.getElementById("builderLiteBack");
+    const dlStage = document.getElementById("dlStage");
+    const dlBaseRing = document.getElementById("dlBaseRing");
+    const dlBaseSvg = document.getElementById("dlBaseSvg");
+
+    const dlModel = document.getElementById("dlModel");
+    const dlDiameter = document.getElementById("dlDiameter");
+    const dlRingColor = document.getElementById("dlRingColor");
+    const dlFeatherColor = document.getElementById("dlFeatherColor");
+    const dlWeave = document.getElementById("dlWeave");
+    const dlWeaveNote = document.getElementById("dlWeaveNote");
+    const dlWebSvg = document.getElementById("dlWebSvg");
+    const dlText = document.getElementById("dlText");
+    const dlNotes = document.getElementById("dlNotes");
+
+    const K_LITE = {
+      projects: "ae_builderlite_projects_v1"
+    };
+
+    let lite = null;
+    let liteSelectedId = null;
+    let liteWeaveTouched = false;
+
+    function loadLiteProjects(){
+      try{
+        const arr = JSON.parse(localStorage.getItem(K_LITE.projects) || "[]");
+        return Array.isArray(arr) ? arr : [];
+      }catch{ return []; }
+    }
+    function saveLiteProjects(arr){ localStorage.setItem(K_LITE.projects, JSON.stringify(arr)); }
+
+    function openBuilderLite(){
+      lite = {
+        id: uid(),
+        created_at: new Date().toISOString(),
+        base: {
+          model: dlModel.value || "Classico",
+          diameter: dlDiameter.value || "30",
+          ringColor: "",
+          featherColor: "",
+          weave: (dlWeave?.value || "classico"),
+          weave_note: ""
+        },
+        elements: [],
+        text: "",
+        notes: ""
+      };
+      liteSelectedId = null;
+      liteWeaveTouched = false;
+
+      dlRingColor.value = "";
+      dlFeatherColor.value = "";
+      if(dlWeave) dlWeave.value = "classico";
+      if(dlWeaveNote) dlWeaveNote.value = "";
+      dlText.value = "";
+      dlNotes.value = "";
+
+      // pulisci stage (lascia base + web)
+      Array.from(dlStage.querySelectorAll(".dl-el")).forEach(n => n.remove());
+      applyLiteBaseStyle();
+      setLiteShapeByModel(dlModel.value);
+      setLiteWeave(dlWeave?.value || "classico");
+      seedLiteByModel(dlModel.value);
+
+      builderLiteBack.style.display = "flex";
+    }
+
+    function closeBuilderLite(){
+      builderLiteBack.style.display = "none";
+      liteSelectedId = null;
+    }
+
+    document.getElementById("btnCloseBuilderLite").onclick = closeBuilderLite;
+    builderLiteBack.addEventListener("click",(e)=>{ if(e.target===builderLiteBack) closeBuilderLite(); });
+
+    // aggiornamenti live (solo configuratore clienti)
+    if(dlRingColor){ dlRingColor.addEventListener("input", ()=>{ applyLiteBaseStyle(); }); }
+    if(dlWeave){ dlWeave.addEventListener("change", ()=>{ liteWeaveTouched = true; setLiteWeave(dlWeave.value); }); }
+    if(dlWeaveNote){ dlWeaveNote.addEventListener("input", ()=>{ if(lite) lite.base.weave_note = (dlWeaveNote.value||"").trim(); }); }
+    if(dlModel){
+      dlModel.addEventListener("change", ()=>{
+        // cambia modello => suggeriamo tessitura coerente (senza toccare altri dati)
+        seedLiteByModel(dlModel.value);
+      });
+    }
+
+
+    function applyLiteBaseStyle(){
+  const v = (dlRingColor.value || "").trim();
+  const col = v ? v : "rgba(233,239,255,.92)";
+  if(dlBaseRing){ dlBaseRing.style.borderColor = col; } // legacy, nascosto
+  if(dlBaseSvg){ dlBaseSvg.style.color = col; }
+}
+
+    /* =========================
+       TESSITURA (ANTEPRIMA) - CONFIGURATORE CLIENTI
+       ========================= */
+    const LITE_SHAPES = {
+  circle: (opts={}) => {
+    const dash = opts.dash ? ' stroke-dasharray="6 5"' : "";
+    return `<circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="6"${dash}/>`;
+  },
+  moon: () => {
+    // crescent outline (semplice)
+    return `
+      <path d="M62 12
+               A38 38 0 1 0 62 88
+               A28 28 0 1 1 62 12Z"
+            fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+    `;
+  },
+  heart: () => {
+    return `
+      <path d="M50 82
+               C35 70 18 56 18 38
+               C18 26 28 18 38 18
+               C44 18 48 21 50 25
+               C52 21 56 18 62 18
+               C72 18 82 26 82 38
+               C82 56 65 70 50 82Z"
+            fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+    `;
+  },
+  star: () => {
+    return `
+      <path d="M50 12 L61 36 L87 38
+               L67 54 L73 80
+               L50 67 L27 80
+               L33 54 L13 38
+               L39 36 Z"
+            fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+    `;
+  },
+  chakra: () => {
+    return `
+      <circle cx="50" cy="34" r="24" fill="none" stroke="currentColor" stroke-width="6"/>
+      <circle cx="50" cy="66" r="24" fill="none" stroke="currentColor" stroke-width="6"/>
+      <path d="M50 10 L50 90" fill="none" stroke="currentColor" stroke-width="3" opacity=".7"/>
+    `;
+  },
+  yinyang: () => {
+    return `
+      <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="6"/>
+      <path d="M50 5
+               A45 45 0 0 1 50 95
+               A22 22 0 0 0 50 50
+               A22 22 0 0 1 50 5Z"
+            fill="none" stroke="currentColor" stroke-width="3" opacity=".85"/>
+      <circle cx="50" cy="28" r="5" fill="currentColor" opacity=".85"/>
+      <circle cx="50" cy="72" r="5" fill="currentColor" opacity=".35"/>
+    `;
+  }
+};
+
+function setLiteShapeByModel(mv){
+  if(!dlBaseSvg) return;
+  const m = String(mv || dlModel.value || "1");
+  let shape = "circle";
+  let dash = false;
+  if(m === "3") shape = "moon";
+  else if(m === "4") shape = "heart";
+  else if(m === "5") shape = "star";
+  else if(m === "6") shape = "chakra";
+  else if(m === "7") shape = "yinyang";
+  else if(m === "8"){ shape = "circle"; dash = true; }
+
+  const tplFn = LITE_SHAPES[shape] || LITE_SHAPES.circle;
+  dlBaseSvg.innerHTML = tplFn({ dash });
+}
+
+const WEAVE_TEMPLATES = {
+      classico: `
+        <g fill="none" stroke="rgba(233,239,255,.75)" stroke-width="1.2">
+          <circle cx="50" cy="50" r="45"/>
+          <circle cx="50" cy="50" r="35"/>
+          <circle cx="50" cy="50" r="25"/>
+          <circle cx="50" cy="50" r="15"/>
+          <path d="M50 5 L50 95"/>
+          <path d="M5 50 L95 50"/>
+          <path d="M18 18 L82 82"/>
+          <path d="M82 18 L18 82"/>
+        </g>
+      `,
+      fitta: `
+        <g fill="none" stroke="rgba(233,239,255,.78)" stroke-width="1.1">
+          <circle cx="50" cy="50" r="45"/>
+          <circle cx="50" cy="50" r="40"/>
+          <circle cx="50" cy="50" r="35"/>
+          <circle cx="50" cy="50" r="30"/>
+          <circle cx="50" cy="50" r="25"/>
+          <circle cx="50" cy="50" r="20"/>
+          <circle cx="50" cy="50" r="15"/>
+          <circle cx="50" cy="50" r="10"/>
+          ${Array.from({length:12}).map((_,i)=>{
+            const a = (Math.PI*2/12)*i;
+            const x = 50 + Math.cos(a)*45;
+            const y = 50 + Math.sin(a)*45;
+            return `<path d="M50 50 L${x.toFixed(2)} ${y.toFixed(2)}"/>`;
+          }).join("")}
+        </g>
+      `,
+      pizzo: `
+        <g fill="none" stroke="rgba(233,239,255,.72)" stroke-width="1.1">
+          <circle cx="50" cy="50" r="45" stroke-dasharray="2.2 2.8"/>
+          <circle cx="50" cy="50" r="36" stroke-dasharray="1.6 2.4"/>
+          <circle cx="50" cy="50" r="28" stroke-dasharray="1.2 2.0"/>
+          <circle cx="50" cy="50" r="20" stroke-dasharray="1.0 1.8"/>
+          <circle cx="50" cy="50" r="12" stroke-dasharray="1.0 1.6"/>
+          ${Array.from({length:8}).map((_,i)=>{
+            const a = (Math.PI*2/8)*i;
+            const x = 50 + Math.cos(a)*45;
+            const y = 50 + Math.sin(a)*45;
+            const x2 = 50 + Math.cos(a)*12;
+            const y2 = 50 + Math.sin(a)*12;
+            return `<path d="M${x2.toFixed(2)} ${y2.toFixed(2)} L${x.toFixed(2)} ${y.toFixed(2)}" opacity=".85"/>`;
+          }).join("")}
+        </g>
+      `,
+      chakra: `
+        <g fill="none" stroke="rgba(233,239,255,.78)" stroke-width="1.1">
+          <circle cx="50" cy="50" r="45"/>
+          <circle cx="50" cy="50" r="32"/>
+          <circle cx="50" cy="50" r="20"/>
+          <circle cx="50" cy="50" r="10"/>
+          ${Array.from({length:14}).map((_,i)=>{
+            const a = (Math.PI*2/14)*i;
+            const x = 50 + Math.cos(a)*45;
+            const y = 50 + Math.sin(a)*45;
+            return `<path d="M50 50 L${x.toFixed(2)} ${y.toFixed(2)}"/>`;
+          }).join("")}
+        </g>
+      `,
+      yinyang: `
+        <g fill="none" stroke="rgba(233,239,255,.78)" stroke-width="1.2">
+          <circle cx="50" cy="50" r="45"/>
+          <path d="M50 5
+                   A45 45 0 0 0 50 95
+                   A22.5 22.5 0 0 1 50 50
+                   A22.5 22.5 0 0 0 50 5" />
+          <path d="M50 5
+                   A45 45 0 0 1 50 95
+                   A22.5 22.5 0 0 0 50 50
+                   A22.5 22.5 0 0 1 50 5" opacity=".55"/>
+          <circle cx="50" cy="28" r="5" />
+          <circle cx="50" cy="72" r="5" opacity=".55"/>
+        </g>
+      `,
+      stella: `
+        <g fill="none" stroke="rgba(233,239,255,.78)" stroke-width="1.15">
+          <circle cx="50" cy="50" r="45"/>
+          <path d="M50 10 L61 38 L90 38 L66 55 L75 85 L50 67 L25 85 L34 55 L10 38 L39 38 Z" opacity=".75"/>
+          <circle cx="50" cy="50" r="18" opacity=".55"/>
+        </g>
+      `
+    };
+
+    function setLiteWeave(kind){
+      const k = String(kind || "classico");
+      const tpl = WEAVE_TEMPLATES[k] || WEAVE_TEMPLATES.classico;
+      if(dlWebSvg) dlWebSvg.innerHTML = tpl;
+      if(lite){
+        lite.base.weave = k;
+        lite.base.weave_note = (dlWeaveNote?.value || "").trim();
+      }
+    }
+
+
+
+    function seedLiteByModel(modelValue){
+      if(!lite) return;
+
+      const mv = String(modelValue || dlModel.value || "1");
+
+      // cambia anche la FORMA base in anteprima (solo configuratore clienti)
+      setLiteShapeByModel(mv);
+
+      // Suggerimento tessitura in base al modello (solo anteprima)
+      let suggested = "classico";
+      if(mv === "6") suggested = "chakra";
+      else if(mv === "7") suggested = "yinyang";
+      else if(mv === "5") suggested = "stella";
+      // se l’utente NON ha già toccato la tessitura, suggeriamo quella coerente col modello
+      if(!liteWeaveTouched){
+        if(dlWeave) dlWeave.value = suggested;
+        setLiteWeave(suggested);
+      }
+
+      // aggiunge una base "tipo" SOLO se non ci sono elementi (così non distrugge il lavoro)
+      if(lite.elements.length) return;
+
+      // centro
+      if(mv === "1"){ // Classico
+        liteAdd("bead");
+        liteAdd("feather"); lite.elements[lite.elements.length-1].x -= 70; lite.elements[lite.elements.length-1].y += 60;
+        liteAdd("feather"); lite.elements[lite.elements.length-1].y += 80;
+        liteAdd("feather"); lite.elements[lite.elements.length-1].x += 70; lite.elements[lite.elements.length-1].y += 60;
+        syncLiteStageFromData();
+      }else if(mv === "2"){ // Cerchio
+        liteAdd("ring_small"); lite.elements[lite.elements.length-1].y += 40;
+        liteAdd("feather"); lite.elements[lite.elements.length-1].x -= 40; lite.elements[lite.elements.length-1].y += 110;
+        liteAdd("feather"); lite.elements[lite.elements.length-1].x += 40; lite.elements[lite.elements.length-1].y += 110;
+        syncLiteStageFromData();
+      }else if(mv === "3"){ // Luna
+        liteAdd("moon"); lite.elements[lite.elements.length-1].y -= 40;
+        syncLiteStageFromData();
+      }else if(mv === "4"){ // Cuore
+        liteAdd("heart"); lite.elements[lite.elements.length-1].y -= 40;
+        syncLiteStageFromData();
+      }else if(mv === "5"){ // Stella
+        liteAdd("star"); lite.elements[lite.elements.length-1].y -= 40;
+        syncLiteStageFromData();
+      }else if(mv === "6"){ // Chakra
+        // catena di cerchi piccoli
+        for(let i=0;i<7;i++){
+          liteAdd("ring_small");
+          lite.elements[lite.elements.length-1].x = dlStage.getBoundingClientRect().width*0.50;
+          lite.elements[lite.elements.length-1].y = dlStage.getBoundingClientRect().height*(0.30 + i*0.08);
+        }
+        syncLiteStageFromData();
+      }else if(mv === "7"){ // Yin & Yang
+        liteAdd("yinyang"); lite.elements[lite.elements.length-1].y -= 40;
+        syncLiteStageFromData();
+      }
+    }
+
+    function syncLiteStageFromData(){
+      // ricrea gli elementi nella stage da lite.elements (senza toccare base + web)
+      Array.from(dlStage.querySelectorAll(".dl-el")).forEach(n=>n.remove());
+      if(!lite) return;
+      for(const el of lite.elements){
+        const id = el.id;
+        const node = document.createElement("div");
+        node.className = "dl-el";
+        node.dataset.id = id;
+
+        if(el.type === "ring_small"){
+          const c = document.createElement("div");
+          c.className = "dl-ring small";
+          node.appendChild(c);
+        }else if(el.type === "ring"){
+          const c = document.createElement("div");
+          c.className = "dl-ring";
+          node.appendChild(c);
+        }else{
+          const s = document.createElement("div");
+          s.className = "emoji";
+          s.textContent = ({
+            feather:"🪶",
+            crystal:"💎",
+            bead:"⚪",
+            bead_red:"🔴",
+            bead_black:"⚫",
+            bow:"🎀",
+            bell:"🔔",
+            snow:"❄️",
+            glitter:"✨",
+            orc:"👹",
+            symbolA:"🅰️",
+            lace:"🧵",
+            light:"💡",
+            moon:"🌙",
+            heart:"❤️",
+            star:"⭐",
+            yinyang:"☯️"
+          })[el.type] || "✨";
+          node.appendChild(s);
+        }
+
+        node.style.left = el.x + "px";
+        node.style.top = el.y + "px";
+
+        node.addEventListener("pointerdown", (ev)=>{
+          if(!lite) return;
+          selectLite(id);
+          const r = dlStage.getBoundingClientRect();
+          const startX = ev.clientX - r.left;
+          const startY = ev.clientY - r.top;
+          const cur = lite.elements.find(e=>e.id===id);
+          if(!cur) return;
+          const offX = startX - cur.x;
+          const offY = startY - cur.y;
+          node.setPointerCapture(ev.pointerId);
+
+          const onMove = (e2)=>{
+            const r2 = dlStage.getBoundingClientRect();
+            const px = e2.clientX - r2.left;
+            const py = e2.clientY - r2.top;
+            cur.x = Math.max(10, Math.min(r2.width-10, px - offX));
+            cur.y = Math.max(10, Math.min(r2.height-10, py - offY));
+            node.style.left = cur.x + "px";
+            node.style.top = cur.y + "px";
+          };
+          const onUp = ()=>{
+            node.removeEventListener("pointermove", onMove);
+            node.removeEventListener("pointerup", onUp);
+            node.removeEventListener("pointercancel", onUp);
+          };
+          node.addEventListener("pointermove", onMove);
+          node.addEventListener("pointerup", onUp);
+          node.addEventListener("pointercancel", onUp);
+        });
+
+        dlStage.appendChild(node);
+      }
+      selectLite(liteSelectedId);
+    }
+
+    function applyLitePreset(id){
+      if(!lite) return;
+      // reset sicuro
+      lite.elements = [];
+      liteSelectedId = null;
+      Array.from(dlStage.querySelectorAll(".dl-el")).forEach(n=>n.remove());
+
+      const stageR = dlStage.getBoundingClientRect();
+      const cx = stageR.width*0.50;
+      const cy = stageR.height*0.55;
+
+      const addAt = (type, x, y)=>{
+        const el = { id: uid(), type, x, y };
+        lite.elements.push(el);
+      };
+
+      if(id === "viola"){
+        dlModel.value = "1";
+        dlRingColor.value = "viola";
+        dlFeatherColor.value = "viola";
+        if(dlWeave) dlWeave.value = "classico";
+        setLiteWeave(dlWeave?.value || "classico");
+        addAt("crystal", cx-70, cy+90);
+        addAt("crystal", cx+70, cy+90);
+        addAt("feather", cx-90, cy+140);
+        addAt("feather", cx, cy+160);
+        addAt("feather", cx+90, cy+140);
+        addAt("bead", cx, cy-10);
+      }else if(id === "oro"){
+        dlModel.value = "2";
+        dlRingColor.value = "oro";
+        dlFeatherColor.value = "bianco";
+        if(dlWeave) dlWeave.value = "classico";
+        setLiteWeave(dlWeave?.value || "classico");
+        addAt("bead", cx-60, cy+95);
+        addAt("bead", cx, cy+105);
+        addAt("bead", cx+60, cy+95);
+        addAt("feather", cx-90, cy+150);
+        addAt("feather", cx, cy+170);
+        addAt("feather", cx+90, cy+150);
+        addAt("crystal", cx, cy-10);
+      }else if(id === "natale"){
+        dlModel.value = "5";
+        dlRingColor.value = "bianco";
+        dlFeatherColor.value = "blu e oro";
+        if(dlWeave) dlWeave.value = "fitta";
+        liteWeaveTouched = true;
+        setLiteWeave(dlWeave?.value || "fitta");
+        addAt("star", cx, cy-35);
+        addAt("bow", cx-110, cy+140);
+        addAt("bow", cx, cy+160);
+        addAt("bow", cx+110, cy+140);
+        addAt("bell", cx-110, cy+170);
+        addAt("bell", cx, cy+190);
+        addAt("bell", cx+110, cy+170);
+        addAt("snow", cx-90, cy-120);
+        addAt("snow", cx+90, cy-120);
+      }else if(id === "albero"){
+        dlModel.value = "8";
+        dlRingColor.value = "bianco";
+        dlFeatherColor.value = "multicolor";
+        if(dlWeave) dlWeave.value = "classico";
+        setLiteWeave(dlWeave?.value || "classico");
+        // molti cerchi piccoli in stile albero
+        const rows = [
+          [0],
+          [-45,45],
+          [-70,0,70],
+          [-95,-30,30,95],
+          [-120,-60,0,60,120]
+        ];
+        let y = stageR.height*0.20
+        for(const r of rows){
+          for(const dx of r){
+            addAt("ring_small", cx+dx, y);
+          }
+          y += 48;
+        }
+        // luci
+        for(let i=0;i<8;i++){
+          addAt("light", cx + (i%2? -120:120) + (i*10), stageR.height*0.20 + i*40);
+        }
+      }else if(id === "real"){
+        dlModel.value = "1";
+        dlRingColor.value = "nero";
+        dlFeatherColor.value = "rosso e nero";
+        dlText.value = "REAL HASTA LA MUERTE";
+        if(dlWeave) dlWeave.value = "fitta";
+        liteWeaveTouched = true;
+        if(dlWeaveNote) dlWeaveNote.value = "Brillantini + perle rosse/nere + simboli";
+        setLiteWeave(dlWeave?.value || "fitta");
+        addAt("bead_red", cx-70, cy+95);
+        addAt("bead_black", cx-70, cy+125);
+        addAt("bead_red", cx-70, cy+155);
+
+        addAt("bead_red", cx+70, cy+95);
+        addAt("bead_black", cx+70, cy+125);
+        addAt("bead_red", cx+70, cy+155);
+
+        addAt("orc", cx-110, cy+70);
+        addAt("orc", cx+110, cy+70);
+        addAt("symbolA", cx, cy+40);
+        addAt("feather", cx-90, cy+170);
+        addAt("feather", cx, cy+200);
+        addAt("feather", cx+90, cy+170);
+        addAt("glitter", cx-80, cy-120);
+        addAt("glitter", cx+80, cy-120);
+      }
+
+      // aggiorna dati base
+      lite.base.model = dlModel.value;
+      lite.base.diameter = dlDiameter.value || "30";
+      lite.base.ringColor = dlRingColor.value.trim();
+      lite.base.featherColor = dlFeatherColor.value.trim();
+      lite.base.weave = (dlWeave?.value || "classico");
+      lite.base.weave_note = (dlWeaveNote?.value || "").trim();
+      lite.text = dlText.value.trim();
+      lite.notes = (dlNotes.value||"").trim();
+
+      applyLiteBaseStyle();
+      syncLiteStageFromData();
+      seedLiteByModel(dlModel.value);
+    }
+
+    [dlModel, dlDiameter, dlRingColor, dlFeatherColor, dlText, dlNotes].forEach(el=>{
+      el.addEventListener("input", ()=>{
+        if(!lite) return;
+        lite.base.model = dlModel.value;
+        lite.base.diameter = dlDiameter.value;
+        lite.base.ringColor = dlRingColor.value.trim();
+        lite.base.featherColor = dlFeatherColor.value.trim();
+        lite.text = dlText.value.trim();
+        lite.notes = (dlNotes.value||"").trim();
+        applyLiteBaseStyle();
+      });
+      el.addEventListener("change", ()=>{
+        if(!lite) return;
+        lite.base.model = dlModel.value;
+        lite.base.diameter = dlDiameter.value;
+        lite.base.ringColor = dlRingColor.value.trim();
+        lite.base.featherColor = dlFeatherColor.value.trim();
+        lite.text = dlText.value.trim();
+        lite.notes = (dlNotes.value||"").trim();
+        applyLiteBaseStyle();
+      });
+    });
+
+    function liteAdd(type){
+      if(!lite) return;
+      const id = uid();
+
+      // posizione iniziale al centro stage
+      const rect = dlStage.getBoundingClientRect();
+      const x = rect.width * 0.50;
+      const y = rect.height * 0.70;
+
+      const el = { id, type, x, y };
+      lite.elements.push(el);
+
+      const node = document.createElement("div");
+      node.className = "dl-el";
+      node.dataset.id = id;
+
+      // contenuto in base al tipo
+      if(type === "ring_small"){
+        const c = document.createElement("div");
+        c.className = "dl-ring small";
+        node.appendChild(c);
+      }else if(type === "ring"){
+        const c = document.createElement("div");
+        c.className = "dl-ring";
+        node.appendChild(c);
+      }else{
+        const s = document.createElement("div");
+        s.className = "emoji";
+        s.textContent = ({
+          feather:"🪶",
+          crystal:"💎",
+          bead:"⚪",
+          bead_red:"🔴",
+          bead_black:"⚫",
+          bow:"🎀",
+          bell:"🔔",
+          snow:"❄️",
+          glitter:"✨",
+          orc:"👹",
+          symbolA:"🅰️",
+          lace:"🧵",
+          light:"💡",
+          moon:"🌙",
+          heart:"❤️",
+          star:"⭐",
+          yinyang:"☯️"
+        })[type] || "✨";
+        node.appendChild(s);
+      }
+
+      // posiziona
+      node.style.left = el.x + "px";
+      node.style.top = el.y + "px";
+
+      // selezione
+      node.addEventListener("pointerdown", (ev)=>{
+        ev.preventDefault();
+        selectLite(id);
+
+        const r = dlStage.getBoundingClientRect();
+        const startX = ev.clientX - r.left;
+        const startY = ev.clientY - r.top;
+
+        const cur = lite.elements.find(e=>e.id===id);
+        if(!cur) return;
+
+        const offX = startX - cur.x;
+        const offY = startY - cur.y;
+
+        node.setPointerCapture(ev.pointerId);
+
+        const onMove = (e2)=>{
+          const r2 = dlStage.getBoundingClientRect();
+          const px = e2.clientX - r2.left;
+          const py = e2.clientY - r2.top;
+
+          cur.x = Math.max(10, Math.min(r2.width-10, px - offX));
+          cur.y = Math.max(10, Math.min(r2.height-10, py - offY));
+
+          node.style.left = cur.x + "px";
+          node.style.top = cur.y + "px";
+        };
+
+        const onUp = ()=>{
+          node.removeEventListener("pointermove", onMove);
+          node.removeEventListener("pointerup", onUp);
+          node.removeEventListener("pointercancel", onUp);
+        };
+
+        node.addEventListener("pointermove", onMove);
+        node.addEventListener("pointerup", onUp);
+        node.addEventListener("pointercancel", onUp);
+      });
+
+      dlStage.appendChild(node);
+      selectLite(id);
+    }
+
+    function selectLite(id){
+      liteSelectedId = id || null;
+      Array.from(dlStage.querySelectorAll(".dl-el")).forEach(n=>{
+        n.classList.toggle("selected", n.dataset.id === liteSelectedId);
+      });
+    }
+
+    document.getElementById("dlSelectNone").onclick = ()=> selectLite(null);
+
+    document.getElementById("dlDelete").onclick = ()=>{
+      if(!lite || !liteSelectedId){ alert("Seleziona prima un elemento."); return; }
+      const id = liteSelectedId;
+      lite.elements = lite.elements.filter(e=>e.id!==id);
+      const node = dlStage.querySelector(`.dl-el[data-id="${CSS.escape(id)}"]`);
+      if(node) node.remove();
+      selectLite(null);
+    };
+
+    document.getElementById("dlReset").onclick = ()=>{
+      if(!lite) return;
+      if(!confirm("Reset anteprima?")) return;
+      lite.elements = [];
+      liteSelectedId = null;
+      Array.from(dlStage.querySelectorAll(".dl-el")).forEach(n => n.remove());
+      selectLite(null);
+    };
+
+    // Palette buttons
+    // Palette accessori (delegation)
+    document.querySelectorAll('.palette .chip[data-add]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const t = btn.getAttribute('data-add');
+        liteAdd(t);
+      });
+    });
+
+    // Preset rapidi
+    const dlPresets = document.getElementById("dlPresets");
+    if(dlPresets){
+      dlPresets.addEventListener("click", (e)=>{
+        const b = e.target.closest("[data-preset]");
+        if(!b) return;
+        applyLitePreset(b.getAttribute("data-preset"));
+      });
+    }
+
+    function liteSummaryForWhatsApp(project){
+      const rect = dlStage.getBoundingClientRect();
+      const counts = {};
+      for(const e of (project.elements||[])){
+        counts[e.type] = (counts[e.type]||0) + 1;
+      }
+      const typeName = (t)=>({
+        feather:"Piuma",
+        crystal:"Cristallo",
+        bead:"Perla",
+        bow:"Fiocco",
+        snow:"Fiocco neve",
+        light:"Luci",
+        ring_small:"Cerchio piccolo",
+        ring:"Cerchio"
+      })[t] || t;
+
+      const weaveLabel = (w)=>({classico:"Classica", fitta:"Ragnatela fitta", pizzo:"Centrino/Pizzo", chakra:"Chakra", yinyang:"Yin & Yang", stella:"Stella"})[w] || w;
+
+      const lines = [];
+      lines.push("Ciao! Vorrei un acchiappasogni personalizzato:");
+      lines.push(`• Modello: ${project.base.model}`);
+      lines.push(`• Diametro: ${project.base.diameter} cm`);
+      if(project.base.ringColor) lines.push(`• Colore cerchio: ${project.base.ringColor}`);
+      if(project.base.featherColor) lines.push(`• Colore piume: ${project.base.featherColor}`);
+
+      if(project.base.weave) lines.push(`• Tessitura: ${weaveLabel(project.base.weave)}`);
+      if(project.base.weave_note) lines.push(`• Intreccio: ${project.base.weave_note}`);
+
+      if(Object.keys(counts).length){
+        lines.push("");
+        lines.push("ACCESSORI (anteprima):");
+        for(const [t,n] of Object.entries(counts)){
+          lines.push(`• ${typeName(t)} × ${n}`);
+        }
+      }
+
+      // posizioni (in percentuale) — utile per “come in foto”
+      if(project.elements?.length){
+        lines.push("");
+        lines.push("POSIZIONI (indicative):");
+        project.elements.forEach((e,i)=>{
+          const xp = Math.round((e.x / rect.width) * 100);
+          const yp = Math.round((e.y / rect.height) * 100);
+          lines.push(`• ${i+1}) ${typeName(e.type)} → ${xp}% x, ${yp}% y`);
+        });
+      }
+
+      if(project.text) lines.push(`\nScritta: ${project.text}`);
+      if(project.notes) lines.push(`\nNote: ${project.notes}`);
+
+      lines.push("\nGrazie!");
+      return lines.join("\n");
+    }
+
+    function liteOpenWhatsApp(project){
+      const number = getWa();
+      const msg = liteSummaryForWhatsApp(project);
+      const url = `https://wa.me/${encodeURIComponent(number.replace(/\s+/g,""))}?text=${encodeURIComponent(msg)}`;
+      window.open(url, "_blank");
+    }
+
+    function liteSave(){
+      if(!lite){ return; }
+      // sync base
+      lite.base.model = dlModel.value;
+      lite.base.diameter = dlDiameter.value;
+      lite.base.ringColor = dlRingColor.value.trim();
+      lite.base.featherColor = dlFeatherColor.value.trim();
+      lite.text = dlText.value.trim();
+      lite.notes = (dlNotes.value||"").trim();
+
+      const all = loadLiteProjects();
+      all.push(JSON.parse(JSON.stringify(lite)));
+      saveLiteProjects(all);
+      alert("Progetto salvato ✅");
+    }
+
+    document.getElementById("dlSave").onclick = liteSave;
+    document.getElementById("dlSend").onclick = ()=>{
+      if(!lite){ return; }
+      lite.base.model = dlModel.value;
+      lite.base.diameter = dlDiameter.value;
+      lite.base.ringColor = dlRingColor.value.trim();
+      lite.base.featherColor = dlFeatherColor.value.trim();
+      lite.text = dlText.value.trim();
+      lite.notes = (dlNotes.value||"").trim();
+      liteOpenWhatsApp(lite);
+    };
+    document.getElementById("dlSaveSend").onclick = ()=>{
+      liteSave();
+      if(lite) liteOpenWhatsApp(lite);
+    };
 
     const builderModalBack = document.getElementById("builderModalBack");
     const btnCloseBuilder = document.getElementById("btnCloseBuilder");
@@ -1698,10 +2739,11 @@
     btnCloseBuilder.onclick = closeBuilder;
     builderModalBack.addEventListener("click",(e)=>{ if(e.target===builderModalBack) closeBuilder(); });
 
-    document.getElementById("btnCustomizer").onclick = openBuilder;
-
+    // attacca al pulsante in alto
+    document.getElementById("btnCustomizer").onclick = openBuilderLite;
     function loadIntoBuilder(project){
       if(!project) return;
+      // Clone to avoid mutating saved object accidentally
       currentBuilder = JSON.parse(JSON.stringify(project));
       const _rings = Array.isArray(currentBuilder.rings) ? currentBuilder.rings : [];
       const _feathers = Array.isArray(currentBuilder.feathers) ? currentBuilder.feathers : [];
@@ -1711,6 +2753,7 @@
       currentBuilder.accessories = [];
       currentBuilder.photoDataUrl = currentBuilder.photoDataUrl || "";
 
+      // Base fields
       bModel.value = currentBuilder.base?.model || bModel.value;
       bDiameter.value = currentBuilder.base?.diameter || bDiameter.value;
       bRingColor.value = currentBuilder.base?.ringColor || "";
@@ -1720,6 +2763,7 @@
       bText.value = currentBuilder.text || "";
       bNotes.value = currentBuilder.notes || "";
 
+      // Photo preview
       if(currentBuilder.photoDataUrl){
         bPhotoPreview.src = currentBuilder.photoDataUrl;
         bPhotoPreview.style.display = "block";
@@ -1729,6 +2773,7 @@
       }
       bPhotoFile.value = "";
 
+      // Rebuild lists
       bRingsList.innerHTML = "";
       bFeathersList.innerHTML = "";
       bAccList.innerHTML = "";
@@ -1748,6 +2793,7 @@
         return;
       }
       const last = all[all.length - 1];
+      // Se il modal non è aperto, aprilo
       if(builderModalBack.style.display !== "flex"){
         builderModalBack.style.display = "flex";
       }
@@ -1755,11 +2801,10 @@
       alert("Progetto ripristinato ✅");
     }
 
-    document.getElementById("btnResumeProject").onclick = resumeLastProject;
 
-    document.getElementById("btnAddRing").onclick = () => addRing();
+    document.getElementById("btnAddRing").onclick = addRing;
     document.getElementById("btnAddFeathers").onclick = () => addFeathersGroup();
-    document.getElementById("btnAddAcc").onclick = () => addAccessory();
+    document.getElementById("btnAddAcc").onclick = addAccessory;
 
     [bModel, bDiameter, bRingColor, bFeatherColor, bHasPhoto, bText, bNotes].forEach(el=>{
       el.addEventListener("input", updateBuilderSummary);
@@ -1769,14 +2814,15 @@
     bPhotoFile.addEventListener("change", async (e)=>{
       const f = e.target.files?.[0];
       if(!f){
-        if(currentBuilder) currentBuilder.photoDataUrl="";
+        currentBuilder.photoDataUrl="";
         bPhotoPreview.style.display="none";
         updateBuilderSummary();
         return;
       }
       try{
+        // usa l’ottimizzatore già presente
         const dataUrl = await optimizeImageFile(f);
-        if(currentBuilder) currentBuilder.photoDataUrl = dataUrl;
+        currentBuilder.photoDataUrl = dataUrl;
         bPhotoPreview.src = dataUrl;
         bPhotoPreview.style.display = "block";
         updateBuilderSummary();
@@ -1802,15 +2848,16 @@
           </div>
         </div>
         <div class="row2">
-          <div><label>Diametro (cm)</label><input data-k="diameter" placeholder="Es: 30" value="${escapeHtml(ring.diameter)}" /></div>
-          <div><label>Colore cerchio</label><input data-k="color" placeholder="Es: bianco/nero/oro" value="${escapeHtml(ring.color)}" /></div>
-          <div><label>Intreccio</label><input data-k="weave" placeholder="Es: pizzo / classico" value="${escapeHtml(ring.weave)}" /></div>
-          <div><label>Decorazioni</label><input data-k="decor" placeholder="Es: brillanti, perline, charm..." value="${escapeHtml(ring.decor)}" /></div>
+          <div><label>Diametro (cm)</label><input data-k="diameter" placeholder="Es: 30" /></div>
+          <div><label>Colore cerchio</label><input data-k="color" placeholder="Es: bianco/nero/oro" /></div>
+          <div><label>Intreccio</label><input data-k="weave" placeholder="Es: pizzo / classico" /></div>
+          <div><label>Decorazioni</label><input data-k="decor" placeholder="Es: brillanti, perline, charm..." /></div>
         </div>
       `;
       bRingsList.appendChild(el);
 
       el.querySelectorAll("input").forEach(inp=>{
+        inp.value = ring[inp.dataset.k] || "";
         inp.addEventListener("input", ()=>{
           ring[inp.dataset.k] = inp.value.trim();
           updateBuilderSummary();
@@ -1828,13 +2875,7 @@
 
     function addFeathersGroup(pos, init){
       const id = uid();
-      const fg = {
-        id,
-        position: init?.position || pos || "sinistra",
-        color: init?.color || "",
-        qty: init?.qty || "",
-        length: init?.length || ""
-      };
+      const fg = { id, position: (init?.position || pos || "sinistra"), color:(init?.color||""), qty:(init?.qty||""), length:(init?.length||"") };
       currentBuilder.feathers.push(fg);
 
       const el = document.createElement("div");
@@ -1856,20 +2897,24 @@
               <option ${fg.position==="destra"?"selected":""}>destra</option>
             </select>
           </div>
-          <div><label>Colore</label><input data-k="color" placeholder="Es: rosso e nero" value="${escapeHtml(fg.color)}" /></div>
-          <div><label>Quantità</label><input data-k="qty" placeholder="Es: 3, 5, 7..." value="${escapeHtml(fg.qty)}" /></div>
-          <div><label>Lunghezza</label><input data-k="length" placeholder="corta / media / lunga" value="${escapeHtml(fg.length)}" /></div>
+          <div><label>Colore</label><input data-k="color" placeholder="Es: rosso e nero" /></div>
+          <div><label>Quantità</label><input data-k="qty" placeholder="Es: 3, 5, 7..." /></div>
+          <div><label>Lunghezza</label><input data-k="length" placeholder="corta / media / lunga" /></div>
         </div>
       `;
       bFeathersList.appendChild(el);
 
       el.querySelectorAll("input,select").forEach(inp=>{
-        const onAny = ()=>{
-          fg[inp.dataset.k] = (inp.value || "").trim();
+        if(inp.tagName==="INPUT") inp.value = fg[inp.dataset.k] || "";
+        if(inp.tagName==="SELECT") inp.value = fg[inp.dataset.k] || inp.value;
+        inp.addEventListener("input", ()=>{
+          fg[inp.dataset.k] = inp.value.trim();
           updateBuilderSummary();
-        };
-        inp.addEventListener("input", onAny);
-        inp.addEventListener("change", onAny);
+        });
+        inp.addEventListener("change", ()=>{
+          fg[inp.dataset.k] = inp.value.trim();
+          updateBuilderSummary();
+        });
       });
 
       el.querySelector("[data-del]").onclick = () => {
@@ -1883,13 +2928,7 @@
 
     function addAccessory(init){
       const id = uid();
-      const acc = {
-        id,
-        type: init?.type || "Perline",
-        color: init?.color || "",
-        details: init?.details || "",
-        qty: init?.qty || ""
-      };
+      const acc = { id, type:(init?.type||"Perline"), color:(init?.color||""), details:(init?.details||""), qty:(init?.qty||"") };
       currentBuilder.accessories.push(acc);
 
       const el = document.createElement("div");
@@ -1906,28 +2945,32 @@
           <div>
             <label>Tipo</label>
             <select data-k="type">
-              <option ${acc.type==="Perline"?"selected":""}>Perline</option>
-              <option ${acc.type==="Brillanti"?"selected":""}>Brillanti</option>
-              <option ${acc.type==="Charm"?"selected":""}>Charm</option>
-              <option ${acc.type==="Simbolo"?"selected":""}>Simbolo</option>
-              <option ${acc.type==="Scritta"?"selected":""}>Scritta</option>
-              <option ${acc.type==="Luci"?"selected":""}>Luci</option>
+              <option>Perline</option>
+              <option>Brillanti</option>
+              <option>Charm</option>
+              <option>Simbolo</option>
+              <option>Scritta</option>
+              <option>Luci</option>
             </select>
           </div>
-          <div><label>Colore</label><input data-k="color" placeholder="Es: oro / nero / rosso..." value="${escapeHtml(acc.color)}" /></div>
-          <div><label>Quantità</label><input data-k="qty" placeholder="Es: 5" value="${escapeHtml(acc.qty)}" /></div>
-          <div><label>Dettagli</label><input data-k="details" placeholder="Es: emoji, perle rosse/nere..." value="${escapeHtml(acc.details)}" /></div>
+          <div><label>Colore</label><input data-k="color" placeholder="Es: oro / nero / rosso..." /></div>
+          <div><label>Quantità</label><input data-k="qty" placeholder="Es: 5" /></div>
+          <div><label>Dettagli</label><input data-k="details" placeholder="Es: emoji, perle rosse/nere..." /></div>
         </div>
       `;
       bAccList.appendChild(el);
 
       el.querySelectorAll("input,select").forEach(inp=>{
-        const onAny = ()=>{
-          acc[inp.dataset.k] = (inp.value || "").trim();
+        if(inp.tagName==="INPUT") inp.value = acc[inp.dataset.k] || "";
+        if(inp.tagName==="SELECT") inp.value = acc[inp.dataset.k] || inp.value;
+        inp.addEventListener("input", ()=>{
+          acc[inp.dataset.k] = inp.value.trim();
           updateBuilderSummary();
-        };
-        inp.addEventListener("input", onAny);
-        inp.addEventListener("change", onAny);
+        });
+        inp.addEventListener("change", ()=>{
+          acc[inp.dataset.k] = inp.value.trim();
+          updateBuilderSummary();
+        });
       });
 
       el.querySelector("[data-del]").onclick = () => {
@@ -1940,9 +2983,11 @@
     }
 
     function estimatePrice(project){
+      project = project || currentBuilder;
       const P = loadPrices();
       let total = 0;
       total += Number(P.base_model || 0);
+
       total += (project.rings?.length || 0) * Number(P.ring_extra || 0);
       total += (project.feathers?.length || 0) * Number(P.feathers_group || 0);
 
@@ -1956,14 +3001,13 @@
         else if(t.includes("luci")) total += Number(P.lights || 0);
       }
 
-      if((project.hasPhoto || "no") === "si") total += Number(P.photo || 0);
+      if((bHasPhoto.value || "no") === "si") total += Number(P.photo || 0);
       return total;
     }
 
     function updateBuilderSummary(){
       if(!currentBuilder) return;
 
-      currentBuilder.base = currentBuilder.base || { model:"", diameter:"", ringColor:"", featherColor:"" };
       currentBuilder.base.model = bModel.value;
       currentBuilder.base.diameter = bDiameter.value;
       currentBuilder.base.ringColor = bRingColor.value.trim();
@@ -1979,46 +3023,31 @@
       const lines = [];
       lines.push(`<b>Modello:</b> ${escapeHtml(currentBuilder.base.model)}`);
       lines.push(`<b>Diametro:</b> ${escapeHtml(currentBuilder.base.diameter)} cm`);
-      if(currentBuilder.base.ringColor) lines.push(`<b>Colore del cerchio principale:</b> ${escapeHtml(currentBuilder.base.ringColor)}`);
-      if(currentBuilder.base.featherColor) lines.push(`<b>Colore delle piume principali:</b> ${escapeHtml(currentBuilder.base.featherColor)}`);
+      if(currentBuilder.base.ringColor) lines.push(`<b>Colore cerchio:</b> ${escapeHtml(currentBuilder.base.ringColor)}`);
+      if(currentBuilder.base.featherColor) lines.push(`<b>Colore piume:</b> ${escapeHtml(currentBuilder.base.featherColor)}`);
 
       if((currentBuilder.rings||[]).length){
-        lines.push(`<br><b>Cerchi aggiuntivi:</b>`);
+        lines.push(`<br><b>Cerchi:</b>`);
         currentBuilder.rings.forEach((r,i)=>{
-          const parts = [];
-          if(r.diameter) parts.push(`${escapeHtml(r.diameter)} cm`);
-          if(r.color) parts.push(`${escapeHtml(r.color)}`);
-          if(r.weave) parts.push(`intreccio ${escapeHtml(r.weave)}`);
-          if(r.decor) parts.push(`decorazioni ${escapeHtml(r.decor)}`);
-          lines.push(`• Cerchio ${i+1}: ${parts.join(", ") || "dettagli da definire"}`);
+          lines.push(`• Cerchio ${i+1}: ${escapeHtml(r.diameter||"")} cm, ${escapeHtml(r.color||"")}, intreccio: ${escapeHtml(r.weave||"")}, decor: ${escapeHtml(r.decor||"")}`);
         });
       }
 
       if((currentBuilder.feathers||[]).length){
         lines.push(`<br><b>Piume:</b>`);
         currentBuilder.feathers.forEach((f,i)=>{
-          const parts = [];
-          if(f.position) parts.push(`posizione ${escapeHtml(f.position)}`);
-          if(f.color) parts.push(`colore ${escapeHtml(f.color)}`);
-          if(f.qty) parts.push(`quantità ${escapeHtml(f.qty)}`);
-          if(f.length) parts.push(`lunghezza ${escapeHtml(f.length)}`);
-          lines.push(`• Gruppo ${i+1}: ${parts.join(", ") || "dettagli da definire"}`);
+          lines.push(`• Gruppo ${i+1}: ${escapeHtml(f.position||"")}, colore: ${escapeHtml(f.color||"")}, quantità: ${escapeHtml(f.qty||"")}, lunghezza: ${escapeHtml(f.length||"")}`);
         });
       }
 
       if((currentBuilder.accessories||[]).length){
         lines.push(`<br><b>Accessori:</b>`);
         currentBuilder.accessories.forEach((a,i)=>{
-          const parts = [];
-          if(a.type) parts.push(`${escapeHtml(a.type)}`);
-          if(a.color) parts.push(`colore ${escapeHtml(a.color)}`);
-          if(a.qty) parts.push(`quantità ${escapeHtml(a.qty)}`);
-          if(a.details) parts.push(`dettagli ${escapeHtml(a.details)}`);
-          lines.push(`• ${i+1}) ${parts.join(", ") || "dettagli da definire"}`);
+          lines.push(`• ${i+1}) ${escapeHtml(a.type||"")} — colore: ${escapeHtml(a.color||"")}, qty: ${escapeHtml(a.qty||"")}, dettagli: ${escapeHtml(a.details||"")}`);
         });
       }
 
-      if((currentBuilder.hasPhoto||"no")==="si"){
+      if((bHasPhoto.value||"no")==="si"){
         lines.push(`<br><b>Foto:</b> Sì (anteprima caricata) — la invio in chat su WhatsApp dopo il messaggio.`);
       } else {
         lines.push(`<br><b>Foto:</b> No`);
@@ -2035,24 +3064,27 @@
       const lines = [];
       lines.push("Ciao! Vorrei un acchiappasogni personalizzato con queste caratteristiche:");
 
+      // Base
       lines.push(`• Modello: ${project.base.model}`);
       lines.push(`• Diametro: ${project.base.diameter} cm`);
       if(project.base.ringColor) lines.push(`• Colore del cerchio principale: ${project.base.ringColor}`);
       if(project.base.featherColor) lines.push(`• Colore delle piume principali: ${project.base.featherColor}`);
 
+      // Cerchi
       if(project.rings?.length){
         lines.push("");
         lines.push("CERCHI AGGIUNTIVI:");
         project.rings.forEach((r,i)=>{
           const parts = [];
           if(r.diameter) parts.push(`${r.diameter} cm`);
-          if(r.color) parts.push(`${r.color}`);
+          if(r.color) parts.push(`colore ${r.color}`);
           if(r.weave) parts.push(`intreccio ${r.weave}`);
           if(r.decor) parts.push(`decorazioni ${r.decor}`);
           lines.push(`- Cerchio ${i+1}: ${parts.join(", ") || "dettagli da definire"}`);
         });
       }
 
+      // Piume
       if(project.feathers?.length){
         lines.push("");
         lines.push("PIUME:");
@@ -2066,33 +3098,36 @@
         });
       }
 
+      // Accessori
       if(project.accessories?.length){
         lines.push("");
         lines.push("ACCESSORI:");
         project.accessories.forEach((a,i)=>{
           const parts = [];
-          if(a.type) parts.push(`${a.type}`);
+          if(a.type) parts.push(a.type);
           if(a.color) parts.push(`colore ${a.color}`);
           if(a.qty) parts.push(`quantità ${a.qty}`);
-          if(a.details) parts.push(`dettagli ${a.details}`);
-          lines.push(`- ${i+1}) ${parts.join(", ") || "dettagli da definire"}`);
+          if(a.details) parts.push(`dettagli: ${a.details}`);
+          lines.push(`- ${i+1}) ${parts.join(" — ") || "dettagli da definire"}`);
         });
       }
 
+      // Foto / Scritta / Note
       lines.push("");
-      lines.push(`• Foto: ${project.hasPhoto === "si" ? "Sì (dopo l’invio, allego la foto in chat)" : "No"}`);
+      lines.push(`• Foto: ${project.hasPhoto === "si" ? "Sì (allego la foto in chat dopo questo messaggio)" : "No"}`);
       if(project.text) lines.push(`• Scritta: ${project.text}`);
-      if(project.notes) lines.push(`• Note: ${project.notes}`);
+      if(project.notes) lines.push(`• Note extra: ${project.notes}`);
 
       lines.push("");
       lines.push(`Totale stimato: ${euro(total)} (da confermare)`);
       lines.push("Grazie!");
 
-      return lines.join("\\n");
+      return lines.join("\n");
     }
 
     function saveCurrentProject(){
       if(!currentBuilder) return null;
+
       const project = {
         ...currentBuilder,
         hasPhoto: bHasPhoto.value,
@@ -2110,9 +3145,11 @@
     function sendProject(project){
       const number = getWa();
       const msg = buildWhatsAppBuilderMessage(project);
-      const url = `https://wa.me/${encodeURIComponent(number.replace(/\\s+/g,""))}?text=${encodeURIComponent(msg)}`;
+      const url = `https://wa.me/${encodeURIComponent(number.replace(/\s+/g,""))}?text=${encodeURIComponent(msg)}`;
       window.open(url, "_blank");
     }
+
+    document.getElementById("btnResumeProject").onclick = () => { resumeLastProject(); };
 
     document.getElementById("btnSaveProject").onclick = () => {
       const p = saveCurrentProject();
@@ -2130,6 +3167,153 @@
       if(!p) return;
       sendProject(p);
     };
-  </script>
-</body>
+
+  
+    /* =========================
+       BOMBONIERE & REGALI (CLIENTI) - LOGICA
+       Separata dal catalogo: salva solo una bozza e genera messaggio WhatsApp.
+       ========================= */
+    const giftsBack = document.getElementById("giftsBack");
+    const btnGifts = document.getElementById("btnGifts");
+    const btnCloseGifts = document.getElementById("btnCloseGifts");
+
+    const gType = document.getElementById("gType");
+    const gOcc = document.getElementById("gOcc");
+    const gName = document.getElementById("gName");
+    const gDate = document.getElementById("gDate");
+    const gColors = document.getElementById("gColors");
+    const gDetails = document.getElementById("gDetails");
+    const gSummary = document.getElementById("gSummary");
+    const gCode = document.getElementById("gCode");
+
+    const gReset = document.getElementById("gReset");
+    const gSave = document.getElementById("gSave");
+    const gSend = document.getElementById("gSend");
+    const gSaveSend = document.getElementById("gSaveSend");
+    const gPresets = document.getElementById("gPresets");
+
+    const K_GIFTS = { drafts: "ae_gifts_drafts_v1" };
+    let gift = null;
+
+    function openGifts(){
+      gift = {
+        id: uid(),
+        created_at: new Date().toISOString(),
+        type: gType?.value || "9",
+        occ: gOcc?.value || "—",
+        name: "",
+        date: "",
+        colors: "",
+        details: ""
+      };
+      gName.value = "";
+      gDate.value = "";
+      gColors.value = "";
+      gDetails.value = "";
+      renderGiftSummary();
+      giftsBack.style.display = "flex";
+    }
+    function closeGifts(){ giftsBack.style.display = "none"; }
+
+    function renderGiftSummary(){
+      if(!gift) return;
+      gift.type = gType.value;
+      gift.occ = gOcc.value;
+      gift.name = (gName.value||"").trim();
+      gift.date = (gDate.value||"").trim();
+      gift.colors = (gColors.value||"").trim();
+      gift.details = (gDetails.value||"").trim();
+
+      const tlabel = gType.options[gType.selectedIndex]?.text || gift.type;
+      const code = "GE-" + new Date().getFullYear() + "-" + Math.random().toString(16).slice(2,8).toUpperCase();
+      gift.code = gift.code || code;
+
+      gCode.textContent = "Codice: " + gift.code;
+
+      const lines = [];
+      lines.push("<b>Categoria:</b> " + escapeHtml(tlabel));
+      if(gift.occ && gift.occ !== "—") lines.push("<b>Occasione:</b> " + escapeHtml(gift.occ));
+      if(gift.name) lines.push("<b>Nome/Scritta:</b> " + escapeHtml(gift.name));
+      if(gift.date) lines.push("<b>Data:</b> " + escapeHtml(gift.date));
+      if(gift.colors) lines.push("<b>Colori:</b> " + escapeHtml(gift.colors));
+      if(gift.details) lines.push("<b>Dettagli:</b> " + escapeHtml(gift.details));
+
+      gSummary.innerHTML = lines.join("<br/>") || "<span class='small'>Compila i campi per vedere il riepilogo.</span>";
+    }
+
+    function giftMessageForWhatsApp(){
+      if(!gift) return "";
+      const tlabel = gType.options[gType.selectedIndex]?.text || gift.type;
+      const lines = [];
+      lines.push("🎁 *Bomboniere & Regali*");
+      lines.push("Codice: " + (gift.code||"—"));
+      lines.push("Categoria: " + tlabel);
+      if(gift.occ && gift.occ !== "—") lines.push("Occasione: " + gift.occ);
+      if(gift.name) lines.push("Nome/Scritta: " + gift.name);
+      if(gift.date) lines.push("Data: " + gift.date);
+      if(gift.colors) lines.push("Colori: " + gift.colors);
+      if(gift.details) lines.push("Dettagli: " + gift.details);
+      lines.push("");
+      lines.push("Vorrei un preventivo e confermare disponibilità 😊");
+      return lines.join("\n");
+    }
+
+    function saveGiftDraft(){
+      const arr = (()=>{ try{ return JSON.parse(localStorage.getItem(K_GIFTS.drafts)||"[]"); }catch{ return []; } })();
+      const clean = arr.filter(x=>x && x.id !== gift.id);
+      clean.unshift(gift);
+      localStorage.setItem(K_GIFTS.drafts, JSON.stringify(clean.slice(0,30)));
+    }
+
+    function sendGiftWhatsApp(){
+      const msg = giftMessageForWhatsApp();
+      const wa = getWa();
+      const url = "https://wa.me/" + wa.replace(/[^0-9]/g,'') + "?text=" + encodeURIComponent(msg);
+      window.open(url, "_blank");
+    }
+
+    [gType, gOcc, gName, gDate, gColors, gDetails].forEach(el=>{
+      if(!el) return;
+      el.addEventListener("input", renderGiftSummary);
+      el.addEventListener("change", renderGiftSummary);
+    });
+
+    if(gPresets){
+      gPresets.addEventListener("click", (e)=>{
+        const b = e.target.closest("[data-gpreset]");
+        if(!b) return;
+        const id = b.getAttribute("data-gpreset");
+        if(id === "confetti"){
+          gDetails.value = "Confetti + bustina + bigliettino";
+        }else if(id === "name"){
+          gName.value = gName.value || "Nome";
+          gDetails.value = "Scritta personalizzata frontale";
+        }else if(id === "baby"){
+          gOcc.value = "Nascita";
+          gDetails.value = "Fiocco + data + nome";
+        }else if(id === "event"){
+          gOcc.value = "Evento";
+          gDetails.value = "Tema personalizzato (colori, simboli, scritta)";
+        }
+        renderGiftSummary();
+      });
+    }
+
+    if(btnGifts) btnGifts.onclick = openGifts;
+    if(btnCloseGifts) btnCloseGifts.onclick = closeGifts;
+    if(giftsBack) giftsBack.addEventListener("click", (e)=>{ if(e.target === giftsBack) closeGifts(); });
+
+    if(gReset) gReset.onclick = ()=>{
+      if(!confirm("Reset campi?")) return;
+      gName.value=""; gDate.value=""; gColors.value=""; gDetails.value="";
+      gift = null;
+      openGifts();
+    };
+    if(gSave) gSave.onclick = ()=>{ if(!gift) return; renderGiftSummary(); saveGiftDraft(); alert("Salvato ✅"); };
+    if(gSend) gSend.onclick = ()=>{ if(!gift) return; renderGiftSummary(); sendGiftWhatsApp(); };
+    if(gSaveSend) gSaveSend.onclick = ()=>{ if(!gift) return; renderGiftSummary(); saveGiftDraft(); sendGiftWhatsApp(); };
+
+
+</script>
+ </body>
 </html>
