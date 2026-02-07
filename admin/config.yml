@@ -1,1 +1,32 @@
 
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "assets/images/acchiappasogni_hd"
+public_folder: "assets/images/acchiappasogni_hd"
+
+publish_mode: simple
+
+locale: it
+
+collections:
+  - name: "catalogo"
+    label: "Catalogo"
+    files:
+      - name: "products"
+        label: "Prodotti (products.json)"
+        file: "data/products.json"
+        format: "json"
+        fields:
+          - label: "Prodotti"
+            name: "products"
+            widget: "list"
+            summary: "{{fields.title}} — €{{fields.price_from}}"
+            fields:
+              - { label: "ID", name: "id", widget: "string" }
+              - { label: "Titolo", name: "title", widget: "string" }
+              - { label: "Categoria", name: "category", widget: "string", default: "Acchiappasogni Classici" }
+              - { label: "Prezzo (€)", name: "price_from", widget: "number", value_type: "int", min: 0, default: 5 }
+              - { label: "In evidenza", name: "featured", widget: "boolean", default: false, required: false }
+              - { label: "Immagine", name: "image", widget: "image", required: false }
