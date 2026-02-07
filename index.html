@@ -562,8 +562,7 @@
     // ========= RENDER FILTERS =========
     function rebuildCategories(){
       const set = new Set(allProducts.map(p => p.category || "Altro"));
-      categories = ["Tutti", ...Array.from(set).sort((a,b)=>a.localeCompare(b,"it"));
-      ];
+      categories = ["Tutti", ...Array.from(set).sort((a,b)=>a.localeCompare(b,"it"))];
     }
 
     function renderFilters(){
@@ -587,6 +586,16 @@
         const pubOk = (p.published !== false);
         return catOk && searchOk && pubOk;
       });
+      renderGrid();
+    }
+
+    // ========= IMAGE FAIL → REMOVE PRODUCT COMPLETELY =========
+    // Se l'immagine non si carica: la card non compare e il prodotto viene escluso dalla lista visibile.
+    function removeProductById(id){
+      allProducts = allProducts.filter(p => p.id !== id);
+      visibleProducts = visibleProducts.filter(p => p.id !== id);
+      // NON tocchiamo products.json: solo lato client. Se vuoi rimuoverlo anche dal file, me lo chiedi e te lo preparo.
+      renderFilters();
       renderGrid();
     }
 
@@ -854,6 +863,7 @@
 
     // ========= SETTINGS / ADMIN =========
     function openAdmin(){
+      // reset view
       document.getElementById("adminLogin").style.display = "block";
       document.getElementById("adminPanel").style.display = "none";
       document.getElementById("adminPass").value = "";
@@ -869,8 +879,10 @@
         alert("Password errata.");
         return;
       }
+      // show panel
       document.getElementById("adminLogin").style.display = "none";
       document.getElementById("adminPanel").style.display = "block";
+      // fill config
       document.getElementById("waNumber").value = getWa();
       document.getElementById("newAdminPass").value = "";
       rebuildEditSelect();
@@ -920,6 +932,8 @@
     }
 
     // Ottimizza (riduce peso) foto prima di salvarla in localStorage:
+    // - ridimensiona lato lungo
+    // - comprime in JPEG (compatibile)
     const IMG_OPT = { maxSide: 1200, quality: 0.72, mime: "image/jpeg" };
 
     function loadImg(src){
@@ -947,6 +961,7 @@
       canvas.width = nw; canvas.height = nh;
       const ctx = canvas.getContext("2d", { alpha: false });
 
+      // sfondo bianco per JPEG
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, nw, nh);
       ctx.drawImage(img, 0, 0, nw, nh);
@@ -968,16 +983,18 @@
         return;
       }
 
+      // id: se stai modificando un prodotto selezionato, usa quell'id, altrimenti crea nuovo
       let id = document.getElementById("editSelect").value;
       const isNew = !id;
       if(!id) id = uid();
 
       const existing = allProducts.find(x => x.id === id) || null;
 
+      // immagine: priorità -> path GitHub -> file galleria (ottimizzato) -> mantieni esistente
       let image = path || "";
       if(file){
         try{
-          image = await optimizeImageFile(file);
+          image = await optimizeImageFile(file); // ✅ più leggera, evita blocchi e quota piena
         }catch(e){
           console.error(e);
           alert("Errore: impossibile leggere/ottimizzare la foto scelta.");
@@ -1003,20 +1020,24 @@
         published
       };
 
+      // salva in override
       const over = loadOverride();
       const idx = over.findIndex(x => x.id === id);
       if(idx >= 0) over[idx] = newP;
       else over.push(newP);
       saveOverride(over);
 
+      // se è nuovo e non pubblicato, lo tieni in bozza (non appare in Home finché non pubblichi)
       await reloadProducts();
       rebuildEditSelect();
       document.getElementById("editSelect").value = id;
 
+      // pulizia input file (così puoi ricaricare la stessa foto se vuoi)
       document.getElementById("fImageFile").value = "";
 
       alert(isNew ? "Salvato (bozza)!" : "Salvato!");
     }
+
 
     function ensureSelectedForPublish(){
       const id = document.getElementById("editSelect").value;
@@ -1046,12 +1067,16 @@
       if(!id){ alert("Seleziona un prodotto"); return; }
       if(!confirm("Eliminare questo prodotto?")) return;
 
+      // Per eliminare: mettiamo un tombstone in override che lo rimuove dal catalogo
+      // (più semplice: salviamo in override una lista 'deleted', ma qui facciamo: rimuoviamo da base + override lato client)
+      // Quindi: aggiungiamo a override un record speciale? NO: meglio salvare una lista di id eliminati.
       const delKey = "ae_deleted_ids";
       let dels = [];
       try{ dels = JSON.parse(localStorage.getItem(delKey) || "[]"); }catch{ dels=[]; }
       if(!dels.includes(id)) dels.push(id);
       localStorage.setItem(delKey, JSON.stringify(dels));
 
+      // rimuovi anche dal carrello
       delete cart[id];
       saveCart(cart);
 
@@ -1063,6 +1088,7 @@
     async function applyBulkPrice(){
       const v = Number(document.getElementById("bulkPrice").value || 0);
       if(!v || v < 0){ alert("Inserisci un prezzo valido."); return; }
+      // applichiamo su override per tutti i prodotti correnti
       const over = loadOverride();
       const overMap = new Map(over.map(p => [p.id, p]));
       const nextOver = [];
@@ -1080,6 +1106,7 @@
       if(!confirm("Reset completo? Cancella modifiche e torna al catalogo originale.")) return;
       localStorage.removeItem(K.productsOverride);
       localStorage.removeItem("ae_deleted_ids");
+      // non tocco password e whatsapp
       await reloadProducts();
       alert("Ripristinato!");
     }
@@ -1143,9 +1170,11 @@
 
     // ========= INIT =========
     async function reloadProducts(){
-      const products = await fetchProductsWithLocalOverride();
+      const products = await fetchProductsWithLocalOverride(); // <-- come mi hai chiesto
+      // applica eliminati
       allProducts = applyDeleted(products);
 
+      // sicurezza: normalizza campi minimi
       allProducts = allProducts.map(p => ({
         id: String(p.id || uid()),
         title: String(p.title || ""),
