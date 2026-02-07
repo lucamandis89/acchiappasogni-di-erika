@@ -3,6 +3,7 @@
    - GitHub Pages (statico)
    - Admin (password 1234) con salvataggio su telefono (localStorage)
    - Foto: upload -> dataURL (solo locale)
+   - DESCRIZIONE: COMPLETAMENTE RIMOSSA
    ============================ */
 
 const DATA_PRODUCTS_URL = "data/products.json";
@@ -30,7 +31,6 @@ function uid(prefix = "AE") {
   return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 }
 function parseJsonSafe(text) {
-  // Rimuove BOM e spazi strani
   const cleaned = text.replace(/^\uFEFF/, "").trim();
   return JSON.parse(cleaned);
 }
@@ -46,7 +46,11 @@ async function fetchJSON(url) {
 async function fetchProductsRemote() {
   const data = await fetchJSON(DATA_PRODUCTS_URL);
   if (!Array.isArray(data)) throw new Error("products.json non è un array");
-  return data;
+  // ✅ RIMUOVE QUALSIASI CAMPO description SE PRESENTE
+  return data.map(p => {
+    const { description, ...rest } = p || {};
+    return rest;
+  });
 }
 
 // ✅ QUESTA È LA FUNZIONE CHE VOLEVI
@@ -55,9 +59,13 @@ async function fetchProductsWithLocalOverride() {
   if (overrideRaw) {
     try {
       const parsed = parseJsonSafe(overrideRaw);
-      if (Array.isArray(parsed)) return parsed;
+      if (Array.isArray(parsed)) {
+        return parsed.map(p => {
+          const { description, ...rest } = p || {};
+          return rest;
+        });
+      }
     } catch (e) {
-      // se override rotto, lo ignoriamo e carichiamo da remoto
       console.warn("Override locale non valido, uso remoto.", e);
     }
   }
@@ -65,7 +73,12 @@ async function fetchProductsWithLocalOverride() {
 }
 
 function saveProductsOverride(products) {
-  localStorage.setItem(LS_PRODUCTS_OVERRIDE, JSON.stringify(products, null, 2));
+  // ✅ SALVA SENZA description
+  const cleaned = (products || []).map(p => {
+    const { description, ...rest } = p || {};
+    return rest;
+  });
+  localStorage.setItem(LS_PRODUCTS_OVERRIDE, JSON.stringify(cleaned, null, 2));
 }
 function clearProductsOverride() {
   localStorage.removeItem(LS_PRODUCTS_OVERRIDE);
@@ -119,7 +132,6 @@ function ensureSettingsButton() {
   btn.textContent = "Impostazioni";
   btn.addEventListener("click", openAdminGate);
 
-  // lo mettiamo prima del carrello
   actions.insertBefore(btn, actions.firstChild);
 }
 
@@ -164,7 +176,7 @@ function buildAdminModal() {
       <div style="display:flex; gap:10px; align-items:center; justify-content:space-between;">
         <div>
           <div style="font-size:18px; font-weight:700;">Impostazioni</div>
-          <div style="opacity:.75; font-size:12px;">Salvataggio: solo su questo telefono (localStorage). Puoi esportare il JSON per renderlo definitivo su GitHub.</div>
+          <div style="opacity:.75; font-size:12px;">Salvataggio: solo su questo telefono. (Descrizione disattivata)</div>
         </div>
         <div style="display:flex; gap:8px;">
           <button id="adminClose" class="btn">Chiudi</button>
@@ -201,14 +213,13 @@ function buildAdminModal() {
   document.getElementById("btnAllTo5").addEventListener("click", () => {
     PRODUCTS = PRODUCTS.map(p => ({ ...p, price_from: 5 }));
     persistAndRefresh();
-    alert("Ok: tutti i prezzi sono a 5€ (salvato sul telefono).");
+    alert("Ok: tutti i prezzi sono a 5€.");
   });
 
   document.getElementById("btnAddProduct").addEventListener("click", () => openEditor(null));
 
   document.getElementById("btnExportJson").addEventListener("click", () => {
     const json = JSON.stringify(PRODUCTS, null, 2);
-    // Download locale
     const blob = new Blob([json], { type: "application/json;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -216,18 +227,18 @@ function buildAdminModal() {
     a.download = "products.json";
     a.click();
     URL.revokeObjectURL(url);
-    alert("Scaricato products.json. Ora puoi caricarlo in data/products.json su GitHub per renderlo definitivo.");
+    alert("Scaricato products.json (senza descrizioni).");
   });
 
   document.getElementById("btnResetLocal").addEventListener("click", () => {
-    if (!confirm("Vuoi tornare ai prodotti originali di GitHub? (cancella le modifiche sul telefono)")) return;
+    if (!confirm("Vuoi tornare ai prodotti originali di GitHub?")) return;
     clearProductsOverride();
     location.reload();
   });
 
   document.getElementById("btnLock").addEventListener("click", () => {
     localStorage.removeItem(LS_ADMIN_UNLOCKED);
-    alert("Impostazioni bloccate. Alla prossima apertura chiederà la password.");
+    alert("Impostazioni bloccate.");
     closeAdminModal();
   });
 }
@@ -267,8 +278,8 @@ function renderAdminList() {
               <td style="padding:10px;">${euro(p.price_from)}</td>
               <td style="padding:10px;">${p.featured ? "✅" : "—"}</td>
               <td style="padding:10px; display:flex; gap:8px; flex-wrap:wrap;">
-                <button class="btn" data-edit="${p.id}">Modifica</button>
-                <button class="btn ghost" data-del="${p.id}">Elimina</button>
+                <button class="btn" data-edit="${escapeHtml(p.id)}">Modifica</button>
+                <button class="btn ghost" data-del="${escapeHtml(p.id)}">Elimina</button>
               </td>
             </tr>
           `).join("")}
@@ -308,7 +319,6 @@ function openEditor(product) {
     title: "Acchiappasogni - Modello X",
     category: "Acchiappasogni Classici",
     price_from: 5,
-    description: "",
     image: "",
     featured: false
   };
@@ -344,11 +354,6 @@ function openEditor(product) {
         </select>
       </label>
 
-      <label style="grid-column:1 / -1; display:flex; flex-direction:column; gap:6px;">
-        <span style="opacity:.8; font-size:12px;">Descrizione (opzionale – NON viene mostrata sulle card)</span>
-        <textarea id="edDesc" rows="3" style="padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:rgba(0,0,0,.25); color:#fff;">${escapeHtml(p.description || "")}</textarea>
-      </label>
-
       <div style="grid-column:1 / -1; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
         <div style="display:flex; flex-direction:column; gap:6px;">
           <span style="opacity:.8; font-size:12px;">Foto (upload dal telefono)</span>
@@ -356,7 +361,7 @@ function openEditor(product) {
         </div>
 
         <div style="display:flex; flex-direction:column; gap:6px;">
-          <span style="opacity:.8; font-size:12px;">Oppure URL/Path immagine (se vuoi usare le cartelle GitHub)</span>
+          <span style="opacity:.8; font-size:12px;">Oppure URL/Path immagine (GitHub)</span>
           <input id="edImg" value="${escapeHtml(p.image || "")}" style="min-width:260px; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:rgba(0,0,0,.25); color:#fff;">
         </div>
       </div>
@@ -400,7 +405,7 @@ function openEditor(product) {
     const file = edFile.files?.[0];
     if (!file) return;
     if (file.size > 2.5 * 1024 * 1024) {
-      alert("Foto troppo grande. Consiglio sotto 2.5MB (altrimenti localStorage può esplodere).");
+      alert("Foto troppo grande. Consiglio sotto 2.5MB.");
       return;
     }
     const reader = new FileReader();
@@ -419,7 +424,6 @@ function openEditor(product) {
       title: safeText(document.getElementById("edTitle").value).trim(),
       category: safeText(document.getElementById("edCategory").value).trim(),
       price_from: Number(document.getElementById("edPrice").value || 0),
-      description: safeText(document.getElementById("edDesc").value),
       image: safeText(edImg.value).trim(),
       featured: document.getElementById("edFeatured").value === "1",
     };
@@ -429,11 +433,8 @@ function openEditor(product) {
       return;
     }
 
-    if (isNew) {
-      PRODUCTS = [newP, ...PRODUCTS];
-    } else {
-      PRODUCTS = PRODUCTS.map(x => x.id === newP.id ? newP : x);
-    }
+    if (isNew) PRODUCTS = [newP, ...PRODUCTS];
+    else PRODUCTS = PRODUCTS.map(x => x.id === newP.id ? newP : x);
 
     persistAndRefresh();
     renderAdminList();
@@ -450,14 +451,11 @@ function normalizeForSearch(p) {
 function getFilteredProducts() {
   let list = [...PRODUCTS];
 
-  // filtro featured
   if (FILTER.featuredOnly) list = list.filter(p => !!p.featured);
 
-  // ricerca
   const q = FILTER.q.trim().toLowerCase();
   if (q) list = list.filter(p => normalizeForSearch(p).includes(q));
 
-  // ordinamento: per id se possibile
   list.sort((a, b) => safeText(a.id).localeCompare(safeText(b.id)));
   return list;
 }
@@ -465,15 +463,18 @@ function getFilteredProducts() {
 function renderProducts() {
   const list = getFilteredProducts();
 
-  // ✅ rinumerazione a VIDEO: Modello 1..N (senza toccare il JSON)
   elGrid.innerHTML = list.map((p, i) => {
     const displayTitle = `Acchiappasogni - Modello ${i + 1}`;
-    const img = p.image ? `<img class="card-img" src="${escapeHtml(p.image)}" alt="${escapeHtml(displayTitle)}" loading="lazy">`
-                        : `<div class="card-img ph"></div>`;
+    const imgId = `img-${escapeHtml(p.id)}`;
+
+    // ✅ immagine con fallback (se non carica)
+    const imgHtml = p.image
+      ? `<img id="${imgId}" class="card-img" src="${escapeHtml(p.image)}" alt="${escapeHtml(displayTitle)}" loading="lazy">`
+      : `<div class="card-img ph"></div>`;
 
     return `
       <article class="card">
-        ${img}
+        ${imgHtml}
         <div class="card-body">
           <div class="card-title">${escapeHtml(displayTitle)}</div>
           <div class="card-sub">${escapeHtml(p.category || "")}</div>
@@ -492,7 +493,19 @@ function renderProducts() {
     `;
   }).join("");
 
-  // bind events
+  // bind + fallback immagini
+  list.forEach(p => {
+    if (!p.image) return;
+    const el = document.getElementById(`img-${p.id}`);
+    if (!el) return;
+    el.addEventListener("error", () => {
+      // sostituisce l’immagine con placeholder senza rompere layout
+      const ph = document.createElement("div");
+      ph.className = "card-img ph";
+      el.replaceWith(ph);
+    });
+  });
+
   elGrid.querySelectorAll("[data-inc]").forEach(b => b.addEventListener("click", () => inc(b.dataset.inc)));
   elGrid.querySelectorAll("[data-dec]").forEach(b => b.addEventListener("click", () => dec(b.dataset.dec)));
   elGrid.querySelectorAll("[data-add]").forEach(b => b.addEventListener("click", () => addToCart(b.dataset.add)));
@@ -543,7 +556,6 @@ function renderCart() {
   const items = [];
   let total = 0;
 
-  // mappa prodotti per lookup
   const map = new Map(PRODUCTS.map(p => [p.id, p]));
 
   for (const [id, qty] of CART.entries()) {
@@ -614,9 +626,7 @@ function checkoutWhatsApp() {
 
 /* ---------- Persist & refresh ---------- */
 function persistAndRefresh() {
-  // salva override sul telefono
   saveProductsOverride(PRODUCTS);
-  // aggiorna UI
   renderProducts();
   updateCartBadge();
 }
@@ -628,11 +638,7 @@ async function init() {
   CONFIG = await fetchConfig();
   if (elBrandName) elBrandName.textContent = CONFIG.brandName || "Acchiappasogni di Erika";
 
-  // ✅ QUI è dove usiamo la tua riga
   PRODUCTS = await fetchProductsWithLocalOverride();
-
-  // Se vuoi partire già con prezzi a 5 senza toccare JSON:
-  // PRODUCTS = PRODUCTS.map(p => ({...p, price_from: 5}));
 
   renderProducts();
 
@@ -662,7 +668,6 @@ async function init() {
   elCheckout?.addEventListener("click", checkoutWhatsApp);
 
   elBtnCustom?.addEventListener("click", () => {
-    // messaggio rapido per personalizzati
     if (!CONFIG?.whatsappNumber) {
       alert("Numero WhatsApp non configurato in data/config.json");
       return;
