@@ -682,10 +682,12 @@ body.studio-mode{
   }
   /* box sinistro occupa tutta l'altezza disponibile */
   #builderLiteBack.studio-mode .lite-grid > .box:first-child{
-    height: 100% !important;
+    height: calc(100vh - var(--studioSheetH, 30vh) - 120px) !important;
     overflow: hidden !important;
-    padding-bottom: 20px !important;
+    padding-bottom: 10px !important;
   }
+  #builderLiteBack.studio-mode #dlStage{height: auto !important; max-height: calc(100vh - var(--studioSheetH, 30vh) - 160px) !important;}
+
   /* stage: contenuto e centrato, mai clippato */
   #builderLiteBack.studio-mode #dlStageWrap{
     display:flex;
@@ -4000,9 +4002,18 @@ function selectLite(id){
       sheetBox.appendChild(scroll);
 
       // altezza iniziale (piccolo, non copre lo stage)
-      sheetBox.style.height = Math.round(window.innerHeight * 0.38) + 'px';
-      sheetBox.style.maxHeight = Math.round(window.innerHeight * 0.82) + 'px';
-      sheetBox.style.minHeight = Math.round(window.innerHeight * 0.22) + 'px';
+      sheetBox.style.height = Math.round(window.innerHeight * 0.28) + 'px';
+      sheetBox.style.maxHeight = Math.round(window.innerHeight * 0.75) + 'px';
+      sheetBox.style.minHeight = Math.round(window.innerHeight * 0.16) + 'px';
+
+      // aggiorna variabili CSS per lasciare visibile la pagina di lavoro
+      function setSheetVars(){
+        const h = sheetBox.getBoundingClientRect().height;
+        document.documentElement.style.setProperty('--studioSheetH', Math.round(h) + 'px');
+      }
+      // inizializza
+      setSheetVars();
+
 
       // drag per cambiare altezza (cassetto)
       let startY = 0;
@@ -4021,11 +4032,12 @@ function selectLite(id){
         const dy = startY - e.clientY; // su = aumenta altezza
         let newH = startH + dy;
 
-        const minH = window.innerHeight * 0.22;
-        const maxH = window.innerHeight * 0.82;
+        const minH = window.innerHeight * 0.16;
+        const maxH = window.innerHeight * 0.75;
 
         newH = Math.max(minH, Math.min(maxH, newH));
         sheetBox.style.height = Math.round(newH) + 'px';
+        setSheetVars();
         e.preventDefault();
       });
 
@@ -4034,20 +4046,33 @@ function selectLite(id){
       }
       handle.addEventListener('pointerup', endDrag);
       handle.addEventListener('pointercancel', endDrag);
+
+
+      // tap sulla maniglia: alterna tra compatto e grande
+      let sheetExpanded = false;
+      handle.addEventListener('click', ()=>{
+        const minH = window.innerHeight * 0.16;
+        const maxH = window.innerHeight * 0.60;
+        const target = sheetExpanded ? minH : maxH;
+        sheetExpanded = !sheetExpanded;
+        sheetBox.style.height = Math.round(target) + 'px';
+        setSheetVars();
+      });
     }
 
     // Ricalcola limiti su resize/orientamento
     function refreshSheetLimits(){
       if(!sheetBox.classList.contains('studio-sheet')) return;
-      sheetBox.style.maxHeight = Math.round(window.innerHeight * 0.82) + 'px';
-      sheetBox.style.minHeight = Math.round(window.innerHeight * 0.22) + 'px';
+      sheetBox.style.maxHeight = Math.round(window.innerHeight * 0.75) + 'px';
+      sheetBox.style.minHeight = Math.round(window.innerHeight * 0.16) + 'px';
       // se troppo grande dopo resize, riduci
       const h = sheetBox.getBoundingClientRect().height;
-      const maxH = window.innerHeight * 0.82;
+      const maxH = window.innerHeight * 0.75;
       if(h > maxH) sheetBox.style.height = Math.round(maxH) + 'px';
     }
     window.addEventListener('resize', refreshSheetLimits, {passive:true});
-  }
+    setSheetVars();
+}
 
   // osserva cambi classi (quando apri/chiudi personalizza e scatta studio-mode)
   const obs = new MutationObserver(()=>{
