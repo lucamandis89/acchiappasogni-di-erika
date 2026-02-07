@@ -809,6 +809,21 @@
         <button class="chip" data-add="bead">⚪ Perla</button>
         <button class="chip" data-add="bead_red">🔴 Perla rossa</button>
         <button class="chip" data-add="bead_black">⚫ Perla nera</button>
+        <button class="chip" data-add="bead_blue">🔵 Perla blu</button>
+        <button class="chip" data-add="bead_green">🟢 Perla verde</button>
+        <button class="chip" data-add="bead_purple">🟣 Perla viola</button>
+        <button class="chip" data-add="bead_yellow">🟡 Perla gialla</button>
+        <button class="chip" data-add="bead_pink">💗 Perla rosa</button>
+        <button class="chip" data-add="crown">👑 Corona</button>
+        <button class="chip" data-add="teddy">🧸 Orsetto</button>
+        <button class="chip" data-add="paw">🐾 Zampetta</button>
+        <button class="chip" data-add="shell">🐚 Conchiglia</button>
+        <button class="chip" data-add="flower">🌸 Fiore</button>
+        <button class="chip" data-add="tree">🌳 Albero vita</button>
+        <button class="chip" data-add="moon">🌙 Luna</button>
+        <button class="chip" data-add="heart">❤️ Cuore</button>
+        <button class="chip" data-add="star">⭐ Stella</button>
+        <button class="chip" data-add="yinyang">☯️ YinYang</button>
         <button class="chip" data-add="bow">🎀 Fiocco</button>
         <button class="chip" data-add="bell">🔔 Campanella</button>
         <button class="chip" data-add="snow">❄️ Fiocco neve</button>
@@ -2230,6 +2245,32 @@ const WEAVE_TEMPLATES = {
             symbolA:"🅰️",
             lace:"🧵",
             light:"💡",
+            bead_blue:"🔵",
+            bead_green:"🟢",
+            bead_purple:"🟣",
+            bead_yellow:"🟡",
+            bead_pink:"💗",
+            bead_gold:"🟡",
+            bead_silver:"⚪",
+            shell:"🐚",
+            flower:"🌸",
+            tree:"🌳",
+            crown:"👑",
+            teddy:"🧸",
+            paw:"🐾",
+            bead_blue:"🔵",
+            bead_green:"🟢",
+            bead_purple:"🟣",
+            bead_yellow:"🟡",
+            bead_pink:"💗",
+            bead_gold:"🟡",
+            bead_silver:"⚪",
+            shell:"🐚",
+            flower:"🌸",
+            tree:"🌳",
+            crown:"👑",
+            teddy:"🧸",
+            paw:"🐾",
             moon:"🌙",
             heart:"❤️",
             star:"⭐",
@@ -2241,36 +2282,114 @@ const WEAVE_TEMPLATES = {
         node.style.left = el.x + "px";
         node.style.top = el.y + "px";
 
-        node.addEventListener("pointerdown", (ev)=>{
-          if(!lite) return;
-          selectLite(id);
-          const r = dlStage.getBoundingClientRect();
-          const startX = ev.clientX - r.left;
-          const startY = ev.clientY - r.top;
-          const cur = lite.elements.find(e=>e.id===id);
-          if(!cur) return;
-          const offX = startX - cur.x;
-          const offY = startY - cur.y;
-          node.setPointerCapture(ev.pointerId);
+        // scala/rotazione (persistenti)
+        if(el.scale == null) el.scale = 1;
+        if(el.rot == null) el.rot = 0;
+        node.style.transformOrigin = "50% 50%";
+        node.style.transform = `rotate(${el.rot}deg) scale(${el.scale})`;
+        node.style.touchAction = "none";
 
-          const onMove = (e2)=>{
-            const r2 = dlStage.getBoundingClientRect();
-            const px = e2.clientX - r2.left;
-            const py = e2.clientY - r2.top;
-            cur.x = Math.max(10, Math.min(r2.width-10, px - offX));
-            cur.y = Math.max(10, Math.min(r2.height-10, py - offY));
+
+        node.addEventListener("pointerdown", (ev)=>{
+        ev.preventDefault();
+        if(!lite) return;
+        selectLite(id);
+
+        const cur = lite.elements.find(e=>e.id===id);
+        if(!cur) return;
+        if(cur.scale == null) cur.scale = 1;
+        if(cur.rot == null) cur.rot = 0;
+
+        // Gestione multi-touch con Pointer Events (drag 1 dito, pinch+rotate 2 dita)
+        const st = (node._dlGesture ||= {
+          pointers: new Map(),
+          mode: "none",
+          drag: { offX:0, offY:0 },
+          tf: { startDist:0, startAng:0, startScale:1, startRot:0 }
+        });
+
+        const stageRect = ()=>dlStage.getBoundingClientRect();
+        const pt = (e)=>{
+          const r = stageRect();
+          return { x: e.clientX - r.left, y: e.clientY - r.top };
+        };
+
+        st.pointers.set(ev.pointerId, pt(ev));
+        node.setPointerCapture(ev.pointerId);
+
+        const applyTransform = ()=>{
+          node.style.transformOrigin = "50% 50%";
+          node.style.transform = `rotate(${cur.rot}deg) scale(${cur.scale})`;
+        };
+        applyTransform();
+
+        if(st.pointers.size === 1){
+          // DRAG
+          st.mode = "drag";
+          const p0 = st.pointers.get(ev.pointerId);
+          st.drag.offX = p0.x - cur.x;
+          st.drag.offY = p0.y - cur.y;
+        } else if(st.pointers.size === 2){
+          // PINCH + ROTATE
+          st.mode = "transform";
+          const pts = Array.from(st.pointers.values());
+          const dx = pts[1].x - pts[0].x;
+          const dy = pts[1].y - pts[0].y;
+          st.tf.startDist = Math.hypot(dx, dy) || 1;
+          st.tf.startAng = Math.atan2(dy, dx);
+          st.tf.startScale = cur.scale || 1;
+          st.tf.startRot = cur.rot || 0;
+        }
+
+        const onMove = (e2)=>{
+          if(!st.pointers.has(e2.pointerId)) return;
+          st.pointers.set(e2.pointerId, pt(e2));
+
+          if(st.mode === "drag" && st.pointers.size === 1){
+            const r2 = stageRect();
+            const p = st.pointers.get(e2.pointerId);
+            cur.x = Math.max(10, Math.min(r2.width-10, p.x - st.drag.offX));
+            cur.y = Math.max(10, Math.min(r2.height-10, p.y - st.drag.offY));
             node.style.left = cur.x + "px";
             node.style.top = cur.y + "px";
-          };
-          const onUp = ()=>{
-            node.removeEventListener("pointermove", onMove);
-            node.removeEventListener("pointerup", onUp);
-            node.removeEventListener("pointercancel", onUp);
-          };
-          node.addEventListener("pointermove", onMove);
-          node.addEventListener("pointerup", onUp);
-          node.addEventListener("pointercancel", onUp);
-        });
+            // mantiene transform
+            applyTransform();
+            return;
+          }
+
+          if(st.pointers.size >= 2){
+            st.mode = "transform";
+            const pts = Array.from(st.pointers.values()).slice(0,2);
+            const dx = pts[1].x - pts[0].x;
+            const dy = pts[1].y - pts[0].y;
+            const dist = Math.hypot(dx, dy) || 1;
+            const ang = Math.atan2(dy, dx);
+
+            const scale = (st.tf.startScale * (dist / st.tf.startDist));
+            cur.scale = Math.max(0.35, Math.min(3.0, scale));
+            cur.rot = st.tf.startRot + ((ang - st.tf.startAng) * 180 / Math.PI);
+
+            applyTransform();
+          }
+        };
+
+        const onUp = (e3)=>{
+          st.pointers.delete(e3.pointerId);
+          if(st.pointers.size === 0){
+            st.mode = "none";
+          } else if(st.pointers.size === 1){
+            // passa a drag con il dito rimasto
+            st.mode = "drag";
+            const only = Array.from(st.pointers.values())[0];
+            st.drag.offX = only.x - cur.x;
+            st.drag.offY = only.y - cur.y;
+          }
+        };
+
+        node.addEventListener("pointermove", onMove);
+        node.addEventListener("pointerup", onUp);
+        node.addEventListener("pointercancel", onUp);
+      });
 
         dlStage.appendChild(node);
       }
@@ -2289,7 +2408,7 @@ const WEAVE_TEMPLATES = {
       const cy = stageR.height*0.55;
 
       const addAt = (type, x, y)=>{
-        const el = { id: uid(), type, x, y };
+        const el = { id: uid(), type, x, y, scale:1, rot:0 };
         lite.elements.push(el);
       };
 
@@ -2478,39 +2597,109 @@ const WEAVE_TEMPLATES = {
       node.style.left = el.x + "px";
       node.style.top = el.y + "px";
 
+        // scala/rotazione (persistenti)
+        if(el.scale == null) el.scale = 1;
+        if(el.rot == null) el.rot = 0;
+        node.style.transformOrigin = "50% 50%";
+        node.style.transform = `rotate(${el.rot}deg) scale(${el.scale})`;
+        node.style.touchAction = "none";
+
+
       // selezione
       node.addEventListener("pointerdown", (ev)=>{
         ev.preventDefault();
+        if(!lite) return;
         selectLite(id);
-
-        const r = dlStage.getBoundingClientRect();
-        const startX = ev.clientX - r.left;
-        const startY = ev.clientY - r.top;
 
         const cur = lite.elements.find(e=>e.id===id);
         if(!cur) return;
+        if(cur.scale == null) cur.scale = 1;
+        if(cur.rot == null) cur.rot = 0;
 
-        const offX = startX - cur.x;
-        const offY = startY - cur.y;
+        // Gestione multi-touch con Pointer Events (drag 1 dito, pinch+rotate 2 dita)
+        const st = (node._dlGesture ||= {
+          pointers: new Map(),
+          mode: "none",
+          drag: { offX:0, offY:0 },
+          tf: { startDist:0, startAng:0, startScale:1, startRot:0 }
+        });
 
-        node.setPointerCapture(ev.pointerId);
-
-        const onMove = (e2)=>{
-          const r2 = dlStage.getBoundingClientRect();
-          const px = e2.clientX - r2.left;
-          const py = e2.clientY - r2.top;
-
-          cur.x = Math.max(10, Math.min(r2.width-10, px - offX));
-          cur.y = Math.max(10, Math.min(r2.height-10, py - offY));
-
-          node.style.left = cur.x + "px";
-          node.style.top = cur.y + "px";
+        const stageRect = ()=>dlStage.getBoundingClientRect();
+        const pt = (e)=>{
+          const r = stageRect();
+          return { x: e.clientX - r.left, y: e.clientY - r.top };
         };
 
-        const onUp = ()=>{
-          node.removeEventListener("pointermove", onMove);
-          node.removeEventListener("pointerup", onUp);
-          node.removeEventListener("pointercancel", onUp);
+        st.pointers.set(ev.pointerId, pt(ev));
+        node.setPointerCapture(ev.pointerId);
+
+        const applyTransform = ()=>{
+          node.style.transformOrigin = "50% 50%";
+          node.style.transform = `rotate(${cur.rot}deg) scale(${cur.scale})`;
+        };
+        applyTransform();
+
+        if(st.pointers.size === 1){
+          // DRAG
+          st.mode = "drag";
+          const p0 = st.pointers.get(ev.pointerId);
+          st.drag.offX = p0.x - cur.x;
+          st.drag.offY = p0.y - cur.y;
+        } else if(st.pointers.size === 2){
+          // PINCH + ROTATE
+          st.mode = "transform";
+          const pts = Array.from(st.pointers.values());
+          const dx = pts[1].x - pts[0].x;
+          const dy = pts[1].y - pts[0].y;
+          st.tf.startDist = Math.hypot(dx, dy) || 1;
+          st.tf.startAng = Math.atan2(dy, dx);
+          st.tf.startScale = cur.scale || 1;
+          st.tf.startRot = cur.rot || 0;
+        }
+
+        const onMove = (e2)=>{
+          if(!st.pointers.has(e2.pointerId)) return;
+          st.pointers.set(e2.pointerId, pt(e2));
+
+          if(st.mode === "drag" && st.pointers.size === 1){
+            const r2 = stageRect();
+            const p = st.pointers.get(e2.pointerId);
+            cur.x = Math.max(10, Math.min(r2.width-10, p.x - st.drag.offX));
+            cur.y = Math.max(10, Math.min(r2.height-10, p.y - st.drag.offY));
+            node.style.left = cur.x + "px";
+            node.style.top = cur.y + "px";
+            // mantiene transform
+            applyTransform();
+            return;
+          }
+
+          if(st.pointers.size >= 2){
+            st.mode = "transform";
+            const pts = Array.from(st.pointers.values()).slice(0,2);
+            const dx = pts[1].x - pts[0].x;
+            const dy = pts[1].y - pts[0].y;
+            const dist = Math.hypot(dx, dy) || 1;
+            const ang = Math.atan2(dy, dx);
+
+            const scale = (st.tf.startScale * (dist / st.tf.startDist));
+            cur.scale = Math.max(0.35, Math.min(3.0, scale));
+            cur.rot = st.tf.startRot + ((ang - st.tf.startAng) * 180 / Math.PI);
+
+            applyTransform();
+          }
+        };
+
+        const onUp = (e3)=>{
+          st.pointers.delete(e3.pointerId);
+          if(st.pointers.size === 0){
+            st.mode = "none";
+          } else if(st.pointers.size === 1){
+            // passa a drag con il dito rimasto
+            st.mode = "drag";
+            const only = Array.from(st.pointers.values())[0];
+            st.drag.offX = only.x - cur.x;
+            st.drag.offY = only.y - cur.y;
+          }
         };
 
         node.addEventListener("pointermove", onMove);
