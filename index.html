@@ -526,74 +526,29 @@
     }
 
   
-    /* ===== Image preview modal (tap product photo) ===== */
-    .img{ cursor: pointer; }
-    .img:active{ transform: translateY(1px); }
-    #imgModalBack .modal{ width:min(980px,100%); }
-    .img-modal-wrap{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .img-modal-wrap img{
-      width:100%;
-      max-height: 78vh;
-      object-fit: contain;
-      border-radius: 14px;
-      border:1px solid rgba(35,54,95,.65);
-      background: rgba(0,0,0,.25);
-    }
-    .img-modal-caption{
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.3;
-    }
+/* Fullscreen fallback for builder */
+.modal-back.fs-fallback{
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  background: rgba(0,0,0,.85) !important;
+}
+.modal-back.fs-fallback .modal{
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  border-radius: 0 !important;
+}
+.modal-back.fs-fallback .modal-body{
+  height: calc(100% - 64px) !important;
+  overflow: auto !important;
+}
+.modal-back.fs-fallback #dlStage{
+  height: 70vh !important;
+}
 
-    /* ===== Extra mobile sizing (bigger, app-like) ===== */
-    @media (max-width: 560px){
-      body{ font-size: 16px; }
-      .brand h1{ font-size: 16px; }
-      .brand small{ font-size: 12px; }
-      .search{ padding: 14px 14px; font-size: 16px; }
-      .card{ min-height: 320px; }
-      .title{ font-size: 18px !important; }
-      .price{ font-size: 16px !important; }
-      .content{ padding: 14px 14px 12px; gap:10px; }
-      .qty{ min-width: 132px; padding: 8px 10px; }
-      .qbtn{ width:32px; height:32px; font-size: 18px; }
-      .btn{ border-radius: 16px; }
-      .modal-head h2{ font-size: 16px; }
-      /* Personalizza acchiappasogni: stage più grande */
-      .stage{
-        height: min(74vh, 620px) !important;
-      }
-      .dl-el{ transform: translate(-50%,-50%) scale(1.25) !important; }
-      .dl-el .emoji{ font-size: 28px !important; }
-    }
-
-    /* ===== Fullscreen stage (mobile friendly) ===== */
-    .stage-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .stage-head h3{margin:0}
-    .btn.small{padding:8px 10px;font-size:14px;border-radius:14px}
-
-    body.builder-fs{overflow:hidden}
-    body.builder-fs #builderLiteBack{padding:0}
-    body.builder-fs #builderLiteBack .modal{
-      width:100vw;height:100vh;max-width:none;max-height:none;border-radius:0;
-      margin:0;
-    }
-    body.builder-fs #builderLiteBack .modal-body{
-      height:calc(100vh - 62px);
-      overflow:auto;
-    }
-    body.builder-fs #builderLiteBack .lite-grid{
-      grid-template-columns: 1fr !important;
-    }
-    body.builder-fs #builderLiteBack #dlStage{
-      height: clamp(420px, 72vh, 820px) !important;
-    }
-
-  </style>
+</style>
  </head>
  <body>
   <div class="topbar">
@@ -769,7 +724,7 @@
       </div>
       <div class="hr"></div>
       <div class="hint">
-       ✅ Le immagini che non si aprono NON vengono mostrate (spariscono).
+       ✅ Se una foto non carica, il prodotto resta visibile (con placeholder).
        <br>
        ✅ Le foto da galleria vengono ottimizzate (più leggere) prima di salvarle.
       </div>
@@ -879,10 +834,7 @@
      <div class="lite-grid">
       <!-- SINISTRA: STAGE -->
       <div class="box">
-       <div class="stage-head">
-        <h3>Anteprima (trascina gli accessori)</h3>
-        <button class="btn small" id="btnStageFullscreen">⛶ Schermo intero</button>
-       </div>
+       <h3>Anteprima (trascina gli accessori)</h3>
        <div class="stage" id="dlStage">
         <div class="base-ring" id="dlBaseRing"></div>
         <svg class="base-shape" id="dlBaseSvg" viewBox="0 0 100 100" aria-hidden="true"></svg>
@@ -898,6 +850,7 @@
         <button class="btn" id="dlSelectNone">🖐️ Deseleziona</button>
         <button class="btn danger" id="dlDelete">🗑 Rimuovi elemento</button>
         <button class="btn danger" id="dlReset">♻️ Reset</button>
+        <button class="btn" id="dlFullscreen">⛶ Schermo intero</button>
        </div>
        <div class="helpbox" style="margin-top:10px">
         • Premi un accessorio per selezionarlo, poi trascinalo dove vuoi.
@@ -1051,28 +1004,25 @@
     </div>
    </div>
   </div>
-  <!-- MODAL: FOTO PRODOTTO (tap sulla foto in Home) -->
-  <div class="modal-back" id="imgModalBack" aria-hidden="true">
-   <div class="modal">
-    <div class="modal-head">
-     <h2 id="imgModalTitle">📷 Foto</h2>
-     <div class="spacer"></div>
-     <button class="btn" id="btnCloseImgModal">✖ Chiudi</button>
-    </div>
-    <div class="modal-body">
-     <div class="img-modal-wrap">
-      <img id="imgModalImg" alt="">
-      <div class="img-modal-caption" id="imgModalCaption"></div>
-     </div>
-    </div>
-   </div>
-  </div>
   <script>
     const DEFAULT_WA = "+393440260906";
     const ADMIN_PASS_DEFAULT = "1234";
     const PRODUCTS_URL = "data/products.json";
 
-    const IMAGE_BASE_PATH = "assets/assets/images/assets/images/acchiappasogni_hd/";
+    const IMAGE_BASE_PATH = "assets/images/acchiappasogni_hd/";
+    const IMAGE_BASE_CANDIDATES = [
+      "assets/images/acchiappasogni_hd/",
+      "assets/img/acchiappasogni_hd/",
+      "assets/images/",
+      "assets/img/",
+      "images/",
+      "img/",
+      "assets/",
+      ""
+    ];
+
+    const NOIMG_DATA = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23101423'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23a9b3d1' font-family='Arial' font-size='28'%3EFoto non disponibile%3C/text%3E%3C/svg%3E";
+
 
     const K = {
 adminPass: "ae_admin_pass",
@@ -1095,7 +1045,63 @@ adminPass: "ae_admin_pass",
 
     const uid = () => "P-" + Math.random().toString(16).slice(2) + "-" + Date.now().toString(16);
 
-    function getAdminPass(){ return localStorage.getItem(K.adminPass) || ADMIN_PASS_DEFAULT; }
+    
+
+    // --- Mobile-safe image resolution (prevents empty catalog if images 404) ---
+    function isAbsoluteUrl(u){
+      return /^https?:\/\//i.test(u) || /^data:/i.test(u) || u.startsWith("/");
+    }
+    function resolveImageCandidates(imageValue){
+      let raw = String(imageValue || "").trim();
+      if (!raw) return [];
+
+      // GitHub Pages subfolder safe: convert "/assets/..." to relative "assets/..."
+      if (raw.startsWith("/") && !raw.startsWith("//")) raw = raw.slice(1);
+
+      // Absolute http(s) and data:
+      if (/^https?:\/\//i.test(raw) || /^data:/i.test(raw)) return [raw];
+
+      // If already contains folders, try as-is + common normalizations
+      if (raw.includes("/")) {
+        const cleaned = raw.startsWith("./") ? raw.slice(2) : raw;
+        return Array.from(new Set([raw, "./" + cleaned, cleaned]));
+      }
+
+      // If only filename, try common base folders
+      return IMAGE_BASE_CANDIDATES.map(base => base + raw);
+    }
+    function setImgWithFallback(imgEl, candidates, onAllFail, onOk){
+      let idx = 0;
+
+      const cleanup = () => {
+        imgEl.removeEventListener("error", onErr);
+        imgEl.removeEventListener("load", onLoad);
+      };
+
+      const onLoad = () => {
+        if (typeof onOk === "function") onOk();
+        cleanup();
+      };
+
+      const onErr = () => {
+        if (idx < candidates.length){
+          imgEl.src = candidates[idx++];
+          return;
+        }
+        cleanup();
+        if (typeof onAllFail === "function") onAllFail();
+      };
+
+      imgEl.addEventListener("error", onErr);
+      imgEl.addEventListener("load", onLoad);
+
+      if (candidates && candidates.length){
+        imgEl.src = candidates[idx++];
+      } else if (typeof onAllFail === "function"){
+        onAllFail();
+      }
+    }
+function getAdminPass(){ return localStorage.getItem(K.adminPass) || ADMIN_PASS_DEFAULT; }
     function setAdminPass(p){ localStorage.setItem(K.adminPass, p); }
 
     function getWa(){ return localStorage.getItem(K.wa) || DEFAULT_WA; }
@@ -1159,10 +1165,6 @@ adminPass: "ae_admin_pass",
 
     const cartModalBack = document.getElementById("cartModalBack");
     const adminModalBack = document.getElementById("adminModalBack");
-    const imgModalBack = document.getElementById("imgModalBack");
-    const imgModalImg = document.getElementById("imgModalImg");
-    const imgModalTitle = document.getElementById("imgModalTitle");
-    const imgModalCaption = document.getElementById("imgModalCaption");
 
     function rebuildCategories(){
       const set = new Set(allProducts.map(p => p.category || "Altro"));
@@ -1212,24 +1214,30 @@ adminPass: "ae_admin_pass",
         img.alt = p.title || "";
         img.loading = "lazy";
         img.decoding = "async";
-        img.src = (p.image || "");
-
-        img.onerror = () => {
-          img.onerror = null;
-          brokenImages.add(p.id);
-          saveBrokenSet(brokenImages);
-          try { cardEl.remove(); } catch {}
-          visibleProducts = visibleProducts.filter(x => x.id !== p.id);
-        };
-
-        const badge = document.createElement("div");
+        // Resolve image path safely (GitHub Pages + mobile)
+        const candidates = resolveImageCandidates(p.image);
+        setImgWithFallback(img, candidates, () => {
+          // Se l'immagine non si apre: NON mostrare il prodotto in Home (come prima)
+          try {
+            brokenImages.add(p.id);
+            saveBrokenSet(brokenImages);
+          } catch (e) {}
+          try { cardEl.remove(); } catch(e){}
+        }, () => {
+          // Auto-heal: se torna a caricarsi, rimuovi dalla lista "broken"
+          if (brokenImages.has(p.id)){
+            try {
+              brokenImages.delete(p.id);
+              saveBrokenSet(brokenImages);
+            } catch(e){}
+          }
+        });
+            const badge = document.createElement("div");
         badge.className = "badge";
         badge.textContent = (p.category || "Altro");
 
         imgWrap.appendChild(img);
         imgWrap.appendChild(badge);
-
-        imgWrap.onclick = () => openImgModal(p.image || "", p.title || "");
 
         const content = document.createElement("div");
         content.className = "content";
@@ -1468,23 +1476,6 @@ adminPass: "ae_admin_pass",
       adminModalBack.style.display = "flex";
     }
     function closeAdmin(){ adminModalBack.style.display = "none"; }
-
-    function openImgModal(src, titleText){
-      if(!src) return;
-      imgModalImg.src = src;
-      imgModalImg.alt = titleText || "";
-      imgModalTitle.textContent = "📷 " + (titleText || "Foto");
-      imgModalCaption.textContent = titleText ? ("Tocca fuori o su “Chiudi” per tornare indietro.") : "";
-      imgModalBack.style.display = "flex";
-      imgModalBack.setAttribute("aria-hidden","false");
-    }
-    function closeImgModal(){
-      imgModalBack.style.display = "none";
-      imgModalBack.setAttribute("aria-hidden","true");
-      // scarica l'immagine per evitare glitch su alcuni Android
-      imgModalImg.removeAttribute("src");
-    }
-
 
     function adminLogin(){
       const pass = document.getElementById("adminPass").value || "";
@@ -1820,10 +1811,6 @@ adminPass: "ae_admin_pass",
     document.getElementById("btnCloseCart").onclick = closeCart;
     cartModalBack.addEventListener("click", (e)=>{ if(e.target === cartModalBack) closeCart(); });
 
-    // Modal foto prodotto
-    document.getElementById("btnCloseImgModal").onclick = closeImgModal;
-    imgModalBack.addEventListener("click", (e)=>{ if(e.target === imgModalBack) closeImgModal(); });
-
     document.getElementById("btnWhatsApp").onclick = openWhatsApp;
     document.getElementById("btnWhatsApp2").onclick = openWhatsApp;
 
@@ -2129,22 +2116,9 @@ adminPass: "ae_admin_pass",
     function closeBuilderLite(){
       builderLiteBack.style.display = "none";
       liteSelectedId = null;
-      // esci sempre dalla modalità schermo intero
-      document.body.classList.remove("builder-fs");
-      const fsBtn = document.getElementById("btnStageFullscreen");
-      if(fsBtn) fsBtn.textContent = "⛶ Schermo intero";
     }
 
     document.getElementById("btnCloseBuilderLite").onclick = closeBuilderLite;
-    // fullscreen per l'anteprima (solo UI, non tocca le funzioni)
-    const btnStageFullscreen = document.getElementById("btnStageFullscreen");
-    if(btnStageFullscreen){
-      btnStageFullscreen.addEventListener("click", ()=>{
-        const on = document.body.classList.toggle("builder-fs");
-        btnStageFullscreen.textContent = on ? "⤓ Esci" : "⛶ Schermo intero";
-      });
-    }
-
     builderLiteBack.addEventListener("click",(e)=>{ if(e.target===builderLiteBack) closeBuilderLite(); });
 
     // aggiornamenti live (solo configuratore clienti)
@@ -2966,12 +2940,44 @@ function selectLite(id){
       return lines.join("\n");
     }
 
-    function liteOpenWhatsApp(project){
+    async function liteOpenWhatsApp(project){
       const number = getWa();
       const msg = liteSummaryForWhatsApp(project);
+
+      // Prova a condividere FOTO + TESTO (WhatsApp) usando il pannello "Condividi" del telefono
+      try{
+        const stage = document.getElementById("dlStage");
+        if(stage && window.html2canvas && navigator.share){
+          const canvas = await html2canvas(stage, {
+            backgroundColor: null,
+            scale: Math.min(2, window.devicePixelRatio || 2),
+            useCORS: true
+          });
+
+          const blob = await new Promise(res => canvas.toBlob(res, "image/png", 1.0));
+          if(blob){
+            const file = new File([blob], "anteprima_acchiappasogni.png", { type: "image/png" });
+
+            // Alcuni telefoni richiedono canShare per i file
+            if(!navigator.canShare || navigator.canShare({ files: [file] })){
+              await navigator.share({
+                files: [file],
+                text: msg
+              });
+              return; // ✅ fatto (foto + testo)
+            }
+          }
+        }
+      }catch(err){
+        // Se fallisce, andiamo in fallback a WhatsApp con testo
+        console.warn("Condivisione con immagine non disponibile:", err);
+      }
+
+      // Fallback: apre WhatsApp con il testo (l’utente allega la foto manualmente se vuole)
       const url = `https://wa.me/${encodeURIComponent(number.replace(/\s+/g,""))}?text=${encodeURIComponent(msg)}`;
       window.open(url, "_blank");
     }
+
 
     function liteSave(){
       if(!lite){ return; }
@@ -3684,6 +3690,69 @@ function selectLite(id){
       caches.keys().then((keys) => keys.forEach((k) => caches.delete(k)));
     }
   }
+</script>
+  <!-- html2canvas per condividere l’anteprima su WhatsApp -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+// Fullscreen toggle for Dreamcatcher builder
+(function(){
+  const back = document.getElementById('builderLiteBack');
+  const btn = document.getElementById('dlFullscreen');
+  const closeBtn = document.getElementById('btnCloseBuilderLite');
+  if(!back || !btn) return;
+
+  function isFs(){
+    return document.fullscreenElement || document.webkitFullscreenElement;
+  }
+  async function enterFs(){
+    const target = back.querySelector('.modal') || back;
+    if(target.requestFullscreen){
+      await target.requestFullscreen();
+      return true;
+    }
+    if(target.webkitRequestFullscreen){
+      target.webkitRequestFullscreen();
+      return true;
+    }
+    // fallback CSS
+    back.classList.add('fs-fallback');
+    return false;
+  }
+  async function exitFs(){
+    if(document.exitFullscreen){
+      try{ await document.exitFullscreen(); } catch(e){}
+    } else if(document.webkitExitFullscreen){
+      try{ document.webkitExitFullscreen(); } catch(e){}
+    }
+    back.classList.remove('fs-fallback');
+  }
+
+  btn.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    if(isFs() || back.classList.contains('fs-fallback')){
+      await exitFs();
+      btn.textContent = '⛶ Schermo intero';
+    } else {
+      await enterFs();
+      btn.textContent = '🗗 Esci';
+    }
+  });
+
+  // Ensure we exit fullscreen when closing modal
+  if(closeBtn){
+    closeBtn.addEventListener('click', ()=>{ exitFs(); btn.textContent='⛶ Schermo intero'; }, {capture:true});
+  }
+  back.addEventListener('click', (e)=>{
+    // if tap outside modal closes, also exit
+    if(e.target === back){ exitFs(); btn.textContent='⛶ Schermo intero'; }
+  });
+
+  document.addEventListener('fullscreenchange', ()=>{
+    if(!isFs()){ btn.textContent='⛶ Schermo intero'; }
+    else { btn.textContent='🗗 Esci'; }
+  });
+})();
+
 </script>
  </body>
 </html>
