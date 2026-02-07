@@ -10,90 +10,91 @@
   <header class="topbar">
     <div class="brand">
       <div class="logo">✨</div>
-      <div>
-        <div id="brandName" class="brand-title">Acchiappasogni di Erika</div>
-        <div class="brand-sub">Catalogo • Ordina su WhatsApp</div>
+      <div class="brandText">
+        <div id="brandName" class="brandName">Acchiappasogni di Erika</div>
+        <div id="brandTag" class="brandTag">Catalogo - Ordina su WhatsApp</div>
       </div>
     </div>
 
     <div class="actions">
+      <button id="btnCatalog" class="btn ghost active">Catalogo</button>
       <button id="btnCustom" class="btn ghost">Personalizzato</button>
+      <button id="btnSettings" class="btn ghost">Impostazioni</button>
       <button id="btnCart" class="btn">Carrello <span id="cartCount" class="badge">0</span></button>
     </div>
   </header>
 
-  <main class="container">
-    <section class="search">
-      <input id="search" type="search" placeholder="Cerca (nome o descrizione)..." autocomplete="off" />
-    </section>
+  <main class="wrap">
+    <div class="searchWrap">
+      <input id="search" class="search" placeholder="Cerca (nome o descrizione)..." />
+    </div>
 
-    <section class="tabs-wrap">
+    <div id="catalogPanel">
       <div id="tabs" class="tabs"></div>
-    </section>
+      <section id="grid" class="grid"></section>
+    </div>
 
-    <section id="grid" class="grid" aria-live="polite"></section>
+    <div id="customPanel" class="hidden">
+      <div class="panel">
+        <h2>Progetto personalizzato</h2>
+        <p>Scrivi cosa vorresti e invia la richiesta su WhatsApp (dal carrello).</p>
+      </div>
+    </div>
   </main>
 
-  <!-- Cart Drawer -->
-  <div id="drawerBackdrop" class="backdrop hidden"></div>
-  <aside id="drawer" class="drawer hidden" aria-hidden="true">
-    <div class="drawer-header">
-      <div class="drawer-title">Carrello</div>
-      <button id="btnCloseCart" class="btn ghost">Chiudi</button>
-    </div>
-
-    <div id="cartItems" class="cart-items"></div>
-
-    <div class="totals">
-      <div class="row"><span>Subtotale</span><span id="subtotal">€ 0,00</span></div>
-      <div class="row"><span>Spedizione</span><span id="shipping">€ 0,00</span></div>
-      <div class="row total"><span>Totale</span><span id="total">€ 0,00</span></div>
-      <div class="hint" id="shippingHint"></div>
-    </div>
-
-    <div class="checkout">
-      <div class="section-title">Dati ordine</div>
-
-      <label class="field">
-        <span>Nome e cognome</span>
-        <input id="name" type="text" placeholder="Es. Mario Rossi" />
-      </label>
-
-      <div class="radios">
-        <label><input type="radio" name="delivery" value="shipping" checked /> Spedizione</label>
-        <label><input type="radio" name="delivery" value="pickup" /> Ritiro / consegna a mano</label>
+  <!-- Carrello -->
+  <div id="cartModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title">Carrello</div>
+        <button id="cartClose" class="icon-btn" aria-label="Chiudi">✕</button>
       </div>
 
-      <div id="shippingFields">
-        <label class="field">
-          <span>Via / indirizzo</span>
-          <input id="street" type="text" placeholder="Via..." />
-        </label>
-        <div class="two">
-          <label class="field">
-            <span>CAP</span>
-            <input id="cap" type="text" inputmode="numeric" placeholder="090..." />
-          </label>
-          <label class="field">
-            <span>Città</span>
-            <input id="city" type="text" placeholder="Città..." />
-          </label>
+      <div id="cartItems" class="cartItems"></div>
+
+      <div class="cartFoot">
+        <div class="totalRow">
+          <span>Totale</span>
+          <b id="cartTotal">€ 0,00</b>
+        </div>
+        <button id="cartSend" class="btn">Invia su WhatsApp</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Modal -->
+  <div id="adminModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title">Impostazioni</div>
+        <button id="adminClose" class="icon-btn" aria-label="Chiudi">✕</button>
+      </div>
+
+      <div id="adminLogin" class="admin-login">
+        <p class="muted">Inserisci la password per accedere alle impostazioni.</p>
+        <div class="row">
+          <input id="adminPass" type="password" placeholder="Password" />
+          <button id="adminEnter" class="btn">Entra</button>
+        </div>
+        <p id="adminErr" class="error hidden">Password errata.</p>
+      </div>
+
+      <div id="adminPanel" class="admin-panel hidden">
+        <div class="admin-actions">
+          <button id="adminResetOverride" class="btn ghost">Ripristina catalogo originale</button>
+          <button id="adminSetAllPrice5" class="btn ghost">Imposta €5 su tutti</button>
+          <button id="adminAddNew" class="btn">+ Nuovo progetto</button>
+        </div>
+
+        <div id="adminEditor" class="admin-editor hidden"></div>
+
+        <div class="admin-list-wrap">
+          <div class="admin-list-title">Progetti</div>
+          <div id="adminList" class="admin-list"></div>
         </div>
       </div>
-
-      <label class="field">
-        <span>Note (colore, personalizzazione, ecc.)</span>
-        <textarea id="notes" rows="3" placeholder="Scrivi qui..."></textarea>
-      </label>
-
-      <button id="btnSend" class="btn primary">Invia ordine su WhatsApp</button>
-      <button id="btnClear" class="btn danger">Annulla ordine (svuota carrello)</button>
-
-      <p class="small">
-        Pagamento e spedizione vengono gestiti fuori dal sito. Riceverai conferma su WhatsApp.
-      </p>
     </div>
-  </aside>
+  </div>
 
   <script src="app.js"></script>
 </body>
