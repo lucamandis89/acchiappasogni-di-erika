@@ -1009,8 +1009,9 @@
     const ADMIN_PASS_DEFAULT = "1234";
     const PRODUCTS_URL = "data/products.json";
 
-    const IMAGE_BASE_PATH = "assets/images/acchiappasogni_hd/";
+    const IMAGE_BASE_PATH = "assets/assets/images/assets/images/acchiappasogni_hd/";
     const IMAGE_BASE_CANDIDATES = [
+      "assets/assets/images/assets/images/acchiappasogni_hd/",
       "assets/images/acchiappasogni_hd/",
       "assets/img/acchiappasogni_hd/",
       "assets/images/",
@@ -1029,7 +1030,7 @@ adminPass: "ae_admin_pass",
       wa: "ae_wa_number",
       productsOverride: "ae_products_override",
       cart: "ae_cart_v1",
-      broken: "ae_broken_images_v1",
+      broken: "ae_broken_images_v2",
       deleted: "ae_deleted_ids",
       prices: "ae_builder_prices_v1",
       projects: "ae_builder_projects_v1",
@@ -2865,6 +2866,36 @@ function selectLite(id){
       Array.from(dlStage.querySelectorAll(".dl-el")).forEach(n => n.remove());
       selectLite(null);
     };
+
+    // Fullscreen toggle (builder modal)
+    const btnDlFs = document.getElementById("dlFullscreen");
+    if(btnDlFs){
+      btnDlFs.onclick = async ()=>{
+        const back = document.getElementById("builderModalBack");
+        if(!back) return;
+
+        // Prefer real Fullscreen API when available
+        const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+        if(isFs){
+          try{
+            await (document.exitFullscreen?.() || document.webkitExitFullscreen?.());
+          }catch(e){
+            // fallback
+            back.classList.remove("fs-fallback");
+          }
+          return;
+        }
+
+        // Try requestFullscreen on the modal container; if denied, use CSS fallback
+        const target = back;
+        try{
+          await (target.requestFullscreen?.() || target.webkitRequestFullscreen?.());
+        }catch(e){
+          back.classList.toggle("fs-fallback");
+        }
+      };
+    }
+
 
     // Palette buttons
     // Palette accessori (delegation)
