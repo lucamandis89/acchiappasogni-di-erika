@@ -8,15 +8,10 @@
     :root{
       --bg1:#070a12;
       --bg2:#0b1430;
-      --card:#0f1b33cc;
-      --card2:#0f1b33f2;
-      --stroke:#23365f;
       --text:#e9efff;
       --muted:#b9c6ffcc;
       --accent:#7c5cff;
-      --accent2:#6ee7ff;
       --danger:#ff4d6d;
-      --ok:#35d07f;
       --shadow: 0 12px 30px rgba(0,0,0,.35);
       --radius: 18px;
     }
@@ -401,6 +396,11 @@
               <input id="fCategory" placeholder="Acchiappasogni Classici" />
             </div>
 
+            <div style="grid-column:1 / -1">
+              <label>Descrizione (testo sotto al titolo)</label>
+              <textarea id="fDesc" placeholder="Esempio: Fatto a mano, diametro 30 cm, colori personalizzabili..."></textarea>
+            </div>
+
             <div>
               <label>Prezzo (€)</label>
               <input id="fPrice" type="number" step="0.01" placeholder="5" />
@@ -418,15 +418,15 @@
               <label>Foto (dal telefono / galleria)</label>
               <input id="fImageFile" type="file" accept="image/*" />
               <div class="hint">
-                Se carichi da galleria: viene salvata nel telefono (localStorage).  
+                Se carichi da galleria: viene salvata nel telefono (localStorage).<br/>
                 Se vuoi che si veda su TUTTI i telefoni, carica la foto nel repo e poi metti il percorso nel campo sotto.
               </div>
             </div>
 
             <div style="grid-column:1 / -1">
               <label>Oppure percorso immagine (GitHub)</label>
-              <input id="fImagePath" placeholder="assets/assets/images/assets/images/acchiappasogni_hd/FB_IMG_xxx.jpg" />
-              <div class="hint">Se metti un percorso qui, verrà usato al posto della foto caricata.</div>
+              <input id="fImagePath" placeholder="foto.jpg oppure cartella/foto.jpg" />
+              <div class="hint">Se scrivi solo il nome file (es: foto.jpg) la cerca nella cartella base configurata.</div>
             </div>
 
             <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
@@ -439,8 +439,8 @@
 
           <div class="hr"></div>
           <div class="hint">
-            ✅ Se una foto non si apre, viene mostrato un placeholder (l’app resta fluida).<br/>
-            ✅ Tutte le modifiche restano salvate sul telefono.
+            ✅ Le immagini che non si aprono NON vengono mostrate (spariscono).<br/>
+            ✅ Le foto da galleria vengono ottimizzate (più leggere) prima di salvarle.
           </div>
         </div>
       </div>
@@ -449,24 +449,26 @@
 
   <script>
     // ========= CONFIG =========
-    const DEFAULT_WA = "+393440260906"; // cambialo dal pannello admin se vuoi
+    const DEFAULT_WA = "+393440260906";
     const ADMIN_PASS_DEFAULT = "1234";
-    const PRODUCTS_URL = "data/products.json"; // nel tuo repo: /data/products.json
+    const PRODUCTS_URL = "data/products.json";
 
-    // Placeholder leggero (evita crash/lag se una foto manca)
-    const PLACEHOLDER_IMG = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0f1b33" offset="0"/><stop stop-color="#070a12" offset="1"/></linearGradient></defs><rect width="100%" height="100%" fill="url(#g)"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#b9c6ff" font-family="system-ui,Segoe UI,Roboto" font-size="26" font-weight="800">Immagine non disponibile</text></svg>`);
+    // Se nel campo "percorso immagine" scrivi solo "foto.jpg", viene aggiunta questa base:
+    // ⚠️ Se la tua cartella è diversa, cambia SOLO questa riga.
+    const IMAGE_BASE_PATH = "assets/assets/images/assets/images/acchiappasogni_hd/";
 
-
-    // ========= STORAGE KEYS =========
     const K = {
       adminPass: "ae_admin_pass",
       wa: "ae_wa_number",
       productsOverride: "ae_products_override",
       cart: "ae_cart_v1",
-      broken: "ae_broken_images_v1"
+      broken: "ae_broken_images_v1",
+      deleted: "ae_deleted_ids"
     };
 
-    // ========= UTILS =========
+    // Ottimizzazione foto galleria
+    const IMG_OPT = { maxSide: 1200, quality: 0.72, mime: "image/jpeg" };
+
     const euro = (n) => {
       const v = Number(n || 0);
       return v.toLocaleString("it-IT", { style: "currency", currency: "EUR" });
@@ -474,39 +476,32 @@
 
     const uid = () => "P-" + Math.random().toString(16).slice(2) + "-" + Date.now().toString(16);
 
-    function getAdminPass(){
-      return localStorage.getItem(K.adminPass) || ADMIN_PASS_DEFAULT;
-    }
-    function setAdminPass(p){
-      localStorage.setItem(K.adminPass, p);
-    }
-    function getWa(){
-      return localStorage.getItem(K.wa) || DEFAULT_WA;
-    }
-    function setWa(v){
-      localStorage.setItem(K.wa, v);
-    }
+    function getAdminPass(){ return localStorage.getItem(K.adminPass) || ADMIN_PASS_DEFAULT; }
+    function setAdminPass(p){ localStorage.setItem(K.adminPass, p); }
 
-    function loadCart(){
-      try { return JSON.parse(localStorage.getItem(K.cart) || "{}"); } catch { return {}; }
-    }
-    function saveCart(c){
-      localStorage.setItem(K.cart, JSON.stringify(c));
-    }
+    function getWa(){ return localStorage.getItem(K.wa) || DEFAULT_WA; }
+    function setWa(v){ localStorage.setItem(K.wa, v); }
 
-    // ========= BROKEN IMAGES (no rallentamenti all'avvio) =========
+    function loadCart(){ try { return JSON.parse(localStorage.getItem(K.cart) || "{}"); } catch { return {}; } }
+    function saveCart(c){ localStorage.setItem(K.cart, JSON.stringify(c)); }
+
     function loadBrokenSet(){
       try{
         const arr = JSON.parse(localStorage.getItem(K.broken) || "[]");
         return new Set(Array.isArray(arr) ? arr : []);
       }catch{ return new Set(); }
     }
-    function saveBrokenSet(set){
-      localStorage.setItem(K.broken, JSON.stringify(Array.from(set)));
-    }
+    function saveBrokenSet(set){ localStorage.setItem(K.broken, JSON.stringify(Array.from(set))); }
     let brokenImages = loadBrokenSet();
 
-    // ========= PRODUCTS (base + override) =========
+    function loadDeleted(){
+      try{
+        const arr = JSON.parse(localStorage.getItem(K.deleted) || "[]");
+        return Array.isArray(arr) ? arr : [];
+      }catch{ return []; }
+    }
+    function saveDeleted(arr){ localStorage.setItem(K.deleted, JSON.stringify(arr)); }
+
     async function fetchBaseProducts(){
       const r = await fetch(PRODUCTS_URL, { cache: "no-store" });
       if(!r.ok) throw new Error("Impossibile caricare " + PRODUCTS_URL);
@@ -518,28 +513,17 @@
       try { return JSON.parse(localStorage.getItem(K.productsOverride) || "[]"); } catch { return []; }
     }
     function saveOverride(list){
-      try{
-        localStorage.setItem(K.productsOverride, JSON.stringify(list));
-      }catch(e){
-        console.error(e);
-        alert("Memoria piena: le foto sono troppo pesanti. Prova a ricaricarle (ora vengono ottimizzate) oppure elimina qualche prodotto/foto.");
-        throw e;
-      }
+      localStorage.setItem(K.productsOverride, JSON.stringify(list));
     }
 
-    // Merge: se un prodotto esiste in override (stesso id) lo sostituisce; se override ha nuovi prodotti li aggiunge
     async function fetchProductsWithLocalOverride(){
       const base = await fetchBaseProducts();
       const over = loadOverride();
-
       const map = new Map(base.map(p => [p.id, p]));
-      for(const p of over){
-        map.set(p.id, p);
-      }
+      for(const p of over) map.set(p.id, p);
       return Array.from(map.values());
     }
 
-    // ========= APP STATE =========
     let allProducts = [];
     let visibleProducts = [];
     let categories = [];
@@ -547,7 +531,6 @@
     let q = "";
     let cart = loadCart();
 
-    // ========= DOM =========
     const grid = document.getElementById("grid");
     const search = document.getElementById("search");
     const filters = document.getElementById("filters");
@@ -555,11 +538,9 @@
     const cartTotal = document.getElementById("cartTotal");
     const cartTotal2 = document.getElementById("cartTotal2");
 
-    // Modals
     const cartModalBack = document.getElementById("cartModalBack");
     const adminModalBack = document.getElementById("adminModalBack");
 
-    // ========= RENDER FILTERS =========
     function rebuildCategories(){
       const set = new Set(allProducts.map(p => p.category || "Altro"));
       categories = ["Tutti", ...Array.from(set).sort((a,b)=>a.localeCompare(b,"it"))];
@@ -576,30 +557,19 @@
       }
     }
 
-    // ========= APPLY FILTERS =========
     function applyFilters(){
       const s = (q || "").trim().toLowerCase();
       visibleProducts = allProducts.filter(p => {
         const catOk = (activeCategory === "Tutti") || ((p.category || "Altro") === activeCategory);
-        const text = ((p.title || "") + " " + (p.category || "")).toLowerCase();
+        const text = ((p.title || "") + " " + (p.category || "") + " " + (p.description || "")).toLowerCase();
         const searchOk = !s || text.includes(s);
         const pubOk = (p.published !== false);
-        return catOk && searchOk && pubOk;
+        const imgOk = !brokenImages.has(p.id); // ✅ se già rotta, non mostrarla
+        return catOk && searchOk && pubOk && imgOk;
       });
       renderGrid();
     }
 
-    // ========= IMAGE FAIL → REMOVE PRODUCT COMPLETELY =========
-    // Se l'immagine non si carica: la card non compare e il prodotto viene escluso dalla lista visibile.
-    function removeProductById(id){
-      allProducts = allProducts.filter(p => p.id !== id);
-      visibleProducts = visibleProducts.filter(p => p.id !== id);
-      // NON tocchiamo products.json: solo lato client. Se vuoi rimuoverlo anche dal file, me lo chiedi e te lo preparo.
-      renderFilters();
-      renderGrid();
-    }
-
-    // ========= GRID =========
     function renderGrid(){
       grid.innerHTML = "";
       for(const p of visibleProducts){
@@ -613,13 +583,15 @@
         img.alt = p.title || "";
         img.loading = "lazy";
         img.decoding = "async";
-        img.src = (brokenImages.has(p.id) ? PLACEHOLDER_IMG : (p.image || ""));
+        img.src = (p.image || "");
 
+        // ✅ Se la foto non si apre: segna rotta e rimuovi la card (NON placeholder)
         img.onerror = () => {
           img.onerror = null;
-          img.src = PLACEHOLDER_IMG;
           brokenImages.add(p.id);
           saveBrokenSet(brokenImages);
+          try { cardEl.remove(); } catch {}
+          visibleProducts = visibleProducts.filter(x => x.id !== p.id);
         };
 
         const badge = document.createElement("div");
@@ -644,6 +616,19 @@
         price.textContent = euro(p.price_from ?? 0);
 
         meta.appendChild(price);
+
+        content.appendChild(title);
+
+        if (p.description) {
+          const desc = document.createElement("div");
+          desc.style.color = "rgba(185,198,255,.85)";
+          desc.style.fontSize = "12px";
+          desc.style.lineHeight = "1.25";
+          desc.textContent = p.description;
+          content.appendChild(desc);
+        }
+
+        content.appendChild(meta);
 
         const row = document.createElement("div");
         row.className = "row";
@@ -698,8 +683,6 @@
         row.appendChild(qtyWrap);
         row.appendChild(add);
 
-        content.appendChild(title);
-        content.appendChild(meta);
         content.appendChild(row);
 
         cardEl.appendChild(imgWrap);
@@ -709,7 +692,6 @@
       }
     }
 
-    // ========= CART =========
     function cartTotals(){
       let items = 0;
       let tot = 0;
@@ -730,20 +712,12 @@
       cartTotal2.textContent = euro(tot);
     }
 
-    function openCart(){
-      renderCartModal();
-      cartModalBack.style.display = "flex";
-    }
-    function closeCart(){
-      cartModalBack.style.display = "none";
-    }
-
     function renderCartModal(){
       const list = document.getElementById("cartList");
       list.innerHTML = "";
       const byId = new Map(allProducts.map(p => [p.id, p]));
-
       const ids = Object.keys(cart);
+
       if(ids.length === 0){
         const empty = document.createElement("div");
         empty.className = "hint";
@@ -756,7 +730,6 @@
       for(const id of ids){
         const p = byId.get(id);
         if(!p) continue;
-
         const qty = cart[id];
 
         const item = document.createElement("div");
@@ -765,8 +738,8 @@
         const th = document.createElement("div");
         th.className = "thumb";
         const im = document.createElement("img");
-        im.src = (brokenImages.has(p.id) ? PLACEHOLDER_IMG : (p.image || ""));
-        im.onerror = () => { im.onerror=null; im.src = PLACEHOLDER_IMG; brokenImages.add(p.id); saveBrokenSet(brokenImages); };
+        im.src = (p.image || "");
+        im.onerror = () => { im.onerror=null; brokenImages.add(p.id); saveBrokenSet(brokenImages); };
         th.appendChild(im);
 
         const info = document.createElement("div");
@@ -824,6 +797,9 @@
       updateCartUI();
     }
 
+    function openCart(){ renderCartModal(); cartModalBack.style.display = "flex"; }
+    function closeCart(){ cartModalBack.style.display = "none"; }
+
     function buildWhatsAppMessage(){
       const byId = new Map(allProducts.map(p => [p.id, p]));
       let lines = [];
@@ -846,43 +822,30 @@
 
     function openWhatsApp(){
       const { items } = cartTotals();
-      if(items <= 0){
-        alert("Il carrello è vuoto.");
-        return;
-      }
+      if(items <= 0){ alert("Il carrello è vuoto."); return; }
       const number = getWa();
       const msg = buildWhatsAppMessage();
       const url = `https://wa.me/${encodeURIComponent(number.replace(/\s+/g,""))}?text=${encodeURIComponent(msg)}`;
       window.open(url, "_blank");
     }
 
-    // ========= CUSTOMIZER BUTTON =========
     document.getElementById("btnCustomizer").onclick = () => {
-      alert("Qui possiamo mettere una pagina/box per richieste personalizzate (nome, colori, dimensione). Se vuoi te la preparo.");
+      alert("Qui possiamo mettere una pagina/box per richieste personalizzate. Se vuoi te la preparo.");
     };
 
-    // ========= SETTINGS / ADMIN =========
     function openAdmin(){
-      // reset view
       document.getElementById("adminLogin").style.display = "block";
       document.getElementById("adminPanel").style.display = "none";
       document.getElementById("adminPass").value = "";
       adminModalBack.style.display = "flex";
     }
-    function closeAdmin(){
-      adminModalBack.style.display = "none";
-    }
+    function closeAdmin(){ adminModalBack.style.display = "none"; }
 
     function adminLogin(){
       const pass = document.getElementById("adminPass").value || "";
-      if(pass !== getAdminPass()){
-        alert("Password errata.");
-        return;
-      }
-      // show panel
+      if(pass !== getAdminPass()){ alert("Password errata."); return; }
       document.getElementById("adminLogin").style.display = "none";
       document.getElementById("adminPanel").style.display = "block";
-      // fill config
       document.getElementById("waNumber").value = getWa();
       document.getElementById("newAdminPass").value = "";
       rebuildEditSelect();
@@ -906,6 +869,7 @@
       if(!p){ alert("Prodotto non trovato"); return; }
       document.getElementById("fTitle").value = p.title || "";
       document.getElementById("fCategory").value = p.category || "";
+      document.getElementById("fDesc").value = p.description || "";
       document.getElementById("fPrice").value = Number(p.price_from || 0);
       document.getElementById("fPublished").checked = (p.published !== false);
       document.getElementById("fImagePath").value = (p.image && !p.image.startsWith("data:")) ? p.image : "";
@@ -916,6 +880,7 @@
       document.getElementById("editSelect").value = "";
       document.getElementById("fTitle").value = "";
       document.getElementById("fCategory").value = "Acchiappasogni Classici";
+      document.getElementById("fDesc").value = "";
       document.getElementById("fPrice").value = 5;
       document.getElementById("fPublished").checked = false;
       document.getElementById("fImagePath").value = "";
@@ -930,11 +895,6 @@
         r.readAsDataURL(file);
       });
     }
-
-    // Ottimizza (riduce peso) foto prima di salvarla in localStorage:
-    // - ridimensiona lato lungo
-    // - comprime in JPEG (compatibile)
-    const IMG_OPT = { maxSide: 1200, quality: 0.72, mime: "image/jpeg" };
 
     function loadImg(src){
       return new Promise((resolve, reject) => {
@@ -961,7 +921,6 @@
       canvas.width = nw; canvas.height = nh;
       const ctx = canvas.getContext("2d", { alpha: false });
 
-      // sfondo bianco per JPEG
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, nw, nh);
       ctx.drawImage(img, 0, 0, nw, nh);
@@ -972,79 +931,74 @@
     async function saveProduct(){
       const title = document.getElementById("fTitle").value.trim();
       const category = document.getElementById("fCategory").value.trim() || "Altro";
+      const description = (document.getElementById("fDesc").value || "").trim();
       const price = Number(document.getElementById("fPrice").value || 0);
       const published = !!document.getElementById("fPublished").checked;
 
-      const path = document.getElementById("fImagePath").value.trim();
+      let path = document.getElementById("fImagePath").value.trim();
       const file = document.getElementById("fImageFile").files?.[0] || null;
 
-      if(!title){
-        alert("Metti un titolo.");
-        return;
+      if(!title){ alert("Metti un titolo."); return; }
+
+      // Se scrivi solo "foto.jpg", aggiunge la base
+      if (path && !path.includes("/") && !path.startsWith("http") && !path.startsWith("data:")) {
+        path = IMAGE_BASE_PATH + path;
       }
 
-      // id: se stai modificando un prodotto selezionato, usa quell'id, altrimenti crea nuovo
       let id = document.getElementById("editSelect").value;
       const isNew = !id;
       if(!id) id = uid();
 
       const existing = allProducts.find(x => x.id === id) || null;
 
-      // immagine: priorità -> path GitHub -> file galleria (ottimizzato) -> mantieni esistente
+      // Priorità: file galleria (ottimizzato) -> path GitHub -> esistente
       let image = path || "";
       if(file){
         try{
-          image = await optimizeImageFile(file); // ✅ più leggera, evita blocchi e quota piena
+          image = await optimizeImageFile(file);
         }catch(e){
           console.error(e);
           alert("Errore: impossibile leggere/ottimizzare la foto scelta.");
           return;
         }
       }
-      if(!image && existing){
-        image = existing.image || "";
-      }
+      if(!image && existing) image = existing.image || "";
+      if(!image){ alert("Seleziona una foto (galleria) oppure inserisci il percorso GitHub."); return; }
 
-      if(!image){
-        alert("Seleziona una foto (galleria) oppure inserisci il percorso GitHub.");
-        return;
+      // Se stai salvando un'immagine nuova, togli eventuale flag di "rotta"
+      if (brokenImages.has(id)) {
+        brokenImages.delete(id);
+        saveBrokenSet(brokenImages);
       }
 
       const newP = {
         id,
         title,
         category,
+        description,
         price_from: price,
         image,
         featured: !!(existing?.featured),
         published
       };
 
-      // salva in override
       const over = loadOverride();
       const idx = over.findIndex(x => x.id === id);
       if(idx >= 0) over[idx] = newP;
       else over.push(newP);
       saveOverride(over);
 
-      // se è nuovo e non pubblicato, lo tieni in bozza (non appare in Home finché non pubblichi)
       await reloadProducts();
       rebuildEditSelect();
       document.getElementById("editSelect").value = id;
-
-      // pulizia input file (così puoi ricaricare la stessa foto se vuoi)
       document.getElementById("fImageFile").value = "";
 
       alert(isNew ? "Salvato (bozza)!" : "Salvato!");
     }
 
-
     function ensureSelectedForPublish(){
       const id = document.getElementById("editSelect").value;
-      if(!id){
-        alert("Prima salva il prodotto (bozza), poi pubblichi.");
-        return null;
-      }
+      if(!id){ alert("Prima salva il prodotto (bozza), poi pubblichi."); return null; }
       return id;
     }
 
@@ -1067,16 +1021,10 @@
       if(!id){ alert("Seleziona un prodotto"); return; }
       if(!confirm("Eliminare questo prodotto?")) return;
 
-      // Per eliminare: mettiamo un tombstone in override che lo rimuove dal catalogo
-      // (più semplice: salviamo in override una lista 'deleted', ma qui facciamo: rimuoviamo da base + override lato client)
-      // Quindi: aggiungiamo a override un record speciale? NO: meglio salvare una lista di id eliminati.
-      const delKey = "ae_deleted_ids";
-      let dels = [];
-      try{ dels = JSON.parse(localStorage.getItem(delKey) || "[]"); }catch{ dels=[]; }
+      const dels = loadDeleted();
       if(!dels.includes(id)) dels.push(id);
-      localStorage.setItem(delKey, JSON.stringify(dels));
+      saveDeleted(dels);
 
-      // rimuovi anche dal carrello
       delete cart[id];
       saveCart(cart);
 
@@ -1088,7 +1036,7 @@
     async function applyBulkPrice(){
       const v = Number(document.getElementById("bulkPrice").value || 0);
       if(!v || v < 0){ alert("Inserisci un prezzo valido."); return; }
-      // applichiamo su override per tutti i prodotti correnti
+
       const over = loadOverride();
       const overMap = new Map(over.map(p => [p.id, p]));
       const nextOver = [];
@@ -1105,21 +1053,20 @@
     async function resetAll(){
       if(!confirm("Reset completo? Cancella modifiche e torna al catalogo originale.")) return;
       localStorage.removeItem(K.productsOverride);
-      localStorage.removeItem("ae_deleted_ids");
-      // non tocco password e whatsapp
+      localStorage.removeItem(K.deleted);
+      localStorage.removeItem(K.broken);
+      brokenImages = new Set();
       await reloadProducts();
       alert("Ripristinato!");
     }
 
     function applyDeleted(products){
-      const delKey = "ae_deleted_ids";
-      let dels = [];
-      try{ dels = JSON.parse(localStorage.getItem(delKey) || "[]"); }catch{ dels=[]; }
-      if(!Array.isArray(dels) || dels.length === 0) return products;
+      const dels = loadDeleted();
+      if(!dels.length) return products;
       return products.filter(p => !dels.includes(p.id));
     }
 
-    // ========= EVENTS =========
+    // EVENTS
     document.getElementById("btnCart").onclick = openCart;
     document.getElementById("btnCloseCart").onclick = closeCart;
     cartModalBack.addEventListener("click", (e)=>{ if(e.target === cartModalBack) closeCart(); });
@@ -1168,17 +1115,15 @@
       applyFilters();
     });
 
-    // ========= INIT =========
     async function reloadProducts(){
-      const products = await fetchProductsWithLocalOverride(); // <-- come mi hai chiesto
-      // applica eliminati
+      const products = await fetchProductsWithLocalOverride();
       allProducts = applyDeleted(products);
 
-      // sicurezza: normalizza campi minimi
       allProducts = allProducts.map(p => ({
         id: String(p.id || uid()),
         title: String(p.title || ""),
         category: String(p.category || "Altro"),
+        description: String(p.description || ""),
         price_from: Number(p.price_from ?? 0),
         image: String(p.image || ""),
         featured: !!p.featured,
