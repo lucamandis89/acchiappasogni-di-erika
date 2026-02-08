@@ -2,7 +2,7 @@
 <html lang="it">
  <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5, user-scalable=yes">
   <title>Acchiappasogni di Erika</title>
   <link rel="manifest" href="/acchiappasogni-di-erika/manifest.webmanifest">
   <meta name="theme-color" content="#ffffff">
@@ -1138,6 +1138,91 @@ body.builder-open{ touch-action: none; } /* serve per pinch/zoom affidabile su A
 #builderLiteBack.studio-mode .hint{
   color: rgba(27,31,42,.75);
 }
+
+
+/* ==== V10 CLEAN LIGHT UI + FIX SHEET/TABS + FIX STAGE FIT ==== */
+:root{
+  --ui-bg: #f6f7fb;
+  --ui-card: rgba(255,255,255,.94);
+  --ui-text: #0d1220;
+  --ui-muted: rgba(13,18,32,.62);
+  --ui-border: rgba(13,18,32,.12);
+  --ui-accent: rgba(72, 110, 255, .20);
+  --ui-accent-border: rgba(72, 110, 255, .45);
+}
+html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !important; background-image:none !important; }
+#builderLiteBack{ background: var(--ui-bg) !important; }
+
+/* Stage area */
+.stage-wrap, .stage, .stageArea{
+  background: #fff !important;
+}
+.stage-wrap{
+  border: 1px solid var(--ui-border) !important;
+  box-shadow: 0 10px 34px rgba(13,18,40,.10) !important;
+}
+.base-ring{ display:none !important; } /* remove duplicate ring overlay */
+
+/* Ensure stage is not absurdly large and doesn't overlap the sheet */
+#stageArea, .stageArea{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding: 10px !important;
+  min-height: 54vh !important;
+  max-height: 62vh !important;
+  overflow: hidden !important;
+}
+#stageCanvas, .stageCanvas{
+  width: min(92vw, 520px) !important;
+  height: min(92vw, 520px) !important;
+  max-width: 92vw !important;
+  max-height: 92vw !important;
+  aspect-ratio: 1 / 1 !important;
+  position: relative !important;
+  transform-origin: center center;
+  touch-action: none; /* we handle pinch/pan ourselves */
+}
+
+/* SVG (ring + grid) */
+#stageCanvas svg, .stageCanvas svg{
+  width: 100% !important;
+  height: 100% !important;
+  display:block !important;
+}
+.stageSvg .ringStroke, .stageSvg .gridStroke{
+  stroke: rgba(0,0,0,.88) !important;
+}
+.stageSvg .gridStroke{
+  stroke: rgba(0,0,0,.28) !important;
+}
+
+/* Sheet */
+.sim-sheet{
+  background: var(--ui-card) !important;
+  color: var(--ui-text) !important;
+  border: 1px solid var(--ui-border) !important;
+}
+.sim-quickbar{
+  background: var(--ui-card) !important;
+  border: 1px solid var(--ui-border) !important;
+  color: var(--ui-text) !important;
+}
+.sim-tabs{ background: transparent !important; }
+.sim-tab{
+  background: rgba(13,18,32,.04) !important;
+  color: var(--ui-text) !important;
+  border: 1px solid var(--ui-border) !important;
+}
+.sim-tab.active{
+  background: var(--ui-accent) !important;
+  border-color: var(--ui-accent-border) !important;
+}
+
+/* Make sure sheet is tappable and always on top */
+.sim-sheet{ z-index: 10050 !important; pointer-events:auto !important; }
+.sim-sheet *{ pointer-events:auto !important; }
+.stage-wrap, #stageCanvas{ z-index: 1 !important; }
 
 </style>
  </head>
@@ -5310,6 +5395,144 @@ window.addEventListener("resize", ()=>{ simRecalcStage(); }, {passive:true});
   // Avvio quando DOM pronto
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
+})();
+</script>
+  <script>
+/* ==== V10: Robust pinch-zoom + pan for stage, without breaking drag items ==== */
+(function(){
+  const stage = document.getElementById('stageCanvas') || document.querySelector('.stageCanvas') || document.getElementById('stageArea');
+  if(!stage) return;
+
+  // Apply transform to an inner wrapper if exists, else stage itself
+  const target = stage;
+
+  // State
+  let scale = 1;
+  let tx = 0, ty = 0;
+  const MIN_SCALE = 0.6, MAX_SCALE = 3.0;
+
+  const pointers = new Map();
+  let startDist = 0;
+  let startScale = 1;
+  let startMid = null;
+  let startTx = 0, startTy = 0;
+  let isPinching = false;
+  let isPanning = false;
+  let panStart = null;
+
+  // Helper
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function apply(){
+    target.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+  }
+  function dist(a,b){
+    const dx=a.x-b.x, dy=a.y-b.y;
+    return Math.hypot(dx,dy);
+  }
+  function mid(a,b){
+    return {x:(a.x+b.x)/2, y:(a.y+b.y)/2};
+  }
+  function getLocalPoint(e){
+    const r = target.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  // Prevent browser gestures on the stage only
+  target.addEventListener('gesturestart', e => e.preventDefault(), {passive:false});
+  target.addEventListener('gesturechange', e => e.preventDefault(), {passive:false});
+  target.addEventListener('gestureend', e => e.preventDefault(), {passive:false});
+
+  target.addEventListener('pointerdown', (e)=>{
+    // Do not start zoom/pan when user is actively dragging an accessory (those have draggable handlers)
+    // We still track pointers; if 2 fingers appear, we pinch regardless.
+    target.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, getLocalPoint(e));
+
+    if(pointers.size === 2){
+      const [p1,p2] = Array.from(pointers.values());
+      startDist = dist(p1,p2);
+      startScale = scale;
+      startMid = mid(p1,p2);
+      startTx = tx; startTy = ty;
+      isPinching = true;
+      isPanning = false;
+      // While pinching, disable accessory pointer events to avoid conflicts
+      document.documentElement.classList.add('pinching');
+    } else if(pointers.size === 1){
+      // one finger pan only if touching empty stage (not an accessory)
+      const isAccessory = e.target && (e.target.closest && e.target.closest('.draggable, .accItem, .stageItem, .placed-item'));
+      if(!isAccessory){
+        isPanning = true;
+        panStart = { p: getLocalPoint(e), tx, ty };
+      }
+    }
+  }, {passive:false});
+
+  target.addEventListener('pointermove', (e)=>{
+    if(!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, getLocalPoint(e));
+
+    if(pointers.size === 2){
+      const [p1,p2] = Array.from(pointers.values());
+      const d = dist(p1,p2);
+      const m = mid(p1,p2);
+
+      const nextScale = clamp(startScale * (d / (startDist || d)), MIN_SCALE, MAX_SCALE);
+
+      // Keep midpoint "anchored" (simple approach)
+      const dx = (m.x - startMid.x);
+      const dy = (m.y - startMid.y);
+
+      scale = nextScale;
+      tx = startTx + dx;
+      ty = startTy + dy;
+      apply();
+      e.preventDefault();
+    } else if(pointers.size === 1 && isPanning && panStart){
+      const p = getLocalPoint(e);
+      tx = panStart.tx + (p.x - panStart.p.x);
+      ty = panStart.ty + (p.y - panStart.p.y);
+      apply();
+      e.preventDefault();
+    }
+  }, {passive:false});
+
+  function endPointer(e){
+    if(pointers.has(e.pointerId)) pointers.delete(e.pointerId);
+    if(pointers.size < 2){
+      isPinching = false;
+      document.documentElement.classList.remove('pinching');
+    }
+    if(pointers.size === 0){
+      isPanning = false;
+      panStart = null;
+    }
+  }
+  target.addEventListener('pointerup', endPointer, {passive:false});
+  target.addEventListener('pointercancel', endPointer, {passive:false});
+  target.addEventListener('pointerout', endPointer, {passive:false});
+  target.addEventListener('pointerleave', endPointer, {passive:false});
+
+  // Double tap to reset zoom
+  let lastTap=0;
+  target.addEventListener('click', ()=>{
+    const now = Date.now();
+    if(now-lastTap < 320){
+      scale = 1; tx = 0; ty = 0; apply();
+    }
+    lastTap = now;
+  });
+
+  // If there's a Reset button in UI, hook it to reset zoom too
+  const resetBtn = document.querySelector('button[data-action="reset"], #btnReset, .btn-reset');
+  if(resetBtn){
+    resetBtn.addEventListener('click', ()=>{
+      // let existing reset run, then reset transform
+      setTimeout(()=>{ scale=1; tx=0; ty=0; apply(); }, 0);
+    });
+  }
+
+  apply();
 })();
 </script>
  </body>
