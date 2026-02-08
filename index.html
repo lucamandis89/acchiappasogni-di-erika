@@ -1296,7 +1296,7 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
     <div class="brand">
      <div class="logo">✦</div>
      <div>
-      <h1>Acchiappasogni di Erika</h1>
+      <h1>Acchiappasogni di Erika <span style="font-size:12px;opacity:.7">(v19)</span></h1>
       <small>Catalogo • Ordina su WhatsApp</small>
      </div>
     </div>
@@ -6775,56 +6775,50 @@ try{
   if(_c1){_c1.addEventListener('click', ()=>{parent.postMessage({type:'DC_CLOSE'}, '*');});}
 }catch(e){}
 <\/script>
-</body>
-</html>
-`;
 
-  function ensureLoaded(){
-    if(!frame) return;
-    if(!frame.srcdoc || frame.srcdoc.length < 50) {
-      frame.srcdoc = SRCDOC;
+<script>
+/* v19 safety bind */
+(function(){
+  function safeOpen(){
+    try{
+      console.log("[v19] btnCustomizer clicked");
+      (window.openBuilderLite||window.openBuilderLiteFallback||window.openBuilderLite2||window.openBuilderLite_||window.openBuilderLiteOld||window.openBuilderLite||openBuilderLite)();
+    }catch(e){
+      alert("Errore configuratore (v19): " + (e && e.message ? e.message : e));
+      console.error(e);
     }
   }
-
-  function openModal(){
-    if(!back) return;
-    ensureLoaded();
-    back.style.display = 'block';
-    back.setAttribute('aria-hidden','false');
-    document.documentElement.classList.add('modal-open');
-  }
-
-  function closeModal(){
-    if(!back) return;
-    back.style.display = 'none';
-    back.setAttribute('aria-hidden','true');
-    document.documentElement.classList.remove('modal-open');
-  }
-
-  // Override old functions if present
-  window.openBuilderLite = openModal;
-  window.closeBuilderLite = closeModal;
-
-  if(closeBtn) closeBtn.addEventListener('click', closeModal);
-
-  // click outside modal
-  if(back) {
-    back.addEventListener('click', (e)=>{
-      if(e.target === back) closeModal();
-    });
-  }
-
-  // ESC to close
-  document.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape' && back && back.style.display==='block') closeModal();
+  document.addEventListener("DOMContentLoaded", ()=>{
+    const b=document.getElementById("btnCustomizer");
+    if(b){
+      b.addEventListener("click", (ev)=>{ ev.preventDefault(); safeOpen(); }, {passive:false});
+    }
   });
-
-  // Listen from iframe
-  window.addEventListener('message', (ev)=>{
-    try {
-      if(ev && ev.data && ev.data.type === 'DC_CLOSE') closeModal();
-    } catch(e) {}
+  window.__CFG_VERSION__="v19";
+  window.__safeOpenCustomizer__=safeOpen;
+})();
+</script>
+   `; function ensureLoaded(){ if(!frame) return; if(!frame.srcdoc || frame.srcdoc.length &lt; 50) { frame.srcdoc = SRCDOC; } } function openModal(){ if(!back) return; ensureLoaded(); back.style.display = 'block'; back.setAttribute('aria-hidden','false'); document.documentElement.classList.add('modal-open'); } function closeModal(){ if(!back) return; back.style.display = 'none'; back.setAttribute('aria-hidden','true'); document.documentElement.classList.remove('modal-open'); } // Override old functions if present window.openBuilderLite = openModal; window.closeBuilderLite = closeModal; if(closeBtn) closeBtn.addEventListener('click', closeModal); // click outside modal if(back) { back.addEventListener('click', (e)=&gt;{ if(e.target === back) closeModal(); }); } // ESC to close document.addEventListener('keydown', (e)=&gt;{ if(e.key === 'Escape' &amp;&amp; back &amp;&amp; back.style.display==='block') closeModal(); }); // Listen from iframe window.addEventListener('message', (ev)=&gt;{ try { if(ev &amp;&amp; ev.data &amp;&amp; ev.data.type === 'DC_CLOSE') closeModal(); } catch(e) {} }); })(); 
+  <script>
+/* v19 safety bind */
+(function(){
+  function safeOpen(){
+    try{
+      console.log("[v19] btnCustomizer clicked");
+      (window.openBuilderLite||window.openBuilderLiteFallback||window.openBuilderLite2||window.openBuilderLite_||window.openBuilderLiteOld||window.openBuilderLite||openBuilderLite)();
+    }catch(e){
+      alert("Errore configuratore (v19): " + (e && e.message ? e.message : e));
+      console.error(e);
+    }
+  }
+  document.addEventListener("DOMContentLoaded", ()=>{
+    const b=document.getElementById("btnCustomizer");
+    if(b){
+      b.addEventListener("click", (ev)=>{ ev.preventDefault(); safeOpen(); }, {passive:false});
+    }
   });
+  window.__CFG_VERSION__="v19";
+  window.__safeOpenCustomizer__=safeOpen;
 })();
 </script>
  </body>
