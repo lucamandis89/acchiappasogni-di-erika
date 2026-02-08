@@ -263,6 +263,11 @@
     }
     @media (max-width: 860px){ .builder-grid{grid-template-columns:1fr;} }
 
+    @media (max-width: 980px) and (orientation: landscape){
+      .stage{height: clamp(220px, 64vh, 420px);} 
+      .base-ring,.web{width: min(58vh, 340px); height: min(58vh, 340px);} 
+    }
+
     .box{
       border:1px solid rgba(35,54,95,.6);
       background: rgba(7,10,18,.28);
@@ -416,7 +421,7 @@
     .stage{
       position:relative;
       width:100%;
-      height:380px;
+      height: clamp(300px, 50vh, 520px);
       border-radius:14px;
       border:1px solid rgba(35,54,95,.55);
       background: rgba(0,0,0,.15);
@@ -425,14 +430,14 @@
     }
     .base-ring{
       position:absolute; left:50%; top:52%;
-      width: 260px; height:260px;
+      width: min(72vw, 340px); height: min(72vw, 340px);
       transform: translate(-50%,-50%);
       border-radius: 999px;
       border: 10px solid rgba(233,239,255,.92);
       box-shadow: 0 10px 24px rgba(0,0,0,.25);
       pointer-events:none;
     }
-    .web{position:absolute; left:50%; top:52%; width:260px; height:260px; transform: translate(-50%,-50%); pointer-events:none; opacity:.95}
+    .web{position:absolute; left:50%; top:52%; width: min(72vw, 340px); height: min(72vw, 340px); transform: translate(-50%,-50%); pointer-events:none; opacity:.95}
     .dl-el{position:absolute; transform: translate(-50%,-50%); cursor:grab; user-select:none}
     .dl-el.selected{outline:2px solid rgba(124,92,255,.95); outline-offset: 4px; border-radius: 12px}
     .dl-ring{width:70px;height:70px;border-radius:999px;border:6px solid rgba(233,239,255,.88); background: rgba(255,255,255,.02)}
@@ -1105,6 +1110,10 @@ body.builder-open{ touch-action: none; } /* serve per pinch/zoom affidabile su A
   .base-shape{width: min(58vh, 340px) !important; height: min(58vh, 340px) !important;}
 }
 
+@media (max-width: 980px) and (orientation: landscape){
+  .web{width: min(58vh, 360px); height: min(58vh, 360px);} 
+}
+
 
 /* --- Simulator-like look (light, always visible ring) --- */
 #builderLiteBack.studio-mode{
@@ -1116,13 +1125,15 @@ body.builder-open{ touch-action: none; } /* serve per pinch/zoom affidabile su A
 }
 #builderLiteBack.studio-mode .base-ring{
   box-shadow: 0 18px 40px rgba(10,20,40,.12);
+  border: 6px solid rgba(20,40,60,.18);
+  background: radial-gradient(circle at 50% 40%, rgba(255,255,255,.96) 0%, rgba(245,248,255,.92) 40%, rgba(230,238,255,.86) 100%);
 }
 #builderLiteBack.studio-mode .web{
   opacity: 1 !important;
 }
 #builderLiteBack.studio-mode .web circle,
 #builderLiteBack.studio-mode .web line{
-  stroke: rgba(20,40,60,.28) !important;
+  stroke: rgba(20,40,60,.55) !important;
 }
 #builderLiteBack.studio-mode .hint{
   color: rgba(27,31,42,.75);
@@ -3084,8 +3095,8 @@ const WEAVE_TEMPLATES = {
       };
       st.addEventListener("pointerdown", (ev)=>{
         // se tocchi direttamente un elemento, ci pensa attachLiteGesture
-        if(ev.target && ev.target.closest && ev.target.closest(".dl-el")) return;
-        const sel = getSel();
+        // allow pinch/zoom even when touching an element
+const sel = getSel();
         if(!sel) return;
         ev.preventDefault();
         state.pointers.set(ev.pointerId, toStage(ev));
@@ -3284,9 +3295,8 @@ const WEAVE_TEMPLATES = {
 
       dlStage.addEventListener("pointerdown", (ev)=>{
         // Non interferire col drag dell'elemento (gestito dal nodo .dl-el)
-        if(ev.target && ev.target.closest && ev.target.closest(".dl-el")) return;
-
-        // Qui ci interessa il pinch con 2 dita sullo stage
+        // allow pinch/zoom even when touching an element
+// Qui ci interessa il pinch con 2 dita sullo stage
         const sel = getSelectedEl();
         if(!sel) return;
 
