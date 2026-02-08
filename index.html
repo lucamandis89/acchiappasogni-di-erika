@@ -1300,7 +1300,7 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
       <small>Catalogo • Ordina su WhatsApp</small>
      </div>
     </div>
-    <button class="btn primary" id="btnCustomizer">🪄 CREA IL TUO ACCHIAPPASOGNI</button>
+    <button class="btn primary" id="btnCustomizer" onclick="try{(window.openBuilderLite||openBuilderLite)();}catch(e){alert('Errore configuratore: '+(e&amp;&amp;e.message?e.message:e)); console.error(e);}">🪄 CREA IL TUO ACCHIAPPASOGNI</button>
     <button class="btn" id="btnGifts">🎁 BOMBONIERE &amp; REGALI</button>
     <div class="spacer"></div>
     <button class="btn" id="btnSettings">⚙️ Impostazioni</button>
@@ -4007,7 +4007,7 @@ function selectLite(id){
     builderModalBack.addEventListener("click",(e)=>{ if(e.target===builderModalBack) closeBuilder(); });
 
     // attacca al pulsante in alto
-    document.getElementById("btnCustomizer").onclick = openBuilderLite;
+    (()=>{const _b=document.getElementById("btnCustomizer"); if(_b) _b.onclick=openBuilderLite;})();
     function loadIntoBuilder(project){
       if(!project) return;
       // Clone to avoid mutating saved object accidentally
