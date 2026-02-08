@@ -247,7 +247,7 @@
       border-radius: 14px;
       background: rgba(7,10,18,.28);
     }
-    .thumb{width:54px;height:54px;border-radius:12px;overflow:hidden;background: rgba(255,255,255,.06); flex:0 0 auto}
+    .thumb{width:54px;height:54px;border-radius:12px;overflow:hidden;background: rgba(10,20,40,.04); flex:0 0 auto}
     .thumb img{width:100%;height:100%;object-fit:cover;display:block}
     .admin-item .info{flex:1; min-width:0}
     .admin-item .info b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -583,10 +583,11 @@ body.studio-mode{
 }
 /* Stage più grande e centrato */
 #builderLiteBack.studio-mode #dlStage{
-  height: min(72vh, 620px) !important;
-  max-height: 72vh !important;
-  touch-action: none;
-}
+    height: auto;
+    aspect-ratio: 1 / 1;
+    max-height: calc(100vh - 300px);
+    min-height: 320px;
+  }
 /* Su schermi stretti: layout a colonna */
 @media (max-width: 820px){
   /* Modal in colonna: anteprima sopra, controlli sotto */
@@ -606,8 +607,10 @@ body.studio-mode{
   }
 
   #builderLiteBack.studio-mode #dlStage{
-    height: 44vh !important;
-    max-height: 44vh !important;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    max-height: calc(100vh - 300px);
+    min-height: 320px;
   }
 
   /* Controlli: pannello chiaro e scroll naturale */
@@ -650,7 +653,7 @@ body.studio-mode{
   height: 6px;
   border-radius: 999px;
   margin: 6px auto 10px;
-  background: rgba(255,255,255,.18);
+  background: rgba(10,20,40,.18);
 }
 
 #builderLiteBack.studio-mode .studio-sheet{
@@ -733,11 +736,10 @@ body.studio-mode{
 
   /* canvas: dimensione calcolata in JS */
   #builderLiteBack.studio-mode #dlStage{
-    width: var(--studioStageSize, min(88vw, 380px)) !important;
-    height: var(--studioStageSize, min(88vw, 380px)) !important;
-    max-width: 100% !important;
-    max-height: 100% !important;
-    touch-action: none;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    max-height: calc(100vh - 300px);
+    min-height: 320px;
   }
 }
 
@@ -775,23 +777,25 @@ body.builder-open{ touch-action: none; } /* serve per pinch/zoom affidabile su A
     right: 10px;
     bottom: 10px;
     z-index: 9999;
-    height: var(--simSheetH, 42vh);
+    height: var(--simSheetH, 34vh);
     max-height: 82vh;
     overflow: hidden;
     padding: 0;
     border-radius: 18px;
-    background: rgba(6,10,22,.92);
+    background: rgba(255,255,255,.92);
+    color: #1b1f2a;
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
   }
   #builderLiteBack .sim-sheet-top{
     padding: 10px 12px 8px;
-    border-bottom: 1px solid rgba(255,255,255,.08);
+    border-bottom: 1px solid rgba(10,20,40,.10);
   }
   #builderLiteBack .sim-handle{
     width: 64px; height: 6px; border-radius: 999px;
     margin: 4px auto 10px;
-    background: rgba(255,255,255,.18);
+    background: rgba(10,20,40,.18);
     touch-action: none;
   }
   #builderLiteBack .sim-tabs{
@@ -803,14 +807,14 @@ body.builder-open{ touch-action: none; } /* serve per pinch/zoom affidabile su A
     flex: 1;
     padding: 10px 10px;
     border-radius: 14px;
-    border: 1px solid rgba(255,255,255,.10);
-    background: rgba(255,255,255,.06);
-    color: #e9efff;
+    border: 1px solid rgba(10,20,40,.14);
+    background: rgba(10,20,40,.04);
+    color: #1b1f2a;
     font-weight: 700;
     font-size: 14px;
   }
   #builderLiteBack .sim-tab.active{
-    background: rgba(132, 92, 255, .22);
+    background: rgba(132, 92, 255, .18);
     border-color: rgba(132,92,255,.55);
   }
   #builderLiteBack .sim-panels{
@@ -845,8 +849,8 @@ body.builder-open{ touch-action: none; } /* serve per pinch/zoom affidabile su A
   #builderLiteBack .sim-sheet-top{ margin-bottom: 12px; }
   #builderLiteBack .sim-handle{ display:none; }
   #builderLiteBack .sim-tabs{ display:flex; gap:8px; flex-wrap:wrap; }
-  #builderLiteBack .sim-tab{ padding:10px 12px; border-radius: 14px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.06); color:#e9efff; font-weight:700; }
-  #builderLiteBack .sim-tab.active{ background: rgba(132, 92, 255, .22); border-color: rgba(132,92,255,.55); }
+  #builderLiteBack .sim-tab{ padding:10px 12px; border-radius: 14px; border:1px solid rgba(255,255,255,.10); background: rgba(10,20,40,.04); color:#e9efff; font-weight:700; }
+  #builderLiteBack .sim-tab.active{ background: rgba(132, 92, 255, .18); border-color: rgba(132,92,255,.55); }
   #builderLiteBack .sim-panels{ }
 }
 #builderLiteBack .sim-panel{ display:none; }
@@ -880,8 +884,11 @@ body.builder-open{ touch-action: none; } /* serve per pinch/zoom affidabile su A
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.55) !important;
 }
 #builderLiteBack.studio-mode #dlStage{
-  background: transparent !important;
-}
+    height: auto;
+    aspect-ratio: 1 / 1;
+    max-height: calc(100vh - 300px);
+    min-height: 320px;
+  }
 
 /* Bottom sheet: più “gioco” e leggibile */
 #builderLiteBack.studio-mode .sim-sheet{
@@ -1096,6 +1103,29 @@ body.builder-open{ touch-action: none; } /* serve per pinch/zoom affidabile su A
 }
 @media (max-width: 980px) and (orientation: landscape){
   .base-shape{width: min(58vh, 340px) !important; height: min(58vh, 340px) !important;}
+}
+
+
+/* --- Simulator-like look (light, always visible ring) --- */
+#builderLiteBack.studio-mode{
+  --stagePad: 12px;
+}
+#builderLiteBack.studio-mode .stage{
+  background: linear-gradient(180deg,#bfe9ff 0%, #eaf6ff 55%, #ffffff 100%);
+  border-color: rgba(10,20,40,.10);
+}
+#builderLiteBack.studio-mode .base-ring{
+  box-shadow: 0 18px 40px rgba(10,20,40,.12);
+}
+#builderLiteBack.studio-mode .web{
+  opacity: 1 !important;
+}
+#builderLiteBack.studio-mode .web circle,
+#builderLiteBack.studio-mode .web line{
+  stroke: rgba(20,40,60,.28) !important;
+}
+#builderLiteBack.studio-mode .hint{
+  color: rgba(27,31,42,.75);
 }
 
 </style>
@@ -1390,7 +1420,7 @@ body.builder-open{ touch-action: none; } /* serve per pinch/zoom affidabile su A
         <svg class="base-shape" id="dlBaseSvg" viewBox="0 0 100 100" aria-hidden="true"></svg>
         <!-- piccola ragnatela (svg leggero) -->
         <svg class="web" id="dlWebSvg" viewBox="0 0 100 100" aria-hidden="true">
-         <g fill="none" stroke="rgba(233,239,255,.75)" stroke-width="1.2">
+         <g fill="none" stroke="rgba(20,40,60,.28)" stroke-width="1.2">
           <circle cx="50" cy="50" r="45" /> <circle cx="50" cy="50" r="35" /> <circle cx="50" cy="50" r="25" /> <circle cx="50" cy="50" r="15" /> <path d="M50 5 L50 95" /> <path d="M5 50 L95 50" /> <path d="M18 18 L82 82" /> <path d="M82 18 L18 82" />
          </g>
         </svg>
@@ -2846,7 +2876,7 @@ function setLiteShapeByModel(mv){
 
 const WEAVE_TEMPLATES = {
       classico: `
-        <g fill="none" stroke="rgba(233,239,255,.75)" stroke-width="1.2">
+        <g fill="none" stroke="rgba(20,40,60,.28)" stroke-width="1.2">
           <circle cx="50" cy="50" r="45"/>
           <circle cx="50" cy="50" r="35"/>
           <circle cx="50" cy="50" r="25"/>
