@@ -758,6 +758,295 @@ body.studio-mode{
   }
 }
 
+
+/* ===== Simulator UI (stile app) ===== */
+#builderLiteBack .modal{ width: min(1120px, 96vw); max-width: 1120px; }
+#builderLiteBack .modal-body{ padding-bottom: 14px; }
+body.builder-open{ touch-action: none; } /* serve per pinch/zoom affidabile su Android */
+#dlStage{ touch-action: none; } /* pinch/drag sullo stage */
+
+@media (max-width: 900px){
+  #builderLiteBack .lite-grid{ display: block; }
+  #builderLiteBack .lite-grid > .box:first-child{ margin-bottom: 10px; }
+  /* stage sopra, sheet sotto */
+  #builderLiteBack .sim-sheet{
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    z-index: 9999;
+    height: var(--simSheetH, 42vh);
+    max-height: 82vh;
+    overflow: hidden;
+    padding: 0;
+    border-radius: 18px;
+    background: rgba(6,10,22,.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  #builderLiteBack .sim-sheet-top{
+    padding: 10px 12px 8px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  #builderLiteBack .sim-handle{
+    width: 64px; height: 6px; border-radius: 999px;
+    margin: 4px auto 10px;
+    background: rgba(255,255,255,.18);
+    touch-action: none;
+  }
+  #builderLiteBack .sim-tabs{
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+  }
+  #builderLiteBack .sim-tab{
+    flex: 1;
+    padding: 10px 10px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.06);
+    color: #e9efff;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  #builderLiteBack .sim-tab.active{
+    background: rgba(132, 92, 255, .22);
+    border-color: rgba(132,92,255,.55);
+  }
+  #builderLiteBack .sim-panels{
+    height: calc(100% - 74px);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 12px 12px 16px;
+  }
+  #builderLiteBack .sim-title{
+    font-size: 16px;
+    margin: 0 0 10px;
+  }
+  /* testo più grande nel pannello */
+  #builderLiteBack label{ font-size: 14px; }
+  #builderLiteBack input, #builderLiteBack select, #builderLiteBack textarea{
+    font-size: 16px;
+  }
+  #builderLiteBack .chip{ font-size: 15px; padding: 10px 12px; }
+  #builderLiteBack .preset{ font-size: 14px; }
+  /* stage: lascia spazio al cassetto */
+  #builderLiteBack .lite-grid > .box:first-child{
+    padding-bottom: calc(var(--simSheetH, 42vh) + 22px);
+  }
+  #builderLiteBack .stage{
+    width: var(--studioStageSize, min(84vw, 360px));
+    height: var(--studioStageSize, min(84vw, 360px));
+    margin: 0 auto;
+  }
+}
+@media (min-width: 901px){
+  /* desktop: sheet normale a destra, ma con tab */
+  #builderLiteBack .sim-sheet-top{ margin-bottom: 12px; }
+  #builderLiteBack .sim-handle{ display:none; }
+  #builderLiteBack .sim-tabs{ display:flex; gap:8px; flex-wrap:wrap; }
+  #builderLiteBack .sim-tab{ padding:10px 12px; border-radius: 14px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.06); color:#e9efff; font-weight:700; }
+  #builderLiteBack .sim-tab.active{ background: rgba(132, 92, 255, .22); border-color: rgba(132,92,255,.55); }
+  #builderLiteBack .sim-panels{ }
+}
+#builderLiteBack .sim-panel{ display:none; }
+#builderLiteBack .sim-panel.active{ display:block; }
+
+
+/* ===== Game-like UI override (ispirato a simulator, senza copiare asset) ===== */
+#builderLiteBack.studio-mode .modal{
+  background: linear-gradient(180deg, rgba(245,248,255,.98), rgba(236,242,255,.98)) !important;
+  color: #101423 !important;
+  border: 1px solid rgba(20,30,60,.10) !important;
+}
+#builderLiteBack.studio-mode .modal-header{
+  background: transparent !important;
+  border-bottom: 1px solid rgba(20,30,60,.10) !important;
+}
+#builderLiteBack.studio-mode .modal-header h2,
+#builderLiteBack.studio-mode .modal-header h1,
+#builderLiteBack.studio-mode .modal-header .title{
+  color:#101423 !important;
+  text-shadow: none !important;
+}
+#builderLiteBack.studio-mode .lite-grid > .box{
+  background: rgba(255,255,255,.70) !important;
+  border: 1px solid rgba(20,30,60,.10) !important;
+  box-shadow: 0 10px 28px rgba(10,20,60,.12) !important;
+}
+#builderLiteBack.studio-mode #dlStageWrap{
+  background: rgba(255,255,255,.65) !important;
+  border: 1px solid rgba(20,30,60,.10) !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.55) !important;
+}
+#builderLiteBack.studio-mode #dlStage{
+  background: transparent !important;
+}
+
+/* Bottom sheet: più “gioco” e leggibile */
+#builderLiteBack.studio-mode .sim-sheet{
+  background: rgba(255,255,255,.92) !important;
+  color:#101423 !important;
+  border: 1px solid rgba(20,30,60,.12) !important;
+  box-shadow: 0 14px 44px rgba(10,20,60,.18) !important;
+}
+#builderLiteBack.studio-mode .sim-sheet .studio-sheet-handle,
+#builderLiteBack.studio-mode .sim-sheet .sim-handle{
+  background: rgba(20,30,60,.25) !important;
+}
+#builderLiteBack.studio-mode .sim-sheet *{
+  color:#101423 !important;
+}
+#builderLiteBack.studio-mode .sim-sheet label,
+#builderLiteBack.studio-mode .sim-sheet .muted{
+  color: rgba(16,20,35,.70) !important;
+}
+
+/* Tabs stile “pulsanti gioco” */
+#builderLiteBack .sim-tabs{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+#builderLiteBack .sim-tab{
+  border-radius: 16px !important;
+  padding: 10px 14px !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  border: 1px solid rgba(20,30,60,.12) !important;
+  background: rgba(245,248,255,.92) !important;
+}
+#builderLiteBack .sim-tab.active{
+  background: linear-gradient(180deg, rgba(120,200,255,.70), rgba(150,180,255,.70)) !important;
+  border-color: rgba(70,120,255,.35) !important;
+}
+
+/* Chip stile “tool” grande */
+#builderLiteBack .chip{
+  border-radius: 999px !important;
+  padding: 10px 14px !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  border: 1px solid rgba(20,30,60,.12) !important;
+  background: rgba(245,248,255,.92) !important;
+}
+#builderLiteBack .chip:hover{ filter: brightness(1.02); }
+
+/* Bottoni più grandi e “touch friendly” */
+#builderLiteBack .btn{
+  border-radius: 18px !important;
+  padding: 12px 16px !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  border: 1px solid rgba(20,30,60,.12) !important;
+}
+#builderLiteBack .btn.primary{
+  background: linear-gradient(180deg, rgba(90,210,140,.85), rgba(60,190,120,.85)) !important;
+  border-color: rgba(40,160,90,.35) !important;
+}
+#builderLiteBack .btn.danger{
+  background: linear-gradient(180deg, rgba(255,130,140,.78), rgba(255,110,120,.78)) !important;
+  border-color: rgba(220,60,70,.28) !important;
+}
+#builderLiteBack .btn:not(.primary):not(.danger){
+  background: rgba(245,248,255,.92) !important;
+}
+
+/* Input più leggibili */
+#builderLiteBack input, #builderLiteBack select, #builderLiteBack textarea{
+  font-size: 16px !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(20,30,60,.12) !important;
+  background: rgba(255,255,255,.88) !important;
+}
+
+/* Mobile: stage un filo più piccolo per lasciare spazio al sheet */
+@media (max-width: 900px){
+  #builderLiteBack.studio-mode { --stageSafePad: 110px !important; }
+  #builderLiteBack.studio-mode #dlStageWrap{ padding: 10px 12px 12px !important; }
+}
+
+
+/* === SIMULATOR: barra "gioco" con 3 bottoni rotondi + colori rapidi === */
+#builderLiteBack .sim-quick-colors{ display:flex; gap:10px; margin-top:8px; }
+#builderLiteBack .sim-quick-colors .qdot{
+  width:34px; height:34px; border-radius:999px;
+  border:1px solid rgba(255,255,255,.20);
+  background: rgba(255,255,255,.10);
+}
+#builderLiteBack .sim-quick-colors .qdot.d-red { background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.25), rgba(255,90,90,.35) 60%, rgba(255,255,255,.08) 100%); }
+#builderLiteBack .sim-quick-colors .qdot.d-blue{ background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.25), rgba(90,150,255,.35) 60%, rgba(255,255,255,.08) 100%); }
+#builderLiteBack .sim-quick-colors .qdot.d-gold{ background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.25), rgba(255,210,90,.35) 60%, rgba(255,255,255,.08) 100%); }
+
+@media (max-width: 900px){
+  #builderLiteBack .sim-tabs{ display:none; }
+  }
+
+/* --- Color picker overlay --- */
+.dl-color-overlay{
+  position:fixed; inset:0; z-index:999999;
+  background:rgba(0,0,0,.55);
+  display:flex; align-items:center; justify-content:center;
+  padding:16px;
+}
+.dl-color-card{
+  width:min(520px, 92vw);
+  background:rgba(10,18,35,.92);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  box-shadow:0 20px 60px rgba(0,0,0,.55);
+  padding:14px 14px 12px;
+  backdrop-filter: blur(10px);
+}
+.dl-color-title{ font-weight:800; margin-bottom:10px; }
+.dl-color-swatches{
+  display:grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap:10px;
+  margin-bottom:12px;
+}
+.dl-swatch{
+  width:100%; aspect-ratio:1/1;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.15);
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,.15);
+}
+.dl-swatch:active{ transform: scale(.98); }
+.dl-color-actions{ display:flex; justify-content:flex-end; gap:10px; }
+
+/* --- Colorable accessory rendering --- */
+.dl-lite-el .dl-token{
+  width:64px; height:64px;
+  border-radius:999px;
+  border:2px solid rgba(255,255,255,.30);
+  box-shadow: 0 10px 25px rgba(0,0,0,.35), inset 0 0 0 2px rgba(0,0,0,.10);
+}
+.dl-lite-el .dl-feather{
+  width:72px; height:72px;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
+}
+
+
+/* --- SIMULATOR ACCESSORI (catalogo) --- */
+.accessory-drawer{margin-top:10px}
+.acc-cats{display:flex;gap:8px;overflow:auto;padding:6px 2px 10px 2px;-webkit-overflow-scrolling:touch}
+.acc-cats button{white-space:nowrap;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#eaf2ff;border-radius:999px;padding:8px 12px;font-weight:700;font-size:13px}
+.acc-cats button.active{background:rgba(120,140,255,.25);border-color:rgba(170,180,255,.35)}
+.acc-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;max-height:220px;overflow:auto;padding:8px 2px 2px 2px;-webkit-overflow-scrolling:touch}
+@media (min-width: 520px){.acc-grid{grid-template-columns:repeat(6,minmax(0,1fr));max-height:260px}}
+.acc-tile{border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18);border-radius:14px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;user-select:none;touch-action:manipulation}
+.acc-tile .ico{width:42px;height:42px;display:grid;place-items:center}
+.acc-tile .lbl{font-size:11px;line-height:1.1;color:rgba(255,255,255,.86);text-align:center}
+.acc-tile:active{transform:scale(.98)}
+.color-pop{position:absolute;left:12px;right:12px;bottom:84px;z-index:50;border:1px solid rgba(255,255,255,.14);background:rgba(12,18,34,.92);backdrop-filter:blur(10px);border-radius:18px;padding:10px 10px 12px 10px;display:none}
+.color-pop.show{display:block}
+.color-pop .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.color-pop h4{margin:0;font-size:13px;color:#eaf2ff}
+.color-swatch{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-top:10px}
+.color-swatch button{height:28px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:transparent}
+.color-swatch button.active{outline:2px solid rgba(170,180,255,.7)}
+.smallhint{font-size:11px;color:rgba(255,255,255,.6);margin-top:8px}
+
 </style>
  </head>
  <body>
@@ -1036,7 +1325,7 @@ body.studio-mode{
   <div class="modal-back" id="builderLiteBack">
    <div class="modal">
     <div class="modal-head">
-     <h2>🪄 Personalizza il tuo Acchiappasogni</h2>
+     <h2>Personalizza il tuo Acchiappasogni</h2>
      <div class="spacer"></div>
      <button class="btn" id="btnCloseBuilderLite">✖ Chiudi</button>
     </div>
@@ -1060,6 +1349,7 @@ body.studio-mode{
         <button class="btn" id="dlSelectNone">🖐️ Deseleziona</button>
         <button class="btn danger" id="dlDelete">🗑 Rimuovi elemento</button>
         <button class="btn danger" id="dlReset">♻️ Reset</button>
+        <button class="btn" id="dlColorBtn" style="display:none">🎨 Colore</button>
         <button class="btn" id="dlFullscreen">⛶ Schermo intero</button>
        </div>
        <div class="helpbox" style="margin-top:10px">
@@ -1068,81 +1358,115 @@ body.studio-mode{
         • Selezionato = bordo viola. “Rimuovi” lo elimina.
        </div>
       </div>
-      <!-- DESTRA: SCELTE SEMPLICI -->
-      <div class="box">
-       <h3>Scelte rapide</h3>
-       <div class="row2">
-        <div>
-         <label>Modello</label> <select id="dlModel"> <option value="1">1 • Classico</option> <option value="2">2 • Cerchio</option> <option value="3">3 • Luna</option> <option value="4">4 • Cuore</option> <option value="5">5 • Stella</option> <option value="6">6 • Chakra</option> <option value="7">7 • Yin &amp; Yang</option> <option value="8">8 • Personalizzato</option> </select>
+      <!-- DESTRA: SIMULATOR (stile app) -->
+      <div class="box sim-sheet" id="simSheet">
+       <div class="sim-sheet-top">
+        <div class="sim-handle" id="simHandle" aria-label="Trascina per ridimensionare"></div>
+        <div class="sim-tabs" role="tablist" aria-label="Strumenti">
+         <button class="sim-tab active" data-simtab="base" type="button">Base</button>
+         <button class="sim-tab" data-simtab="accessori" type="button">Accessori</button>
+         <button class="sim-tab" data-simtab="testo" type="button">Testo</button>
+         <button class="sim-tab" data-simtab="azioni" type="button">Invio</button>
         </div>
-        <div>
-         <label>Diametro (cm)</label> <select id="dlDiameter"> <option>15</option><option>20</option><option>25</option> <option selected>30</option><option>35</option><option>40</option><option>50</option> </select>
-        </div>
-        <div>
-         <label>Colore cerchio</label> <input id="dlRingColor" placeholder="Es: bianco / oro / viola / blu...">
-        </div>
-        <div>
-         <label>Colore piume</label> <input id="dlFeatherColor" placeholder="Es: viola / bianco / arcobaleno...">
-        </div>
-       </div>
-       <div class="hr2"></div>
-       <div class="row2">
-        <div>
-         <label>Tessitura cerchio</label> <select id="dlWeave"> <option value="classico" selected>Classica</option> <option value="fitta">Ragnatela fitta</option> <option value="pizzo">Centrino / pizzo</option> <option value="chakra">Chakra (raggi)</option> <option value="yinyang">Yin &amp; Yang</option> <option value="stella">Stella</option> </select>
-         <div class="hint">Cambia solo l’anteprima (non tocca il catalogo).</div>
-        </div>
-        <div>
-         <label>Intreccio (testo)</label> <input id="dlWeaveNote" placeholder="Es: intreccio bianco, pizzo, doppio filo...">
-         <div class="hint">Viene inviato nell’ordine WhatsApp.</div>
+        <div class="sim-quickbar" aria-label="Scelte rapide">
+         <div class="quick-group">
+          <div class="quick-label">Colori cerchio</div>
+          <button class="qdot c1" type="button" data-quick-target="dlRingColor" data-quick-value="bianco"></button>
+          <button class="qdot c2" type="button" data-quick-target="dlRingColor" data-quick-value="verde"></button>
+          <button class="qdot c3" type="button" data-quick-target="dlRingColor" data-quick-value="rosso"></button>
+         </div>
+         <div class="quick-group">
+          <div class="quick-label">Colori piume</div>
+          <button class="qdot c4" type="button" data-quick-target="dlFeatherColor" data-quick-value="bianco"></button>
+          <button class="qdot c5" type="button" data-quick-target="dlFeatherColor" data-quick-value="arcobaleno"></button>
+          <button class="qdot c6" type="button" data-quick-target="dlFeatherColor" data-quick-value="nero"></button>
+         </div>
         </div>
        </div>
-       <div class="hr2"></div>
-       <h3>🔥 Esempi pronti (1 tocco)</h3>
-       <div class="preset-grid" id="dlPresets">
-        <button class="preset" data-preset="viola"><b>Viola Classico</b> <small>Piume viola + cristalli</small></button>
-        <button class="preset" data-preset="oro"><b>Oro &amp; Bianco</b> <small>Elegante + perle oro</small></button>
-        <button class="preset" data-preset="natale"><b>Natale</b> <small>Fiocchi + campanelline</small></button>
-        <button class="preset" data-preset="albero"><b>Albero di cerchi</b> <small>Molti cerchi + luci</small></button>
-        <button class="preset" data-preset="real"><b>REAL HASTA…</b> <small>Rosso/Nero + simboli</small></button>
+      </div>
+      <div class="sim-panels">
+       <div class="sim-panel active" data-simpanel="base">
+        <h3 class="sim-title">Scelte rapide</h3>
+        <div class="row2">
+         <div>
+          <label>Modello</label> <select id="dlModel"> <option value="1">1 • Classico</option> <option value="2">2 • Cerchio</option> <option value="3">3 • Luna</option> <option value="4">4 • Cuore</option> <option value="5">5 • Stella</option> <option value="6">6 • Chakra</option> <option value="7">7 • Yin &amp; Yang</option> <option value="8">8 • Personalizzato</option> </select>
+         </div>
+         <div>
+          <label>Diametro (cm)</label> <select id="dlDiameter"> <option>15</option><option>20</option><option>25</option> <option selected>30</option><option>35</option><option>40</option><option>50</option> </select>
+         </div>
+         <div>
+          <label>Colore cerchio</label> <input id="dlRingColor" placeholder="Es: bianco / oro / viola / blu...">
+          <div class="sim-quick-colors" aria-label="Colori rapidi">
+           <button class="qdot d-red" data-ring="rosso" type="button" aria-label="Rosso"></button>
+           <button class="qdot d-blue" data-ring="blu" type="button" aria-label="Blu"></button>
+           <button class="qdot d-gold" data-ring="oro" type="button" aria-label="Oro"></button>
+          </div>
+         </div>
+         <div>
+          <label>Colore piume</label> <input id="dlFeatherColor" placeholder="Es: viola / bianco / arcobaleno...">
+         </div>
+        </div>
+        <div class="hr2"></div>
+        <div class="row2">
+         <div>
+          <label>Tessitura cerchio</label> <select id="dlWeave"> <option value="classico" selected>Classica</option> <option value="fitta">Ragnatela fitta</option> <option value="pizzo">Centrino / pizzo</option> <option value="chakra">Chakra (raggi)</option> <option value="yinyang">Yin &amp; Yang</option> <option value="stella">Stella</option> </select>
+          <div class="hint">Cambia solo l’anteprima (non tocca il catalogo).</div>
+         </div>
+         <div>
+          <label>Intreccio (testo)</label> <input id="dlWeaveNote" placeholder="Es: intreccio bianco, pizzo, doppio filo...">
+          <div class="hint">Viene inviato nell’ordine WhatsApp.</div>
+         </div>
+        </div>
+        <div class="hr2"></div>
+        <h3>🔥 Esempi pronti (1 tocco)</h3>
+        <div class="preset-grid" id="dlPresets">
+         <button class="preset" data-preset="viola"><b>Viola Classico</b> <small>Piume viola + cristalli</small></button>
+         <button class="preset" data-preset="oro"><b>Oro &amp; Bianco</b> <small>Elegante + perle oro</small></button>
+         <button class="preset" data-preset="natale"><b>Natale</b> <small>Fiocchi + campanelline</small></button>
+         <button class="preset" data-preset="albero"><b>Albero di cerchi</b> <small>Molti cerchi + luci</small></button>
+         <button class="preset" data-preset="real"><b>REAL HASTA…</b> <small>Rosso/Nero + simboli</small></button>
+        </div>
        </div>
-       <h3>Accessori (tocca per aggiungere)</h3>
-       <div class="palette">
-        <button class="chip" data-add="feather">🪶 Piuma</button>
-        <button class="chip" data-add="crystal">💎 Cristallo</button>
-        <button class="chip" data-add="bead">⚪ Perla</button>
-        <button class="chip" data-add="bead_red">🔴 Perla rossa</button>
-        <button class="chip" data-add="bead_black">⚫ Perla nera</button>
-        <button class="chip" data-add="bead_blue">🔵 Perla blu</button>
-        <button class="chip" data-add="bead_green">🟢 Perla verde</button>
-        <button class="chip" data-add="bead_purple">🟣 Perla viola</button>
-        <button class="chip" data-add="bead_yellow">🟡 Perla gialla</button>
-        <button class="chip" data-add="bead_pink">💗 Perla rosa</button>
-        <button class="chip" data-add="bow">🎀 Fiocco</button>
-        <button class="chip" data-add="bell">🔔 Campanella</button>
-        <button class="chip" data-add="snow">❄️ Fiocco neve</button>
-        <button class="chip" data-add="glitter">✨ Brillantini</button>
-        <button class="chip" data-add="chain">⛓️ Catena</button>
-        <button class="chip" data-add="light">💡 Luci</button>
-        <button class="chip" data-add="orc">👹 Emoji</button>
-        <button class="chip" data-add="symbolA">🅰️ Doppia A</button>
-        <button class="chip" data-add="lace">🧵 Centrino/Pizzo</button>
-        <button class="chip" data-add="ring_small">⭕ Cerchio piccolo</button>
+       <div class="sim-panel" data-simpanel="accessori">
+        <h3>Accessori (tocca per aggiungere)</h3>
+        <div class="accessory-drawer">
+         <div class="acc-cats" id="accCats"></div>
+         <div class="acc-grid" id="accGrid"></div>
+         <div class="smallhint">Tocca un accessorio per aggiungerlo. Tocca un elemento sul cerchio per selezionarlo, poi cambia colore (se disponibile).</div>
+         <div style="display:flex;gap:10px;margin-top:10px;align-items:center;justify-content:space-between">
+          <button class="pill" id="accColorBtn" type="button" style="flex:1">🎨 Colore elemento selezionato</button>
+          <button class="pill" id="accBringFrontBtn" type="button" style="flex:1">⬆️ Porta davanti</button>
+         </div>
+        </div>
+        <div class="color-pop" id="accColorPop" aria-hidden="true">
+         <div class="row">
+          <h4>Colore accessorio</h4>
+          <button class="pill" id="accColorCloseBtn" type="button">Chiudi</button>
+         </div>
+         <div class="color-swatch" id="accColorSwatch"></div>
+         <div class="smallhint">Se un accessorio non supporta colori, verrà lasciato com’è.</div>
+        </div>
+        <div class="sim-panel" data-simpanel="testo">
+         <h3 class="sim-title">Scritta &amp; note</h3>
+         <div>
+          <label>Scritta (opzionale)</label> <input id="dlText" placeholder="Es: nome, frase, data...">
+          <div class="hint">La scritta viene inviata nell’ordine WhatsApp.</div>
+         </div>
+         <div style="margin-top:10px">
+          <label>Note extra</label> <textarea id="dlNotes" placeholder="Es: perle rosse e nere, charm specifico, tema, ecc..."></textarea>
+         </div>
+        </div>
+        <div class="sim-panel" data-simpanel="azioni">
+         <h3 class="sim-title">Salva / Invia</h3>
+         <div class="hr2"></div>
+         <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn" id="dlSave">💾 Salva</button>
+          <button class="btn primary" id="dlSend">📲 Invia su WhatsApp</button>
+          <button class="btn primary" id="dlSaveSend">✅ Salva &amp; Invia</button>
+         </div>
+         <div class="hint" style="margin-top:10px">Nota: l’anteprima è “simbolica” (serve per scegliere la posizione degli accessori).</div>
+        </div>
        </div>
-       <div class="hr2"></div>
-       <div>
-        <label>Scritta (opzionale)</label> <input id="dlText" placeholder="Es: nome, frase, data...">
-        <div class="hint">La scritta viene inviata nell’ordine WhatsApp.</div>
-       </div>
-       <div style="margin-top:10px">
-        <label>Note extra</label> <textarea id="dlNotes" placeholder="Es: perle rosse e nere, charm specifico, tema, ecc..."></textarea>
-       </div>
-       <div class="hr2"></div>
-       <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btn" id="dlSave">💾 Salva</button>
-        <button class="btn primary" id="dlSend">📲 Invia su WhatsApp</button>
-        <button class="btn primary" id="dlSaveSend">✅ Salva &amp; Invia</button>
-       </div>
-       <div class="hint" style="margin-top:10px">Nota: l’anteprima è “simbolica” (serve per scegliere la posizione degli accessori).</div>
       </div>
      </div>
     </div>
@@ -2360,6 +2684,8 @@ function openBuilderLite(){
       builderLiteBack.style.display = "flex";
       document.body.classList.add("builder-open");
           enterStudioMode();
+      simSetup();
+      simRecalcStage();
     }
 
     function closeBuilderLite(){
@@ -2660,6 +2986,68 @@ const WEAVE_TEMPLATES = {
       const t = String(type || "").trim();
       if(t.startsWith("emoji:")) return t.slice(6) || "✨";
       return LITE_EMOJI[t] || "✨";
+
+    // Pinch/rotate anche sulla STAGE quando un elemento è selezionato (utile per emoji piccole)
+    (function(){
+      const st = dlStage;
+      if(!st) return;
+      st.style.touchAction = "none";
+      const state = { pointers:new Map(), startDist:0, startAng:0, startScale:1, startRot:0, active:false };
+      const toStage = (e)=>{
+        const r = st.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+      };
+      const getSel = ()=>{
+        if(!liteSelectedId || !lite) return null;
+        return lite.elements.find(x=>x && x.id===liteSelectedId) || null;
+      };
+      st.addEventListener("pointerdown", (ev)=>{
+        // se tocchi direttamente un elemento, ci pensa attachLiteGesture
+        if(ev.target && ev.target.closest && ev.target.closest(".dl-el")) return;
+        const sel = getSel();
+        if(!sel) return;
+        ev.preventDefault();
+        state.pointers.set(ev.pointerId, toStage(ev));
+        st.setPointerCapture(ev.pointerId);
+        if(state.pointers.size===2){
+          const pts = Array.from(state.pointers.values()).slice(0,2);
+          const dx = pts[1].x-pts[0].x, dy=pts[1].y-pts[0].y;
+          state.startDist = Math.max(1, Math.hypot(dx,dy));
+          state.startAng = Math.atan2(dy,dx);
+          ensureLiteElDefaults(sel);
+          state.startScale = sel.scale;
+          state.startRot = sel.rot;
+          state.active = true;
+        }
+      });
+      st.addEventListener("pointermove", (ev)=>{
+        if(!state.pointers.has(ev.pointerId)) return;
+        const sel = getSel();
+        if(!sel) return;
+        state.pointers.set(ev.pointerId, toStage(ev));
+        if(state.active && state.pointers.size>=2){
+          const pts = Array.from(state.pointers.values()).slice(0,2);
+          const dx = pts[1].x-pts[0].x, dy=pts[1].y-pts[0].y;
+          const dist = Math.max(1, Math.hypot(dx,dy));
+          const ang = Math.atan2(dy,dx);
+          let nextScale = state.startScale * (dist/state.startDist);
+          nextScale = Math.max(0.45, Math.min(3.0, nextScale));
+          let nextRot = state.startRot + ((ang-state.startAng) * 180/Math.PI);
+          nextRot = (nextRot+360)%360;
+          sel.scale = nextScale;
+          sel.rot = nextRot;
+          const node = dlStage.querySelector('.dl-el[data-id="'+sel.id+'"]');
+          if(node) applyLiteElTransform(node, sel);
+        }
+      });
+      const end = (ev)=>{
+        if(state.pointers.has(ev.pointerId)) state.pointers.delete(ev.pointerId);
+        if(state.pointers.size<2) state.active=false;
+      };
+      st.addEventListener("pointerup", end);
+      st.addEventListener("pointercancel", end);
+      st.addEventListener("lostpointercapture", end);
+    })();
     }
 
     function ensureLiteElDefaults(el){
@@ -3118,6 +3506,8 @@ function selectLite(id){
       liteSelectedId = null;
       Array.from(dlStage.querySelectorAll(".dl-el")).forEach(n => n.remove());
       selectLite(null);
+      // dopo reset: ricalcola dimensioni stage/sheet (evita "layout strani")
+      if(typeof simRecalcStage === "function") simRecalcStage();
     };
 
     // Fullscreen toggle (builder modal)
@@ -3129,8 +3519,55 @@ function selectLite(id){
           exitStudioMode();
         }else{
           enterStudioMode();
+      simSetup();
+      simRecalcStage();
         }
       };
+    // --- Color picker for selected accessory ---
+    const dlColorBtn = document.getElementById("dlColorBtn");
+    const dlColorOverlay = document.getElementById("dlColorOverlay");
+    const dlColorSwatches = document.getElementById("dlColorSwatches");
+    const dlColorClose = document.getElementById("dlColorClose");
+
+    const DL_COLORS = ["#FFFFFF","#F2F2F2","#000000","#2C3E50","#E74C3C","#FF6FB1","#F1C40F","#2ECC71","#3498DB","#9B59B6","#AEEBFF","#B388FF"];
+
+    function isColorableType(t){
+      return (t==="bead" || t==="piuma" || t==="crystal" || t==="fiocco" || (t && t.startsWith("perla")));
+    }
+
+    function refreshColorButton(){
+      if(!dlColorBtn) return;
+      if(!liteSelId){ dlColorBtn.style.display="none"; return; }
+      const el = liteData.elements.find(x=>x.id===liteSelId);
+      dlColorBtn.style.display = (el && isColorableType(el.type)) ? "" : "none";
+    }
+
+    function openColorPicker(){
+      if(!liteSelId) return;
+      const el = liteData.elements.find(x=>x.id===liteSelId);
+      if(!el || !isColorableType(el.type)) return;
+
+      dlColorSwatches.innerHTML = "";
+      DL_COLORS.forEach(c=>{
+        const b = document.createElement("button");
+        b.className = "dl-swatch";
+        b.style.background = c;
+        b.addEventListener("click", ()=>{
+          el.color = c;
+          syncLiteStageFromData();
+          dlColorOverlay.style.display = "none";
+          refreshColorButton();
+        });
+        dlColorSwatches.appendChild(b);
+      });
+
+      dlColorOverlay.style.display = "flex";
+    }
+
+    dlColorBtn?.addEventListener("click", openColorPicker);
+    dlColorClose?.addEventListener("click", ()=> dlColorOverlay.style.display="none");
+    dlColorOverlay?.addEventListener("click", (e)=>{ if(e.target===dlColorOverlay) dlColorOverlay.style.display="none"; });
+
     }
 
 
@@ -3565,7 +4002,7 @@ function selectLite(id){
       el.dataset.id = id;
       el.innerHTML = `
         <div class="item-head">
-          <b>✨ Accessorio</b>
+          <b>Accessorio</b>
           <div class="item-actions">
             <button class="btn danger mini" data-del type="button">Elimina</button>
           </div>
@@ -4184,6 +4621,605 @@ function selectLite(id){
   }
   // primo giro
   setupBuilderBottomSheet();
+})();
+
+/* ===== Simulator bottom-sheet + tabs ===== */
+let simActiveTab = "base";
+function simSetup(){
+  const back = document.getElementById("builderLiteBack");
+  if(!back) return;
+
+  const sheet = document.getElementById("simSheet");
+  const handle = document.getElementById("simHandle");
+    });
+
+  // Colori rapidi (scrive nel campo "Colore cerchio" e trigghera l'update)
+  sheet.querySelectorAll(".sim-quick-colors .qdot").forEach(dot=>{
+    dot.addEventListener("click", ()=>{
+      const v = dot.dataset.ring || "";
+      const inp = document.getElementById("dlRingColor");
+      if(inp){
+        inp.value = v;
+        inp.dispatchEvent(new Event("input", {bubbles:true}));
+        inp.dispatchEvent(new Event("change", {bubbles:true}));
+      }
+    });
+  });
+
+  if(!sheet) return;
+
+  // Tabs
+  sheet.querySelectorAll(".sim-tab").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      simSetTab(btn.dataset.simtab || "base");
+      // quando tocchi un tab, apri un po' il cassetto (ma non coprire lo stage)
+      simSetSheetHeightVH(Math.max(42, simGetSheetVH()));
+      simRecalcStage();
+    });
+  });
+
+  // Drag handle: resize sheet
+  if(handle && !handle.dataset.bound){
+    handle.dataset.bound="1";
+    let startY=0, startH=0, dragging=false;
+    handle.addEventListener("pointerdown",(e)=>{
+      dragging=true;
+      startY=e.clientY;
+      startH=sheet.getBoundingClientRect().height;
+      handle.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    handle.addEventListener("pointermove",(e)=>{
+      if(!dragging) return;
+      const dy = startY - e.clientY; // su aumenta
+      let newH = startH + dy;
+      const minH = window.innerHeight*0.30;
+      const maxH = window.innerHeight*0.82;
+      newH = Math.max(minH, Math.min(maxH, newH));
+      sheet.style.setProperty("--simSheetH", (newH/window.innerHeight*100).toFixed(1) + "vh");
+      simRecalcStage();
+      e.preventDefault();
+    });
+    const endDrag=()=>{ dragging=false; };
+    handle.addEventListener("pointerup", endDrag);
+    handle.addEventListener("pointercancel", endDrag);
+    // Tap handle = toggle
+    handle.addEventListener("click", ()=>{
+      const vh = simGetSheetVH();
+      simSetSheetHeightVH(vh > 60 ? 42 : 72);
+      simRecalcStage();
+    });
+  }
+
+  // Ensure correct initial
+  simSetTab(simActiveTab);
+  if(window.matchMedia("(max-width: 900px)").matches){
+    simSetSheetHeightVH(42);
+  }
+  simRecalcStage();
+}
+
+function simSetTab(tab){
+  simActiveTab = tab;
+  const sheet=document.getElementById("simSheet");
+  if(!sheet) return;
+  sheet.querySelectorAll(".sim-tab").forEach(b=>b.classList.toggle("active",(b.dataset.simtab===tab)));
+  sheet.querySelectorAll(".sim-panel").forEach(p=>p.classList.toggle("active",(p.dataset.simpanel===tab)));
+}
+
+function simGetSheetVH(){
+  const sheet=document.getElementById("simSheet");
+  if(!sheet) return 42;
+  const v = getComputedStyle(sheet).getPropertyValue("--simSheetH").trim();
+  if(v.endsWith("vh")) return parseFloat(v)||42;
+  // fallback height
+  return (sheet.getBoundingClientRect().height / window.innerHeight)*100;
+}
+function simSetSheetHeightVH(vh){
+  const sheet=document.getElementById("simSheet");
+  if(!sheet) return;
+  sheet.style.setProperty("--simSheetH", Math.max(30, Math.min(82, vh)).toFixed(1) + "vh");
+}
+
+function simRecalcStage(){
+  // calcola stage size in base allo spazio sopra il cassetto
+  const stage = document.getElementById("dlStage");
+  const leftBox = stage?.closest(".box");
+  const sheet = document.getElementById("simSheet");
+  if(!stage || !leftBox || !sheet) return;
+
+  const isMobile = window.matchMedia("(max-width: 900px)").matches;
+  if(!isMobile) return;
+
+  const head = document.querySelector("#builderLiteBack .modal-head");
+  const headH = head ? head.getBoundingClientRect().height : 0;
+
+  const sheetH = sheet.getBoundingClientRect().height;
+  // spazio disponibile: viewport - header - sheet - padding / margini
+  const safe = 120; // margine sicurezza per bordi/padding/testi
+  const avail = Math.max(180, window.innerHeight - headH - sheetH - safe);
+
+  // stage è quadrato: prendi anche vincolo in larghezza
+  const maxW = Math.min(window.innerWidth - 40, 420);
+  const size = Math.max(220, Math.min(avail, maxW));
+  document.documentElement.style.setProperty("--studioStageSize", size.toFixed(0) + "px");
+}
+
+// aggiorna stage quando ruoti / ridimensioni
+window.addEventListener("resize", ()=>{ simRecalcStage(); }, {passive:true});
+
+
+  // Quickbar: tap color dots to fill inputs (keeps existing logic)
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-quick-target][data-quick-value]');
+    if(!btn) return;
+    const targetId = btn.getAttribute('data-quick-target');
+    const value = btn.getAttribute('data-quick-value');
+    const el = document.getElementById(targetId);
+    if(!el) return;
+    el.value = value;
+    // Trigger both input & change to be safe
+    el.dispatchEvent(new Event('input', {bubbles:true}));
+    el.dispatchEvent(new Event('change', {bubbles:true}));
+  });
+</script>
+  <!-- Color picker overlay (for selected accessory) -->
+  <div id="dlColorOverlay" class="dl-color-overlay" style="display:none" aria-hidden="true">
+   <div class="dl-color-card">
+    <div class="dl-color-title">Scegli un colore</div>
+    <div id="dlColorSwatches" class="dl-color-swatches"></div>
+    <div class="dl-color-actions">
+     <button class="btn" id="dlColorClose">Chiudi</button>
+    </div>
+   </div>
+  </div>
+  <script>
+/* ===== Accessori: catalogo + colori (configuratore) ===== */
+(function(){
+  const catsEl = () => document.getElementById('accCats');
+  const gridEl = () => document.getElementById('accGrid');
+  const popEl  = () => document.getElementById('accColorPop');
+  const swEl   = () => document.getElementById('accColorSwatch');
+  const colorBtn = () => document.getElementById('accColorBtn');
+  const closeBtn = () => document.getElementById('accColorCloseBtn');
+  const frontBtn = () => document.getElementById('accBringFrontBtn');
+
+  // Palette colori (cristalli / piume / metallo)
+  const PALETTES = {
+    crystal: [
+      {id:'clear',  name:'Trasparente',  hex:'#eaf6ff'},
+      {id:'pink',   name:'Rosa',         hex:'#ff4fa3'},
+      {id:'purple', name:'Viola',        hex:'#8b5cf6'},
+      {id:'blue',   name:'Blu',          hex:'#3b82f6'},
+      {id:'cyan',   name:'Azzurro',      hex:'#22d3ee'},
+      {id:'green',  name:'Verde',        hex:'#22c55e'},
+      {id:'yellow', name:'Giallo',       hex:'#facc15'},
+      {id:'red',    name:'Rosso',        hex:'#ef4444'},
+      {id:'amber',  name:'Ambra',        hex:'#f59e0b'},
+      {id:'smoke',  name:'Fumè',         hex:'#94a3b8'},
+      {id:'black',  name:'Nero',         hex:'#111827'},
+      {id:'white',  name:'Bianco',       hex:'#ffffff'}
+    ],
+    metal: [
+      {id:'silver', name:'Argento', hex:'#d6dde7'},
+      {id:'gold',   name:'Oro',     hex:'#f5c542'},
+      {id:'rose',   name:'Oro rosa',hex:'#f0a5a5'},
+      {id:'black',  name:'Nero',    hex:'#111827'}
+    ],
+    feather: [
+      {id:'white',  name:'Bianco',  hex:'#ffffff'},
+      {id:'black',  name:'Nero',    hex:'#0b1220'},
+      {id:'pink',   name:'Rosa',    hex:'#ff4fa3'},
+      {id:'purple', name:'Viola',   hex:'#8b5cf6'},
+      {id:'blue',   name:'Blu',     hex:'#3b82f6'},
+      {id:'green',  name:'Verde',   hex:'#22c55e'},
+      {id:'yellow', name:'Giallo',  hex:'#facc15'},
+      {id:'rain',   name:'Arcobaleno', hex:'#ffffff'} // gestito come gradiente
+    ]
+  };
+
+  // Catalogo accessori (icone SVG inline -> leggerezza, niente asset esterni)
+  const CATALOG = [
+    {cat:'Cristalli', type:'crystal', id:'cr_heart',   label:'Cuore',      shape:'heart'},
+    {cat:'Cristalli', type:'crystal', id:'cr_drop',    label:'Goccia',     shape:'drop'},
+    {cat:'Cristalli', type:'crystal', id:'cr_oval',    label:'Ovale',      shape:'oval'},
+    {cat:'Cristalli', type:'crystal', id:'cr_round',   label:'Tondo',      shape:'round'},
+    {cat:'Cristalli', type:'crystal', id:'cr_bicone',  label:'Bicono',     shape:'bicone'},
+    {cat:'Ciondoli',  type:'metal',   id:'ch_moon',    label:'Luna',       shape:'moon'},
+    {cat:'Ciondoli',  type:'metal',   id:'ch_star',    label:'Stella',     shape:'star'},
+    {cat:'Ciondoli',  type:'metal',   id:'ch_sun',     label:'Sole',       shape:'sun'},
+    {cat:'Ciondoli',  type:'metal',   id:'ch_rose',    label:'Rosa',       shape:'rose'},
+    {cat:'Ciondoli',  type:'metal',   id:'ch_bfly',    label:'Farfalla',   shape:'butterfly'},
+    {cat:'Ciondoli',  type:'metal',   id:'ch_dragon',  label:'Libellula',  shape:'dragonfly'},
+    {cat:'Ciondoli',  type:'metal',   id:'ch_seah',    label:'Cavalluccio',shape:'seahorse'},
+    {cat:'Ciondoli',  type:'metal',   id:'ch_turtle',  label:'Tartaruga',  shape:'turtle'},
+    {cat:'Anelli',    type:'metal',   id:'rg_circle',  label:'Anello',     shape:'ring'},
+    {cat:'Anelli',    type:'metal',   id:'rg_hex',     label:'Esagono',    shape:'hex'},
+    {cat:'Anelli',    type:'metal',   id:'rg_square',  label:'Quadrato',   shape:'square'},
+    {cat:'Perle',     type:'crystal', id:'bd_small',   label:'Perla piccola',shape:'bead'},
+    {cat:'Perle',     type:'crystal', id:'bd_big',     label:'Perla grande', shape:'bead2'},
+    {cat:'Piume',     type:'feather', id:'ft_small',   label:'Piuma',      shape:'feather'},
+    {cat:'Piume',     type:'feather', id:'ft_long',    label:'Piuma lunga',shape:'feather2'},
+    {cat:'Dettagli',  type:'metal',   id:'st_chain',   label:'Catena',     shape:'chain'},
+    {cat:'Dettagli',  type:'metal',   id:'st_bow',     label:'Fiocco',     shape:'bow'},
+    {cat:'Dettagli',  type:'metal',   id:'st_snow',    label:'Fiocco neve',shape:'snow'},
+    {cat:'Dettagli',  type:'metal',   id:'st_spark',   label:'Brill.',     shape:'spark'},
+    {cat:'Dettagli',  type:'metal',   id:'st_letter',  label:'Lettera',    shape:'letter'}
+  ];
+
+  const CAT_ORDER = ['Cristalli','Ciondoli','Perle','Piume','Anelli','Dettagli'];
+
+  function svgIcon(item, colorHex){
+    const c = colorHex || '#eaf6ff';
+    const stroke = 'rgba(255,255,255,.85)';
+    // piccoli SVG stilizzati (non realistici, ma utili per configurare)
+    switch(item.shape){
+      case 'heart': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <path d="M32 54s-20-12.5-24-25.5C5 19 11 12 20 12c5 0 9 3 12 7 3-4 7-7 12-7 9 0 15 7 12 16.5C52 41.5 32 54 32 54z" fill="${c}" stroke="${stroke}" stroke-width="2" opacity="0.95"/>
+      </svg>`;
+      case 'drop': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <path d="M32 6C24 18 14 28 14 40a18 18 0 0 0 36 0c0-12-10-22-18-34z" fill="${c}" stroke="${stroke}" stroke-width="2" opacity="0.95"/>
+      </svg>`;
+      case 'oval': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <ellipse cx="32" cy="32" rx="18" ry="24" fill="${c}" stroke="${stroke}" stroke-width="2" opacity="0.95"/>
+      </svg>`;
+      case 'round': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <circle cx="32" cy="32" r="20" fill="${c}" stroke="${stroke}" stroke-width="2" opacity="0.95"/>
+      </svg>`;
+      case 'bicone': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <path d="M32 8L46 28 32 56 18 28 32 8z" fill="${c}" stroke="${stroke}" stroke-width="2" opacity="0.95"/>
+      </svg>`;
+      case 'moon': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <path d="M40 8a22 22 0 1 0 16 40A18 18 0 1 1 40 8z" fill="${c}" stroke="${stroke}" stroke-width="2" opacity="0.95"/>
+      </svg>`;
+      case 'star': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <path d="M32 6l7 18 19 2-14 12 4 20-16-10-16 10 4-20-14-12 19-2 7-18z" fill="${c}" stroke="${stroke}" stroke-width="2" opacity="0.95"/>
+      </svg>`;
+      case 'sun': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <circle cx="32" cy="32" r="12" fill="${c}" stroke="${stroke}" stroke-width="2"/>
+        <g stroke="${stroke}" stroke-width="2">
+          <line x1="32" y1="6" x2="32" y2="16"/><line x1="32" y1="48" x2="32" y2="58"/>
+          <line x1="6" y1="32" x2="16" y2="32"/><line x1="48" y1="32" x2="58" y2="32"/>
+          <line x1="12" y1="12" x2="19" y2="19"/><line x1="45" y1="45" x2="52" y2="52"/>
+          <line x1="12" y1="52" x2="19" y2="45"/><line x1="45" y1="19" x2="52" y2="12"/>
+        </g>
+      </svg>`;
+      case 'rose': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <path d="M32 14c8-6 18 2 12 10 6 2 8 12-2 14 4 8-6 14-12 8-6 6-16 0-12-8-10-2-8-12-2-14-6-8 4-16 12-10z" fill="${c}" stroke="${stroke}" stroke-width="2"/>
+      </svg>`;
+      case 'butterfly': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <path d="M30 30c-8-16-22-16-22-2 0 12 12 18 22 8z" fill="${c}" stroke="${stroke}" stroke-width="2"/>
+        <path d="M34 30c8-16 22-16 22-2 0 12-12 18-22 8z" fill="${c}" stroke="${stroke}" stroke-width="2"/>
+        <path d="M32 22v20" stroke="${stroke}" stroke-width="3"/>
+      </svg>`;
+      case 'dragonfly': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <ellipse cx="20" cy="24" rx="14" ry="8" fill="${c}" opacity=".9"/><ellipse cx="44" cy="24" rx="14" ry="8" fill="${c}" opacity=".9"/>
+        <ellipse cx="20" cy="40" rx="12" ry="7" fill="${c}" opacity=".7"/><ellipse cx="44" cy="40" rx="12" ry="7" fill="${c}" opacity=".7"/>
+        <rect x="29" y="14" width="6" height="36" rx="3" fill="${stroke}"/>
+      </svg>`;
+      case 'seahorse': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <path d="M40 10c-6 0-10 4-10 10 0 5 3 8 3 10 0 4-5 4-5 10 0 7 6 12 14 12 6 0 10-3 10-8 0-3-2-5-5-6 2-1 4-3 4-6 0-4-4-6-7-6 2-2 3-4 3-7 0-5-4-9-7-9z" fill="${c}" stroke="${stroke}" stroke-width="2"/>
+      </svg>`;
+      case 'turtle': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <ellipse cx="32" cy="34" rx="18" ry="14" fill="${c}" stroke="${stroke}" stroke-width="2"/>
+        <circle cx="50" cy="34" r="5" fill="${c}" stroke="${stroke}" stroke-width="2"/>
+        <g stroke="${stroke}" stroke-width="2">
+          <line x1="18" y1="22" x2="12" y2="18"/><line x1="18" y1="46" x2="12" y2="50"/>
+          <line x1="30" y1="20" x2="28" y2="12"/><line x1="30" y1="48" x2="28" y2="56"/>
+        </g>
+      </svg>`;
+      case 'ring': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <circle cx="32" cy="32" r="18" fill="none" stroke="${c}" stroke-width="6" />
+      </svg>`;
+      case 'hex': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <path d="M20 14h24l12 18-12 18H20L8 32 20 14z" fill="none" stroke="${c}" stroke-width="6"/>
+      </svg>`;
+      case 'square': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <rect x="16" y="16" width="32" height="32" fill="none" stroke="${c}" stroke-width="6" rx="6"/>
+      </svg>`;
+      case 'bead': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <circle cx="32" cy="32" r="14" fill="${c}" stroke="${stroke}" stroke-width="2"/>
+        <circle cx="32" cy="32" r="4" fill="rgba(0,0,0,.25)"/>
+      </svg>`;
+      case 'bead2': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <circle cx="32" cy="32" r="18" fill="${c}" stroke="${stroke}" stroke-width="2"/>
+        <circle cx="32" cy="32" r="5" fill="rgba(0,0,0,.25)"/>
+      </svg>`;
+      case 'feather': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <path d="M46 10C30 12 14 30 16 46c2 10 12 10 18 2 6-8 8-20 12-38z" fill="${c}" stroke="${stroke}" stroke-width="2"/>
+        <path d="M22 44c8-8 16-14 24-20" stroke="rgba(255,255,255,.6)" stroke-width="2"/>
+      </svg>`;
+      case 'feather2': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <path d="M48 8C28 14 10 34 14 52c3 12 14 12 22 2 10-12 10-26 12-46z" fill="${c}" stroke="${stroke}" stroke-width="2"/>
+        <path d="M22 50c10-10 18-16 26-24" stroke="rgba(255,255,255,.6)" stroke-width="2"/>
+      </svg>`;
+      case 'chain': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <path d="M22 26c0-6 4-10 10-10h8" stroke="${c}" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path d="M42 38c0 6-4 10-10 10h-8" stroke="${c}" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path d="M26 38l12-12" stroke="${c}" stroke-width="6" fill="none" stroke-linecap="round"/>
+      </svg>`;
+      case 'bow': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <path d="M14 26c10 0 12 10 18 10s8-10 18-10c4 0 8 3 8 6 0 8-12 14-26 14S6 40 6 32c0-3 4-6 8-6z" fill="${c}" stroke="${stroke}" stroke-width="2"/>
+        <circle cx="32" cy="34" r="4" fill="rgba(0,0,0,.25)"/>
+      </svg>`;
+      case 'snow': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <g stroke="${c}" stroke-width="4" stroke-linecap="round">
+          <line x1="32" y1="10" x2="32" y2="54"/>
+          <line x1="10" y1="32" x2="54" y2="32"/>
+          <line x1="16" y1="16" x2="48" y2="48"/>
+          <line x1="48" y1="16" x2="16" y2="48"/>
+        </g>
+      </svg>`;
+      case 'spark': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <path d="M32 6l6 18 18 6-18 6-6 18-6-18-18-6 18-6 6-18z" fill="${c}" stroke="${stroke}" stroke-width="2"/>
+      </svg>`;
+      case 'letter': return `<svg viewBox="0 0 64 64" width="42" height="42">
+        <rect x="14" y="14" width="36" height="36" rx="10" fill="none" stroke="${c}" stroke-width="6"/>
+        <path d="M24 42l8-20 8 20M28 34h8" stroke="${c}" stroke-width="4" fill="none" stroke-linecap="round"/>
+      </svg>`;
+      default: return `<svg viewBox="0 0 64 64" width="42" height="42"><circle cx="32" cy="32" r="18" fill="${c}"/></svg>`;
+    }
+  }
+
+  function uniqueCats(){
+    const set = new Set(CATALOG.map(x=>x.cat));
+    const arr = Array.from(set);
+    arr.sort((a,b)=>CAT_ORDER.indexOf(a)-CAT_ORDER.indexOf(b));
+    return arr;
+  }
+
+  function renderCats(active){
+    const el = catsEl(); if(!el) return;
+    const cats = uniqueCats();
+    el.innerHTML = '';
+    cats.forEach(cat=>{
+      const b=document.createElement('button');
+      b.type='button';
+      b.textContent=cat;
+      b.className = (cat===active?'active':'');
+      b.addEventListener('click', ()=>{ renderCats(cat); renderGrid(cat); });
+      el.appendChild(b);
+    });
+  }
+
+  function renderGrid(cat){
+    const el = gridEl(); if(!el) return;
+    const list = CATALOG.filter(x=>x.cat===cat);
+    el.innerHTML = '';
+    list.forEach(item=>{
+      const tile=document.createElement('div');
+      tile.className='acc-tile';
+      tile.setAttribute('role','button');
+      tile.setAttribute('tabindex','0');
+      const defaultColor = (PALETTES[item.type]||PALETTES.crystal)[0].hex;
+      tile.innerHTML = `<div class="ico">${svgIcon(item, defaultColor)}</div><div class="lbl">${item.label}</div>`;
+      tile.addEventListener('click', ()=> addAccessoryToStage(item, defaultColor));
+      el.appendChild(tile);
+    });
+  }
+
+  // Integrazione con configuratore esistente:
+  // - stage: #dlStage (contenitore) e layer elementi: #dlLayer
+  // - selezione: window.__dlSelectedEl
+  function getStage(){
+    return document.getElementById('dlStage') || document.querySelector('.dl-stage') || document.querySelector('[data-dl-stage]');
+  }
+  function getLayer(){
+    return document.getElementById('dlLayer') || document.querySelector('.dl-layer') || getStage();
+  }
+
+  function addAccessoryToStage(item, colorHex){
+    const layer = getLayer(); if(!layer) return;
+    const el=document.createElement('div');
+    el.className='dl-item';
+    el.dataset.accId=item.id;
+    el.dataset.accType=item.type;
+    el.dataset.accColor=colorHex;
+    el.style.position='absolute';
+    el.style.left='50%';
+    el.style.top='50%';
+    el.style.transform='translate(-50%, -50%) scale(1)';
+    el.style.width='64px';
+    el.style.height='64px';
+    el.style.touchAction='none';
+    el.innerHTML = `<div class="dl-item-ico">${svgIcon(item, colorHex)}</div>`;
+    layer.appendChild(el);
+
+    // drag + pinch per-element (semplice e robusto)
+    makeDraggableAndPinchable(el);
+    selectItem(el);
+
+    // se esiste la funzione originale, notifichiamo anche lei (non rompe nulla)
+    if(typeof window.dlOnAccessoryAdded === 'function'){
+      try{ window.dlOnAccessoryAdded(item.id); }catch(e){}
+    }
+  }
+
+  function selectItem(el){
+    window.__dlSelectedEl = el;
+    // highlight semplice
+    document.querySelectorAll('.dl-item').forEach(x=>x.style.outline='none');
+    if(el) el.style.outline='2px solid rgba(170,180,255,.85)';
+  }
+
+  function bringFrontSelected(){
+    const el = window.__dlSelectedEl;
+    if(!el || !el.parentElement) return;
+    el.parentElement.appendChild(el);
+  }
+
+  function showColorPicker(){
+    const el = window.__dlSelectedEl;
+    const pop = popEl(); const sw = swEl();
+    if(!pop || !sw) return;
+    if(!el){ pop.classList.add('show'); pop.querySelector('h4').textContent='Seleziona un elemento prima'; sw.innerHTML=''; return; }
+    const type = el.dataset.accType || 'crystal';
+    const palette = PALETTES[type] || PALETTES.crystal;
+    pop.querySelector('h4').textContent = 'Colore accessorio';
+    sw.innerHTML = '';
+    const current = el.dataset.accColor || palette[0].hex;
+    palette.forEach(p=>{
+      const b=document.createElement('button');
+      b.type='button';
+      b.title=p.name;
+      b.style.background = (p.id==='rain') ? 'linear-gradient(90deg,#ef4444,#f59e0b,#facc15,#22c55e,#3b82f6,#8b5cf6,#ec4899)' : p.hex;
+      if(current===p.hex) b.classList.add('active');
+      b.addEventListener('click', ()=>{
+        applyColor(el, type, p);
+        sw.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+      });
+      sw.appendChild(b);
+    });
+    pop.classList.add('show');
+    pop.setAttribute('aria-hidden','false');
+  }
+
+  function hideColorPicker(){
+    const pop = popEl();
+    if(!pop) return;
+    pop.classList.remove('show');
+    pop.setAttribute('aria-hidden','true');
+  }
+
+  function applyColor(el, type, p){
+    // aggiorna SVG con nuovo colore (semplice)
+    const item = CATALOG.find(x=>x.id===el.dataset.accId) || {shape:'round'};
+    const hex = (p.id==='rain') ? '#ffffff' : p.hex;
+    el.dataset.accColor = hex;
+    // rainbow: aggiungiamo un filtro gradiente via CSS
+    const ico = el.querySelector('.dl-item-ico');
+    if(ico){
+      ico.innerHTML = svgIcon(item, hex);
+      if(p.id==='rain'){
+        ico.style.filter = 'hue-rotate(0deg) saturate(1.4)';
+      }else{
+        ico.style.filter = '';
+      }
+    }
+  }
+
+  function makeDraggableAndPinchable(target){
+    let pointers = new Map();
+    let start = null;
+
+    function getDist(a,b){
+      const dx=a.clientX-b.clientX, dy=a.clientY-b.clientY;
+      return Math.hypot(dx,dy);
+    }
+
+    function getScaleFromTransform(el){
+      const tr = el.style.transform || '';
+      const m = tr.match(/scale\(([^)]+)\)/);
+      return m ? parseFloat(m[1]) : 1;
+    }
+    function setScale(el, s){
+      const tr = el.style.transform || 'translate(-50%, -50%) scale(1)';
+      const tr2 = tr.replace(/scale\([^)]+\)/, `scale(${s})`);
+      el.style.transform = tr2;
+    }
+
+    target.addEventListener('pointerdown', (e)=>{
+      target.setPointerCapture(e.pointerId);
+      pointers.set(e.pointerId, {clientX:e.clientX, clientY:e.clientY});
+      selectItem(target);
+
+      if(pointers.size===1){
+        const rect = target.getBoundingClientRect();
+        start = {
+          left: target.style.left,
+          top: target.style.top,
+          x: e.clientX,
+          y: e.clientY,
+          rect,
+          scale: getScaleFromTransform(target)
+        };
+      } else if(pointers.size===2){
+        const [p1,p2] = Array.from(pointers.values());
+        start = {
+          left: target.style.left,
+          top: target.style.top,
+          x: (p1.clientX+p2.clientX)/2,
+          y: (p1.clientY+p2.clientY)/2,
+          dist: getDist(p1,p2),
+          scale: getScaleFromTransform(target)
+        };
+      }
+    });
+
+    target.addEventListener('pointermove', (e)=>{
+      if(!pointers.has(e.pointerId) || !start) return;
+      pointers.set(e.pointerId, {clientX:e.clientX, clientY:e.clientY});
+
+      if(pointers.size===1){
+        const dx = e.clientX - start.x;
+        const dy = e.clientY - start.y;
+
+        // Convertiamo px in % rispetto al layer
+        const layer = getLayer();
+        const lr = layer.getBoundingClientRect();
+        const leftPct = (( (lr.width/2) + dx ) / lr.width) * 100;
+        const topPct  = (( (lr.height/2) + dy ) / lr.height) * 100;
+
+        target.style.left = leftPct.toFixed(3) + '%';
+        target.style.top  = topPct.toFixed(3) + '%';
+      }
+
+      if(pointers.size===2){
+        const [p1,p2] = Array.from(pointers.values());
+        const dist = getDist(p1,p2);
+        let s = start.scale * (dist / start.dist);
+        s = Math.max(0.35, Math.min(2.8, s));
+        setScale(target, s);
+      }
+    });
+
+    function endPointer(e){
+      pointers.delete(e.pointerId);
+      if(pointers.size===0){ start=null; }
+    }
+    target.addEventListener('pointerup', endPointer);
+    target.addEventListener('pointercancel', endPointer);
+  }
+
+  function wireSelectionOnLayer(){
+    const layer = getLayer();
+    if(!layer) return;
+    layer.addEventListener('click', (e)=>{
+      const el = e.target.closest('.dl-item');
+      if(el) selectItem(el);
+    }, true);
+  }
+
+  function init(){
+    // Render iniziale
+    const cats = uniqueCats();
+    const active = cats[0] || 'Cristalli';
+    renderCats(active);
+    renderGrid(active);
+
+    wireSelectionOnLayer();
+
+    // Bottoni
+    const cb = colorBtn(); if(cb) cb.addEventListener('click', showColorPicker);
+    const cl = closeBtn(); if(cl) cl.addEventListener('click', hideColorPicker);
+    const fb = frontBtn(); if(fb) fb.addEventListener('click', bringFrontSelected);
+
+    // Chiudi pop se tocchi fuori
+    document.addEventListener('click', (e)=>{
+      const pop = popEl();
+      if(!pop || !pop.classList.contains('show')) return;
+      if(e.target.closest('#accColorPop') || e.target.closest('#accColorBtn')) return;
+      // non chiudere se si clicca su un elemento della palette
+      if(e.target.closest('.color-swatch')) return;
+      // chiudi solo se click in area configuratore
+      hideColorPicker();
+    }, true);
+  }
+
+  // Avvio quando DOM pronto
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
 </script>
  </body>
