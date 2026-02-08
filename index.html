@@ -2,12 +2,12 @@
 <html lang="it">
  <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5, user-scalable=yes">
+  <meta content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5, user-scalable=yes" name="viewport">
   <title>Acchiappasogni di Erika</title>
-  <link rel="manifest" href="/acchiappasogni-di-erika/manifest.webmanifest">
-  <meta name="theme-color" content="#ffffff">
-  <meta name="description" content="Catalogo online per Acchiappasogni di Erika con ordini diretti su WhatsApp.">
-  <link rel="apple-touch-icon" href="/acchiappasogni-di-erika/icons/icon-192.png">
+  <link href="/acchiappasogni-di-erika/manifest.webmanifest" rel="manifest">
+  <meta content="#ffffff" name="theme-color">
+  <meta content="Catalogo online per Acchiappasogni di Erika con ordini diretti su WhatsApp." name="description">
+  <link href="/acchiappasogni-di-erika/icons/icon-192.png" rel="apple-touch-icon">
   <style>
     :root{
       --bg1:#070a12;
@@ -1332,7 +1332,7 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
      <button class="btn" id="btnCloseCart">✖ Chiudi</button>
     </div>
     <div class="modal-body">
-     <div id="cartList" class="admin-list"></div>
+     <div class="admin-list" id="cartList"></div>
      <div class="hr"></div>
      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
       <div class="pill">
@@ -1361,7 +1361,7 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
       </div>
       <div class="form">
        <div>
-        <label>Password</label> <input id="adminPass" type="password" placeholder="1234">
+        <label>Password</label> <input id="adminPass" placeholder="1234" type="password">
         <div class="hint">Suggerimento: puoi cambiarla dopo l’accesso.</div>
        </div>
        <div style="display:flex;align-items:flex-end;gap:10px">
@@ -1374,7 +1374,7 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
      <div id="adminPanel" style="display:none">
       <div class="form">
        <div>
-        <label>Password Admin (cambia)</label> <input id="newAdminPass" type="password" placeholder="Nuova password">
+        <label>Password Admin (cambia)</label> <input id="newAdminPass" placeholder="Nuova password" type="password">
         <div class="hint">Se lasci vuoto, non cambia.</div>
        </div>
        <div>
@@ -1384,7 +1384,7 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
        <div>
         <label>Prezzo rapido per TUTTI</label>
         <div style="display:flex; gap:8px">
-         <input id="bulkPrice" type="number" step="0.01" placeholder="5">
+         <input id="bulkPrice" placeholder="5" step="0.01" type="number">
          <button class="btn primary" id="btnBulkApply">✅ Applica</button>
         </div>
         <div class="hint">Esempio: 5 → tutti i prodotti diventano € 5.</div>
@@ -1393,7 +1393,7 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
         <label>Backup / Import configurazione (per aggiornare tutti via GitHub)</label>
         <div style="display:flex; gap:8px; flex-wrap:wrap">
          <button class="btn primary" id="btnExportConfig">📤 Esporta JSON</button>
-         <label class="btn" style="cursor:pointer"> 📥 Importa JSON <input id="importConfigFile" type="file" accept="application/json" style="display:none"> </label>
+         <label class="btn" style="cursor:pointer"> 📥 Importa JSON <input accept="application/json" id="importConfigFile" style="display:none" type="file"> </label>
         </div>
         <div class="hint">
          • <b>Esporta JSON</b> ti scarica un file pronto da caricare su GitHub come <code>data/products.json</code>.
@@ -1434,17 +1434,17 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
         <label>Descrizione (testo sotto al titolo)</label> <textarea id="fDesc" placeholder="Esempio: Fatto a mano, diametro 30 cm, colori personalizzabili..."></textarea>
        </div>
        <div>
-        <label>Prezzo (€)</label> <input id="fPrice" type="number" step="0.01" placeholder="5">
+        <label>Prezzo (€)</label> <input id="fPrice" placeholder="5" step="0.01" type="number">
        </div>
        <div>
         <label>Pubblicazione</label>
         <div style="display:flex;align-items:center;gap:10px">
-         <input id="fPublished" type="checkbox" style="width:auto">
+         <input id="fPublished" style="width:auto" type="checkbox">
          <div class="hint" style="margin:0">Se attivo, il prodotto si vede nella Home.</div>
         </div>
        </div>
        <div>
-        <label>Foto (dal telefono / galleria)</label> <input id="fImageFile" type="file" accept="image/*">
+        <label>Foto (dal telefono / galleria)</label> <input accept="image/*" id="fImageFile" type="file">
         <div class="hint">
          Se carichi da galleria: viene salvata nel telefono (localStorage).
          <br>
@@ -1522,11 +1522,11 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
        <h3>5) Foto e Note</h3>
        <div class="row2">
         <div>
-         <label>Vuoi inserire una foto?</label> <select id="bHasPhoto"> <option value="no" selected>No</option> <option value="si">Sì</option> </select>
+         <label>Vuoi inserire una foto?</label> <select id="bHasPhoto"> <option selected value="no">No</option> <option value="si">Sì</option> </select>
          <div class="small">Se sì, puoi caricarla qui e vedere l’anteprima.</div>
         </div>
         <div>
-         <label>Carica foto (opzionale)</label> <input id="bPhotoFile" type="file" accept="image/*">
+         <label>Carica foto (opzionale)</label> <input accept="image/*" id="bPhotoFile" type="file">
         </div>
        </div>
        <div style="margin-top:10px">
@@ -1552,9 +1552,9 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
           <span class="badge2" id="bEstimate">Totale stimato: € 0,00</span> <span class="badge2" id="bCode">Codice: —</span>
          </div>
-         <img id="bPhotoPreview" class="preview-img" alt="Anteprima foto">
+         <img alt="Anteprima foto" class="preview-img" id="bPhotoPreview">
          <div class="hr2"></div>
-         <div id="bSummary" class="small"></div>
+         <div class="small" id="bSummary"></div>
         </div>
        </div>
       </div>
@@ -1563,17 +1563,17 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
    </div>
   </div>
   <!-- MODAL: CONFIGURATORE SEMPLICE (CLIENTI) -->
-  <div id="builderLiteBack" class="builderlite-back" aria-hidden="true">
-   <div class="builderlite-modal" role="dialog" aria-modal="true" aria-label="Personalizza il tuo Acchiappasogni">
+  <div aria-hidden="true" class="builderlite-back" id="builderLiteBack">
+   <div aria-label="Personalizza il tuo Acchiappasogni" aria-modal="true" class="builderlite-modal" role="dialog">
     <div class="builderlite-head">
      <div>
       <div style="font-weight:800;font-size:18px">Personalizza il tuo Acchiappasogni</div>
       <div style="opacity:.8;font-size:12px;margin-top:2px">Trascina gli accessori nell’anteprima. Pinch per zoom, 1 dito per spostare.</div>
      </div>
-     <button class="builderlite-close" id="builderLiteCloseBtn" type="button" aria-label="Chiudi">× Chiudi</button>
+     <button aria-label="Chiudi" class="builderlite-close" id="builderLiteCloseBtn" type="button">× Chiudi</button>
     </div>
     <div class="builderlite-body" style="padding:0">
-     <iframe id="dcConfiguratorFrame" title="Configuratore Acchiappasogni" style="width:100%;height:100%;border:0;display:block;background:#fff;"></iframe>
+     <iframe id="dcConfiguratorFrame" style="width:100%;height:100%;border:0;display:block;background:#fff;" title="Configuratore Acchiappasogni"></iframe>
     </div>
    </div>
   </div>
@@ -1589,10 +1589,10 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
      </div>
      <div>
       <label>Colore cerchio</label> <input id="dlRingColor" placeholder="Es: bianco / oro / viola / blu...">
-      <div class="sim-quick-colors" aria-label="Colori rapidi">
-       <button class="qdot d-red" data-ring="rosso" type="button" aria-label="Rosso"></button>
-       <button class="qdot d-blue" data-ring="blu" type="button" aria-label="Blu"></button>
-       <button class="qdot d-gold" data-ring="oro" type="button" aria-label="Oro"></button>
+      <div aria-label="Colori rapidi" class="sim-quick-colors">
+       <button aria-label="Rosso" class="qdot d-red" data-ring="rosso" type="button"></button>
+       <button aria-label="Blu" class="qdot d-blue" data-ring="blu" type="button"></button>
+       <button aria-label="Oro" class="qdot d-gold" data-ring="oro" type="button"></button>
       </div>
      </div>
      <div>
@@ -1602,7 +1602,7 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
     <div class="hr2"></div>
     <div class="row2">
      <div>
-      <label>Tessitura cerchio</label> <select id="dlWeave"> <option value="classico" selected>Classica</option> <option value="fitta">Ragnatela fitta</option> <option value="pizzo">Centrino / pizzo</option> <option value="chakra">Chakra (raggi)</option> <option value="yinyang">Yin &amp; Yang</option> <option value="stella">Stella</option> </select>
+      <label>Tessitura cerchio</label> <select id="dlWeave"> <option selected value="classico">Classica</option> <option value="fitta">Ragnatela fitta</option> <option value="pizzo">Centrino / pizzo</option> <option value="chakra">Chakra (raggi)</option> <option value="yinyang">Yin &amp; Yang</option> <option value="stella">Stella</option> </select>
       <div class="hint">Cambia solo l’anteprima (non tocca il catalogo).</div>
      </div>
      <div>
@@ -1627,11 +1627,11 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
      <div class="acc-grid" id="accGrid"></div>
      <div class="smallhint">Tocca un accessorio per aggiungerlo. Tocca un elemento sul cerchio per selezionarlo, poi cambia colore (se disponibile).</div>
      <div style="display:flex;gap:10px;margin-top:10px;align-items:center;justify-content:space-between">
-      <button class="pill" id="accColorBtn" type="button" style="flex:1">🎨 Colore elemento selezionato</button>
-      <button class="pill" id="accBringFrontBtn" type="button" style="flex:1">⬆️ Porta davanti</button>
+      <button class="pill" id="accColorBtn" style="flex:1" type="button">🎨 Colore elemento selezionato</button>
+      <button class="pill" id="accBringFrontBtn" style="flex:1" type="button">⬆️ Porta davanti</button>
      </div>
     </div>
-    <div class="color-pop" id="accColorPop" aria-hidden="true">
+    <div aria-hidden="true" class="color-pop" id="accColorPop">
      <div class="row">
       <h4>Colore accessorio</h4>
       <button class="pill" id="accColorCloseBtn" type="button">Chiudi</button>
@@ -1660,7 +1660,7 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
      <div class="hint" style="margin-top:10px">Nota: l’anteprima è “simbolica” (serve per scegliere la posizione degli accessori).</div>
     </div>
    </div>
-  </div>   
+  </div>
   <!-- MODAL: BOMBONIERE & REGALI (CLIENTI) -->
   <div class="modal-back" id="giftsBack">
    <div class="modal">
@@ -2192,6 +2192,19 @@ function getAdminPass(){ return localStorage.getItem(K.adminPass) || ADMIN_PASS_
     }
 
     /* btnCustomizer: handler impostato dal configuratore */
+
+    // FIX: collega sempre il pulsante "Personalizza acchiappasogni" al nuovo configuratore
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('btnCustomizer');
+      if(btn){
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          if(typeof window.openBuilderLite === 'function') window.openBuilderLite();
+          else alert('Configuratore non disponibile: funzione mancante.');
+        });
+      }
+    });
+
 
     function openAdmin(){
       document.getElementById("adminLogin").style.display = "block";
@@ -4994,10 +5007,10 @@ window.addEventListener("resize", ()=>{ simRecalcStage(); }, {passive:true});
   });
 </script>
   <!-- Color picker overlay (for selected accessory) -->
-  <div id="dlColorOverlay" class="dl-color-overlay" style="display:none" aria-hidden="true">
+  <div aria-hidden="true" class="dl-color-overlay" id="dlColorOverlay" style="display:none">
    <div class="dl-color-card">
     <div class="dl-color-title">Scegli un colore</div>
-    <div id="dlColorSwatches" class="dl-color-swatches"></div>
+    <div class="dl-color-swatches" id="dlColorSwatches"></div>
     <div class="dl-color-actions">
      <button class="btn" id="dlColorClose">Chiudi</button>
     </div>
@@ -5410,8 +5423,8 @@ window.addEventListener("resize", ()=>{ simRecalcStage(); }, {passive:true});
     }
     target.addEventListener('pointerup', endPointer);
     target.addEventListener('pointercancel', endPointer);
-  })();
-</script>
+}
+})();</script>
   <script>
 /* ==== V10: Robust pinch-zoom + pan for stage, without breaking drag items ==== */
 (function(){
