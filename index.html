@@ -4631,8 +4631,7 @@ function simSetup(){
 
   const sheet = document.getElementById("simSheet");
   const handle = document.getElementById("simHandle");
-    });
-
+  if(!sheet) return;
   // Colori rapidi (scrive nel campo "Colore cerchio" e trigghera l'update)
   sheet.querySelectorAll(".sim-quick-colors .qdot").forEach(dot=>{
     dot.addEventListener("click", ()=>{
