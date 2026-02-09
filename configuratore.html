@@ -1,0 +1,1103 @@
+<!doctype html>
+<html lang="it" class="">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>Personalizza Acchiappasogni</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --border:#e5e7eb;
+      --accent:#5b4bff;
+      --r:18px;
+      --shadow: 0 10px 30px rgba(2,6,23,.14);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+    .top{
+      position:sticky;top:0;z-index:20;
+      background:rgba(255,255,255,.95);
+      backdrop-filter: blur(8px);
+      border-bottom:1px solid var(--border);
+      padding:14px;
+      display:flex;gap:12px;align-items:flex-start;justify-content:space-between;
+    }
+    .top h1{margin:0;font-size:20px;line-height:1.1}
+    .top p{margin:6px 0 0;font-size:13px;color:var(--muted)}
+    .btn{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:14px;
+      padding:10px 12px;
+      font-weight:900;
+      box-shadow: 0 6px 14px rgba(2,6,23,.08);
+    }
+    .btn:active{transform:scale(.98)}
+    .wrap{max-width:1200px;margin:0 auto;padding:12px}
+    .grid{display:grid;grid-template-columns:1.25fr .75fr;gap:12px;align-items:start}
+    .card{background:#fff;border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow)}
+    .stageCard{padding:12px}
+    .panel{padding:12px}
+    .secTitle{margin:0 0 10px;font-size:12px;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    button.chip{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:999px;
+      padding:10px 12px;
+      font-weight:900;
+      cursor:pointer;
+      user-select:none;
+      font-size:13px;
+    }
+    button.chip.primary{background:rgba(91,75,255,.10);border-color:rgba(91,75,255,.35)}
+    button.chip.on{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.35)}
+    button.chip.danger{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.35)}
+    button.chip:active{transform:scale(.98)}
+    .small{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.35}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .field{display:flex;flex-direction:column;gap:6px}
+    label{font-size:12px;color:var(--muted);font-weight:900}
+    input[type="text"], select{
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:10px 10px;
+      font-weight:900;
+      outline:none;
+      background:#fff;
+    }
+    input[type="range"]{width:100%}
+    .hr{height:1px;background:var(--border);margin:12px 0}
+
+    /* STAGE */
+    #stageWrap{
+      width:100%;
+      aspect-ratio: 9/16;
+      max-height: 80vh;
+      margin:0 auto;
+      background:#ffffff;
+      border-radius: calc(var(--r) - 6px);
+      overflow:hidden;
+      position:relative;
+      border:1px solid var(--border);
+      touch-action:none; /* importante per drag/pinch */
+    }
+    svg{touch-action:none;}
+    svg *{touch-action:none;}
+    #stageSvg{width:100%;height:100%;display:block}
+    .hintLine{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .pill{font-size:12px;color:var(--muted)}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+
+    @media (pointer:coarse), (max-width:900px){
+      .grid{grid-template-columns:1fr;}
+      .panel{
+        position:fixed;left:0;right:0;bottom:0;z-index:30;
+        border-top-left-radius:22px;border-top-right-radius:22px;
+        max-height:56vh;overflow:auto;
+      }
+      .stageCard{padding-bottom:calc(56vh + 12px);}
+    }
+  
+    .embedded .top{display:none !important;}
+    .embedded body{padding-top:0 !important;}
+  </style>
+
+  <script>
+    // Se il configuratore è caricato dentro un iframe (nell'app), nascondiamo la topbar interna
+    // per evitare doppio titolo/chiudi e layout "sdoppiato".
+    try { if (window.self !== window.top) document.documentElement.classList.add('embedded'); } catch(e){ document.documentElement.classList.add('embedded'); }
+  </script>
+
+</head>
+<body>
+  <div class="top">
+    <div>
+      <h1>Personalizza il tuo Acchiappasogni</h1>
+      <p>1 dito: sposta cerchi/accessori • 2 dita: zoom scena • ✏️ Disegna: tap-tap per ragnatela manuale.</p>
+    </div>
+    <button class="btn" id="btnClose" type="button">✕ Chiudi</button>
+  </div>
+
+  <div class="wrap">
+    <div class="grid">
+      <div class="card stageCard">
+        <div id="stageWrap" aria-label="Anteprima">
+          <svg id="stageSvg" viewBox="0 0 1000 1600" xmlns="http://www.w3.org/2000/svg">
+            <rect id="bgRect" x="0" y="0" width="1000" height="1600" fill="#ffffff"/>
+            <!-- world zoom only (no pan) -->
+            <g id="world" transform="translate(500 800) scale(1) translate(-500 -800)">
+              <g id="ringsLayer"></g>
+              <g id="accLayer"></g>
+            </g>
+          </svg>
+        </div>
+        <div class="hintLine">
+          <div class="pill" id="modeInfo">Modalità: sposta</div>
+          <div class="pill mono" id="selInfo">Nessun elemento selezionato</div>
+        </div>
+      </div>
+
+      <div class="card panel">
+        <div class="secTitle">Impostazioni base</div>
+        <div class="grid2">
+          <div class="field">
+            <label>Sfondo</label>
+            <input type="color" id="bgColor" value="#ffffff"/>
+          </div>
+          <div class="field">
+            <label>Zoom scena</label>
+            <input type="range" id="worldZoom" min="60" max="320" value="100"/>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="secTitle">Cerchi indipendenti</div>
+        <div class="row">
+          <button class="chip primary" id="btnAddRing" type="button">+ Aggiungi cerchio</button>
+          <button class="chip" id="btnDupRing" type="button">⎘ Duplica selezionato</button>
+          <button class="chip danger" id="btnRemoveRing" type="button">- Rimuovi selezionato</button>
+        </div>
+        <div class="small">Tocca un cerchio per selezionarlo. Trascina per spostarlo.</div>
+
+        <div class="grid2" style="margin-top:10px">
+          <div class="field">
+            <label>Diametro cerchio</label>
+            <input type="range" id="ringSize" min="120" max="950" value="620"/>
+          </div>
+          <div class="field">
+            <label>Colore cerchio</label>
+            <input type="color" id="ringColor" value="#000000"/>
+          </div>
+        </div>
+        <div class="grid2" style="margin-top:10px">
+          <div class="field">
+            <label>Tessitura (preset)</label>
+            <select id="ringWeave">
+              <option value="classic">Classica</option>
+              <option value="net">Rete</option>
+              <option value="dense">Fitta</option>
+              <option value="chakra">Chakra</option>
+              <option value="star">Stella</option>
+              <option value="spiral">Spirale</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Rotazione cerchio</label>
+            <input type="range" id="ringRot" min="-180" max="180" value="0"/>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="secTitle">Ragnatela manuale</div>
+        <div class="row">
+          <button class="chip" id="btnDrawMode" type="button">✏️ Disegna</button>
+          <button class="chip" id="btnUndoLine" type="button">↶ Annulla ultimo</button>
+          <button class="chip danger" id="btnClearManual" type="button">🧹 Pulisci manuale</button>
+        </div>
+        <div class="small">In “Disegna”: tap su 2 punti dentro il cerchio selezionato per creare una linea.</div>
+
+        <div class="hr"></div>
+
+        <div class="secTitle">Accessori</div>
+        <div class="row" id="palette">
+          <button class="chip primary" type="button" data-add="feather">Piuma</button>
+          <button class="chip primary" type="button" data-add="bead">Perlina</button>
+          <button class="chip primary" type="button" data-add="chain">Catenella</button>
+          <button class="chip primary" type="button" data-add="tassel">Frange</button>
+          <button class="chip primary" type="button" data-add="moon">Luna</button>
+          <button class="chip primary" type="button" data-add="star">Stella</button>
+          <button class="chip primary" type="button" data-add="eye">Occhio</button>
+          <button class="chip primary" type="button" data-add="bow">Fiocco</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="secTitle">Elemento selezionato</div>
+        <div class="grid2">
+          <div class="field">
+            <label>Colore accessorio</label>
+            <input type="color" id="accColor" value="#0ea5e9"/>
+          </div>
+          <div class="field">
+            <label>Dimensione</label>
+            <input type="range" id="accScale" min="24" max="280" value="90"/>
+          </div>
+        </div>
+        <div class="grid2" style="margin-top:10px">
+          <div class="field">
+            <label>Rotazione (°)</label>
+            <input type="range" id="accRot" min="-180" max="180" value="0"/>
+          </div>
+          <div class="field">
+            <label>Tipo</label>
+            <input type="text" id="accType" value="—" readonly/>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <button class="chip" id="btnReset" type="button">↺ Reset</button>
+          <button class="chip danger" id="btnDelete" type="button">🗑 Elimina selez.</button>
+          <button class="chip primary" id="btnSend" type="button">📲 Invia WhatsApp</button>
+        </div>
+
+        <div class="small">
+          Nota WhatsApp: scarichiamo l’anteprima e apriamo WhatsApp con il testo pronto (WhatsApp non allega automaticamente file via URL).
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  // ===== CONFIG =====
+  const WHATSAPP_NUMBER = '+393440260906';
+  const VB = { w:1000, h:1600 };
+  const ZOOM_CENTER = { x:500, y:800 };
+
+  // ===== DOM =====
+  const btnClose = document.getElementById('btnClose');
+  const stageWrap = document.getElementById('stageWrap');
+  const svg = document.getElementById('stageSvg');
+  const bgRect = document.getElementById('bgRect');
+  const world = document.getElementById('world');
+  const ringsLayer = document.getElementById('ringsLayer');
+  const accLayer = document.getElementById('accLayer');
+
+  const bgColor = document.getElementById('bgColor');
+  const worldZoom = document.getElementById('worldZoom');
+
+  const btnAddRing = document.getElementById('btnAddRing');
+  const btnDupRing = document.getElementById('btnDupRing');
+  const btnRemoveRing = document.getElementById('btnRemoveRing');
+
+  const ringSize = document.getElementById('ringSize');
+  const ringColor = document.getElementById('ringColor');
+  const ringWeave = document.getElementById('ringWeave');
+  const ringRot = document.getElementById('ringRot');
+
+  const btnDrawMode = document.getElementById('btnDrawMode');
+  const btnUndoLine = document.getElementById('btnUndoLine');
+  const btnClearManual = document.getElementById('btnClearManual');
+
+  const palette = document.getElementById('palette');
+  const accColor = document.getElementById('accColor');
+  const accScale = document.getElementById('accScale');
+  const accRot = document.getElementById('accRot');
+  const accType = document.getElementById('accType');
+
+  const btnReset = document.getElementById('btnReset');
+  const btnDelete = document.getElementById('btnDelete');
+  const btnSend = document.getElementById('btnSend');
+
+  const modeInfo = document.getElementById('modeInfo');
+  const selInfo = document.getElementById('selInfo');
+
+  // ===== SAFE HELPERS =====
+  function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+  function dist(a,b){ const dx=a.x-b.x, dy=a.y-b.y; return Math.hypot(dx,dy); }
+
+  function niceType(t){
+    return ({
+      feather:'Piuma', bead:'Perlina', chain:'Catenella', tassel:'Frange',
+      moon:'Luna', star:'Stella', eye:'Occhio', bow:'Fiocco'
+    }[t]) || t;
+  }
+  function niceWeave(w){
+    return ({classic:'Classica', net:'Rete', dense:'Fitta', chakra:'Chakra', star:'Stella', spiral:'Spirale'}[w]) || w;
+  }
+
+  function colorName(hex){
+    const h = String(hex||'').toLowerCase();
+    const map = [
+      ['#000000','nero'],['#ffffff','bianco'],['#ff0000','rosso'],['#00ff00','verde'],['#0000ff','blu'],
+      ['#ffff00','giallo'],['#ff00ff','fucsia'],['#00ffff','azzurro'],['#ffa500','arancione'],
+      ['#a52a2a','marrone'],['#808080','grigio'],['#ffd700','oro'],['#c0c0c0','argento']
+    ];
+    function hexToRgb(x){
+      const m = /^#?([0-9a-f]{6})$/.exec(x);
+      if(!m) return [0,0,0];
+      const n = parseInt(m[1],16);
+      return [(n>>16)&255, (n>>8)&255, n&255];
+    }
+    const [r,g,b] = hexToRgb(h);
+    let best = {d:1e18, name:h};
+    for(const [k,name] of map){
+      const [R,G,B] = hexToRgb(k);
+      const d = (r-R)*(r-R)+(g-G)*(g-G)+(b-B)*(b-B);
+      if(d < best.d) best = {d,name};
+    }
+    return best.name;
+  }
+
+  // Robust client->SVG point using bounding rect (works in WebView)
+  function clientToSvg(clientX, clientY){
+    const r = svg.getBoundingClientRect();
+    if(!r.width || !r.height) return {x:0,y:0};
+    const x = (clientX - r.left) * (VB.w / r.width);
+    const y = (clientY - r.top)  * (VB.h / r.height);
+    return {x, y};
+  }
+
+  // Reverse world zoom around center
+  let worldScale = 1;
+  function clientToWorld(clientX, clientY){
+    const p = clientToSvg(clientX, clientY);
+    return {
+      x: (p.x - ZOOM_CENTER.x)/worldScale + ZOOM_CENTER.x,
+      y: (p.y - ZOOM_CENTER.y)/worldScale + ZOOM_CENTER.y
+    };
+  }
+
+  function applyWorld(){
+    world.setAttribute('transform', `translate(${ZOOM_CENTER.x} ${ZOOM_CENTER.y}) scale(${worldScale}) translate(${-ZOOM_CENTER.x} ${-ZOOM_CENTER.y})`);
+  }
+
+  // ===== STATE =====
+  let ringIdC = 2;
+  let accIdC = 1;
+
+  let rings = [
+    { id:'ring1', x:500, y:720, d:620, rot:0, color:'#000000', weave:'classic', manualLines:[] }
+  ];
+  let selectedRingId = 'ring1';
+
+  let acc = [];
+  let selectedAccId = null;
+
+  let drawMode = false;
+  let drawLastPoint = null; // ring-local
+
+  // ===== DRAW PRESETS =====
+  function weaveMarkup(type, r){
+    const out = [];
+    const circle = (rad, cls) => `<circle class="${cls}" cx="0" cy="0" r="${rad}" fill="none"/>`;
+    const line = (x1,y1,x2,y2, cls) => `<line class="${cls}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+
+    if(type === 'spiral'){
+      out.push(`<path class="w1" d="M 0 ${-r}
+        a ${r} ${r} 0 1 1 -1 0
+        a ${r-12} ${r-12} 0 1 0 1 0
+        a ${r-46} ${r-46} 0 1 1 -1 0" fill="none"/>`);
+    } else if(type === 'chakra'){
+      for(const k of [0.92,0.76,0.60,0.44,0.28]) out.push(circle(r*k,'w2'));
+      for(let i=0;i<8;i++){
+        const a = i*(Math.PI*2/8);
+        out.push(line(Math.cos(a)*r*0.92, Math.sin(a)*r*0.92, 0, 0, 'w1'));
+      }
+    } else if(type === 'star'){
+      out.push(circle(r*0.86,'w2'));
+      out.push(circle(r*0.60,'w2'));
+      const pts = [];
+      for(let i=0;i<5;i++){
+        const a = (-90 + i*72) * Math.PI/180;
+        pts.push({x: Math.cos(a)*r*0.86, y: Math.sin(a)*r*0.86});
+      }
+      for(let i=0;i<5;i++){
+        const a = pts[i], b = pts[(i+2)%5];
+        out.push(`<line class="w1" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`);
+      }
+    } else if(type === 'dense'){
+      for(const k of [0.90,0.80,0.70,0.60,0.50,0.40,0.30,0.20]) out.push(circle(r*k,'w2'));
+      for(let i=0;i<16;i++){
+        const a = i*(Math.PI*2/16);
+        out.push(line(Math.cos(a)*r*0.90, Math.sin(a)*r*0.90, 0, 0, 'w1'));
+      }
+    } else if(type === 'net'){
+      out.push(circle(r*0.92,'w2'));
+      out.push(circle(r*0.72,'w2'));
+      out.push(circle(r*0.52,'w2'));
+      out.push(circle(r*0.32,'w2'));
+      for(let i=0;i<6;i++){
+        const a = (-90 + i*60) * Math.PI/180;
+        out.push(line(Math.cos(a)*r*0.92, Math.sin(a)*r*0.92, 0, 0, 'w1'));
+      }
+      for(let i=0;i<6;i++){
+        const a = (-60 + i*60) * Math.PI/180;
+        out.push(line(Math.cos(a)*r*0.72, Math.sin(a)*r*0.72, Math.cos(a+Math.PI)*r*0.32, Math.sin(a+Math.PI)*r*0.32, 'w2'));
+      }
+    } else {
+      out.push(circle(r*0.88,'w2'));
+      out.push(circle(r*0.62,'w2'));
+      out.push(circle(r*0.36,'w2'));
+      const A = [];
+      for(let i=0;i<6;i++){
+        const a = (-90 + i*60) * Math.PI/180;
+        A.push({x:Math.cos(a)*r*0.88, y:Math.sin(a)*r*0.88});
+      }
+      for(let i=0;i<6;i++){
+        const p1=A[i], p2=A[(i+1)%6];
+        out.push(line(p1.x,p1.y,p2.x,p2.y,'w1'));
+      }
+      out.push(line(A[0].x,A[0].y,A[3].x,A[3].y,'w2'));
+      out.push(line(A[1].x,A[1].y,A[4].x,A[4].y,'w2'));
+      out.push(line(A[2].x,A[2].y,A[5].x,A[5].y,'w2'));
+    }
+    return out;
+  }
+
+  function accSvg(type, color){
+    const c = color;
+    if(type === 'bead'){
+      return `
+        <g>
+          <circle cx="0" cy="0" r="40" fill="${c}" opacity="0.95"/>
+          <circle cx="-12" cy="-14" r="10" fill="rgba(255,255,255,.55)"/>
+          <circle cx="0" cy="0" r="40" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="3"/>
+        </g>`;
+    }
+    if(type === 'chain'){
+      return `
+        <g fill="none" stroke="${c}" stroke-width="10" stroke-linecap="round" opacity="0.95">
+          <ellipse cx="0" cy="-55" rx="36" ry="22"/>
+          <ellipse cx="0" cy="0" rx="36" ry="22"/>
+          <ellipse cx="0" cy="55" rx="36" ry="22"/>
+        </g>`;
+    }
+    if(type === 'feather'){
+      return `
+        <g>
+          <path d="M-10,-80 C-55,-35 -55,35 -5,80 C35,35 40,-25 -10,-80Z" fill="${c}" opacity="0.95"/>
+          <path d="M-10,-80 C-2,-30 -2,20 -5,80" stroke="rgba(0,0,0,.25)" stroke-width="6" stroke-linecap="round"/>
+          <path d="M-18,-50 L-50,-35" stroke="rgba(255,255,255,.35)" stroke-width="5" stroke-linecap="round"/>
+          <path d="M-12,-15 L-52,0" stroke="rgba(255,255,255,.35)" stroke-width="5" stroke-linecap="round"/>
+          <path d="M-8,18 L-45,35" stroke="rgba(255,255,255,.35)" stroke-width="5" stroke-linecap="round"/>
+        </g>`;
+    }
+    if(type === 'tassel'){
+      return `
+        <g>
+          <rect x="-22" y="-85" width="44" height="28" rx="12" fill="${c}" opacity="0.9"/>
+          <circle cx="-12" cy="-42" r="9" fill="${c}" opacity="0.85"/>
+          <circle cx="12" cy="-42" r="9" fill="${c}" opacity="0.85"/>
+          <g stroke="${c}" stroke-width="8" stroke-linecap="round" opacity="0.75">
+            <line x1="-40" y1="-20" x2="-40" y2="95"/>
+            <line x1="-20" y1="-20" x2="-20" y2="115"/>
+            <line x1="0" y1="-20" x2="0" y2="125"/>
+            <line x1="20" y1="-20" x2="20" y2="115"/>
+            <line x1="40" y1="-20" x2="40" y2="95"/>
+          </g>
+          <g stroke="rgba(0,0,0,.15)" stroke-width="4" stroke-linecap="round">
+            <line x1="-40" y1="-20" x2="-40" y2="95"/>
+            <line x1="-20" y1="-20" x2="-20" y2="115"/>
+            <line x1="0" y1="-20" x2="0" y2="125"/>
+            <line x1="20" y1="-20" x2="20" y2="115"/>
+            <line x1="40" y1="-20" x2="40" y2="95"/>
+          </g>
+        </g>`;
+    }
+    if(type === 'moon'){
+      return `
+        <g>
+          <path d="M20,-55 A55,55 0 1 0 20,55 A35,35 0 1 1 20,-55Z" fill="${c}" opacity="0.95"/>
+          <path d="M20,-55 A55,55 0 1 0 20,55" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="4"/>
+        </g>`;
+    }
+    if(type === 'star'){
+      return `
+        <g>
+          <path d="M0,-70 L18,-22 L68,-22 L28,8 L44,55 L0,28 L-44,55 L-28,8 L-68,-22 L-18,-22 Z"
+                fill="${c}" opacity="0.95" stroke="rgba(0,0,0,.18)" stroke-width="4" stroke-linejoin="round"/>
+        </g>`;
+    }
+    if(type === 'eye'){
+      return `
+        <g>
+          <path d="M-85,0 C-50,-45 50,-45 85,0 C50,45 -50,45 -85,0Z" fill="${c}" opacity="0.9"/>
+          <circle cx="0" cy="0" r="28" fill="rgba(255,255,255,.9)"/>
+          <circle cx="0" cy="0" r="14" fill="rgba(0,0,0,.75)"/>
+          <circle cx="-6" cy="-8" r="6" fill="rgba(255,255,255,.7)"/>
+          <path d="M-85,0 C-50,-45 50,-45 85,0" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="5"/>
+          <path d="M-85,0 C-50,45 50,45 85,0" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="5"/>
+        </g>`;
+    }
+    if(type === 'bow'){
+      return `
+        <g>
+          <path d="M0,0 C-30,-35 -80,-40 -95,0 C-80,40 -30,35 0,0Z" fill="${c}" opacity="0.95"/>
+          <path d="M0,0 C30,-35 80,-40 95,0 C80,40 30,35 0,0Z" fill="${c}" opacity="0.95"/>
+          <circle cx="0" cy="0" r="22" fill="rgba(255,255,255,.25)"/>
+          <circle cx="0" cy="0" r="18" fill="${c}" opacity="0.95"/>
+          <path d="M-95,0 C-80,40 -30,35 0,0" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="4"/>
+          <path d="M95,0 C80,40 30,35 0,0" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="4"/>
+        </g>`;
+    }
+    return `<circle cx="0" cy="0" r="40" fill="${c}"/>`;
+  }
+
+  // ===== RENDER =====
+  function render(){
+    bgRect.setAttribute('fill', bgColor.value);
+    applyWorld();
+    renderRings();
+    renderAcc();
+    modeInfo.textContent = drawMode ? 'Modalità: ✏️ disegna ragnatela' : 'Modalità: sposta';
+    btnDrawMode.classList.toggle('on', drawMode);
+  }
+
+  function renderRings(){
+    ringsLayer.innerHTML = '';
+    const ordered = [...rings].sort((a,b)=>{
+      if(a.id === selectedRingId) return 1;
+      if(b.id === selectedRingId) return -1;
+      return 0;
+    });
+
+    for(const rg of ordered){
+      const r = rg.d/2;
+      const sel = rg.id === selectedRingId;
+
+      const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+      g.setAttribute('data-ring-id', rg.id);
+      g.setAttribute('transform', `translate(${rg.x} ${rg.y}) rotate(${rg.rot||0})`);
+      g.style.cursor = drawMode ? 'crosshair' : 'grab';
+
+      // hit area: permette di trascinare il cerchio anche toccando dentro (non solo sul bordo)
+      const hit = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      hit.setAttribute('cx','0'); hit.setAttribute('cy','0'); hit.setAttribute('r', String(r));
+      hit.setAttribute('fill','transparent');
+      hit.setAttribute('stroke','transparent');
+      hit.setAttribute('stroke-width', String(clamp(r*0.12, 22, 46)));
+      hit.style.pointerEvents = 'all';
+      g.appendChild(hit);
+
+
+      const outline = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      outline.setAttribute('cx','0'); outline.setAttribute('cy','0'); outline.setAttribute('r', String(r));
+      outline.setAttribute('fill','none');
+      outline.setAttribute('stroke', rg.color);
+      outline.setAttribute('stroke-width', String(clamp(r*0.035, 8, 18)));
+      g.appendChild(outline);
+
+      const presetG = document.createElementNS('http://www.w3.org/2000/svg','g');
+      presetG.innerHTML = weaveMarkup(rg.weave, r*0.92).join('');
+      presetG.querySelectorAll('.w1,.w2').forEach(n=>{
+        n.setAttribute('stroke', 'rgba(0,0,0,.35)');
+        n.setAttribute('stroke-width', String(clamp(r*0.006, 2, 3)));
+        n.setAttribute('stroke-linecap', 'round');
+      });
+      presetG.querySelectorAll('.w2').forEach(n=> n.setAttribute('stroke','rgba(0,0,0,.22)'));
+      g.appendChild(presetG);
+
+      const manualG = document.createElementNS('http://www.w3.org/2000/svg','g');
+      (rg.manualLines||[]).forEach(L=>{
+        const ln = document.createElementNS('http://www.w3.org/2000/svg','line');
+        ln.setAttribute('x1', L.x1); ln.setAttribute('y1', L.y1);
+        ln.setAttribute('x2', L.x2); ln.setAttribute('y2', L.y2);
+        ln.setAttribute('stroke', 'rgba(0,0,0,.48)');
+        ln.setAttribute('stroke-width', String(clamp(r*0.008, 2.2, 3.6)));
+        ln.setAttribute('stroke-linecap', 'round');
+        manualG.appendChild(ln);
+      });
+      g.appendChild(manualG);
+
+      if(sel){
+        const halo = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        halo.setAttribute('cx','0'); halo.setAttribute('cy','0'); halo.setAttribute('r', String(r + 12));
+        halo.setAttribute('fill','none');
+        halo.setAttribute('stroke', 'rgba(91,75,255,.75)');
+        halo.setAttribute('stroke-width','4');
+        halo.setAttribute('stroke-dasharray','10 10');
+        g.appendChild(halo);
+      }
+
+      bindRingEvents(g, rg.id);
+      ringsLayer.appendChild(g);
+    }
+  }
+
+  function renderAcc(){
+    accLayer.innerHTML = '';
+    const ordered = [...acc].sort((a,b)=>{
+      if(a.id === selectedAccId) return 1;
+      if(b.id === selectedAccId) return -1;
+      return 0;
+    });
+
+    for(const obj of ordered){
+      const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+      g.setAttribute('data-acc-id', obj.id);
+      g.setAttribute('transform', `translate(${obj.x} ${obj.y}) rotate(${obj.rot||0})`);
+      g.style.cursor = 'grab';
+
+      const isSel = obj.id === selectedAccId;
+      if(isSel){
+        const halo = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        halo.setAttribute('x', String(-obj.size/2 - 18));
+        halo.setAttribute('y', String(-obj.size/2 - 18));
+        halo.setAttribute('width', String(obj.size + 36));
+        halo.setAttribute('height', String(obj.size + 36));
+        halo.setAttribute('rx', '18');
+        halo.setAttribute('fill', 'rgba(91,75,255,.10)');
+        halo.setAttribute('stroke', 'rgba(91,75,255,.90)');
+        halo.setAttribute('stroke-width', '5');
+        accLayer.appendChild(halo);
+      }
+
+      const inner = document.createElementNS('http://www.w3.org/2000/svg','g');
+      inner.setAttribute('transform', `scale(${(obj.size||90)/100})`);
+      inner.innerHTML = accSvg(obj.type, obj.color);
+      g.appendChild(inner);
+
+      bindAccEvents(g, obj.id);
+      accLayer.appendChild(g);
+    }
+  }
+
+  // ===== SELECTION =====
+  function ringById(id){ return rings.find(r=>r.id===id) || null; }
+  function accById(id){ return acc.find(a=>a.id===id) || null; }
+
+  function selectRing(id){
+    const rg = ringById(id);
+    if(!rg) return;
+    selectedRingId = id;
+    selectedAccId = null;
+
+    ringSize.value = String(rg.d);
+    ringColor.value = rg.color;
+    ringWeave.value = rg.weave;
+    ringRot.value = String(rg.rot||0);
+
+    drawLastPoint = null;
+    accType.value = '—';
+    selInfo.textContent = `Selezionato: Cerchio • ${colorName(rg.color)} • Ø ${Math.round(rg.d)} • ${niceWeave(rg.weave)}`;
+    render();
+  }
+
+  function selectAcc(id){
+    const obj = accById(id);
+    if(!obj) return;
+    selectedAccId = id;
+
+    accColor.value = obj.color;
+    accScale.value = String(obj.size);
+    accRot.value = String(obj.rot||0);
+    accType.value = niceType(obj.type);
+
+    selInfo.textContent = `Selezionato: ${niceType(obj.type)} • ${colorName(obj.color)} • size ${Math.round(obj.size)}`;
+    renderAcc(); // no need full render
+  }
+
+  // ===== INPUT / EVENTS =====
+  btnClose.addEventListener('click', ()=>{
+    try{ parent.postMessage({type:'DC_CLOSE'}, '*'); }catch{}
+    // fallback
+    if(history.length>1) history.back();
+  });
+
+  bgColor.addEventListener('input', ()=> render());
+  worldZoom.addEventListener('input', ()=>{
+    worldScale = clamp(Number(worldZoom.value)/100, 0.6, 3.2);
+    render();
+  });
+
+  ringSize.addEventListener('input', ()=>{
+    const rg = ringById(selectedRingId); if(!rg) return;
+    rg.d = Number(ringSize.value);
+    selInfo.textContent = `Selezionato: Cerchio • ${colorName(rg.color)} • Ø ${Math.round(rg.d)} • ${niceWeave(rg.weave)}`;
+    renderRings();
+  });
+  ringColor.addEventListener('input', ()=>{
+    const rg = ringById(selectedRingId); if(!rg) return;
+    rg.color = ringColor.value;
+    selInfo.textContent = `Selezionato: Cerchio • ${colorName(rg.color)} • Ø ${Math.round(rg.d)} • ${niceWeave(rg.weave)}`;
+    renderRings();
+  });
+  ringWeave.addEventListener('change', ()=>{
+    const rg = ringById(selectedRingId); if(!rg) return;
+    rg.weave = ringWeave.value;
+    selInfo.textContent = `Selezionato: Cerchio • ${colorName(rg.color)} • Ø ${Math.round(rg.d)} • ${niceWeave(rg.weave)}`;
+    renderRings();
+  });
+  ringRot.addEventListener('input', ()=>{
+    const rg = ringById(selectedRingId); if(!rg) return;
+    rg.rot = Number(ringRot.value);
+    renderRings();
+  });
+
+  btnAddRing.addEventListener('click', ()=>{
+    const base = ringById(selectedRingId) || rings[0];
+    const d = clamp((base?.d||620)-120, 140, 950);
+    const rg = {
+      id:'ring'+(ringIdC++),
+      x: (base?.x||500) + 90,
+      y: (base?.y||720) + 90,
+      d,
+      rot:0,
+      color:ringColor.value || '#000000',
+      weave:ringWeave.value || 'classic',
+      manualLines:[]
+    };
+    rings.push(rg);
+    selectRing(rg.id);
+  });
+
+  btnDupRing.addEventListener('click', ()=>{
+    const base = ringById(selectedRingId); if(!base) return;
+    const copy = JSON.parse(JSON.stringify(base));
+    copy.id = 'ring'+(ringIdC++);
+    copy.x = base.x + 90;
+    copy.y = base.y + 90;
+    rings.push(copy);
+    selectRing(copy.id);
+  });
+
+  btnRemoveRing.addEventListener('click', ()=>{
+    if(rings.length<=1) return;
+    rings = rings.filter(r=>r.id!==selectedRingId);
+    selectRing(rings[rings.length-1].id);
+  });
+
+  btnDrawMode.addEventListener('click', ()=>{
+    drawMode = !drawMode;
+    drawLastPoint = null;
+    selInfo.textContent = drawMode ? 'Disegna: tap due punti nel cerchio selezionato' : selInfo.textContent;
+    render();
+  });
+
+  btnUndoLine.addEventListener('click', ()=>{
+    const rg = ringById(selectedRingId); if(!rg) return;
+    if(!(rg.manualLines||[]).length) return;
+    rg.manualLines.pop();
+    drawLastPoint = null;
+    renderRings();
+    selInfo.textContent = `Linee manuali: ${rg.manualLines.length}`;
+  });
+
+  btnClearManual.addEventListener('click', ()=>{
+    const rg = ringById(selectedRingId); if(!rg) return;
+    rg.manualLines = [];
+    drawLastPoint = null;
+    renderRings();
+    selInfo.textContent = 'Ragnatela manuale pulita';
+  });
+
+  palette.addEventListener('click', (e)=>{
+    const b = e.target.closest('[data-add]');
+    if(!b) return;
+    const type = b.dataset.add;
+    const rg = ringById(selectedRingId) || rings[0];
+    const obj = {
+      id: String(accIdC++),
+      type,
+      color: accColor.value,
+      size: Number(accScale.value),
+      rot: Number(accRot.value),
+      x: rg.x,
+      y: rg.y + rg.d/2 + 180
+    };
+    acc.push(obj);
+    selectAcc(obj.id);
+  });
+
+  accColor.addEventListener('input', ()=>{
+    const obj = accById(selectedAccId); if(!obj) return;
+    obj.color = accColor.value;
+    selInfo.textContent = `Selezionato: ${niceType(obj.type)} • ${colorName(obj.color)} • size ${Math.round(obj.size)}`;
+    renderAcc();
+  });
+  accScale.addEventListener('input', ()=>{
+    const obj = accById(selectedAccId); if(!obj) return;
+    obj.size = Number(accScale.value);
+    selInfo.textContent = `Selezionato: ${niceType(obj.type)} • ${colorName(obj.color)} • size ${Math.round(obj.size)}`;
+    renderAcc();
+  });
+  accRot.addEventListener('input', ()=>{
+    const obj = accById(selectedAccId); if(!obj) return;
+    obj.rot = Number(accRot.value);
+    renderAcc();
+  });
+
+  btnDelete.addEventListener('click', ()=>{
+    if(selectedAccId){
+      acc = acc.filter(a=>a.id!==selectedAccId);
+      selectedAccId = null;
+      accType.value = '—';
+      renderAcc();
+      return;
+    }
+  });
+
+  btnReset.addEventListener('click', ()=>{
+    rings = [{ id:'ring1', x:500, y:720, d:620, rot:0, color:'#000000', weave:'classic', manualLines:[] }];
+    selectedRingId = 'ring1';
+    ringIdC = 2;
+
+    acc = [];
+    selectedAccId = null;
+    accIdC = 1;
+
+    bgColor.value = '#ffffff';
+    ringColor.value = '#000000';
+    ringSize.value = '620';
+    ringWeave.value = 'classic';
+    ringRot.value = '0';
+
+    drawMode = false;
+    drawLastPoint = null;
+
+    worldScale = 1;
+    worldZoom.value = '100';
+
+    accType.value = '—';
+    selInfo.textContent = 'Nessun elemento selezionato';
+    render();
+    selectRing('ring1');
+  });
+
+  // ===== DRAGGING (one finger) + PINCH ZOOM (two fingers) =====
+  const pointers = new Map();
+  let pinch = null;
+
+  const drag = { kind:null, id:null, dx:0, dy:0 };
+
+  // pinch-to-resize accessori (2 dita sull'accessorio selezionato)
+  const accPointers = new Map();
+  let accPinch = null;
+
+
+  function bindRingEvents(node, ringId){
+    node.addEventListener('pointerdown', (e)=>{
+      e.preventDefault(); e.stopPropagation();
+      selectRing(ringId);
+
+      // in draw mode, ring does not move with 1 finger (only tap points)
+      if(drawMode) return;
+
+      node.setPointerCapture(e.pointerId);
+      const p = clientToWorld(e.clientX, e.clientY);
+      const rg = ringById(ringId); if(!rg) return;
+
+      drag.kind='ring'; drag.id=ringId;
+      drag.dx = rg.x - p.x;
+      drag.dy = rg.y - p.y;
+    }, {passive:false});
+
+    node.addEventListener('pointermove', (e)=>{
+      if(drag.kind!=='ring' || drag.id!==ringId) return;
+      e.preventDefault();
+      const p = clientToWorld(e.clientX, e.clientY);
+      const rg = ringById(ringId); if(!rg) return;
+      rg.x = p.x + drag.dx;
+      rg.y = p.y + drag.dy;
+      // aggiorna solo il nodo durante il drag (evita re-render che interrompe il pointer capture)
+      node.setAttribute('transform', `translate(${rg.x} ${rg.y}) rotate(${rg.rot||0})`);
+    }, {passive:false});
+
+    const end=()=>{
+      if(drag.kind==='ring' && drag.id===ringId){ drag.kind=null; drag.id=null; }
+      // sync finale
+      renderRings();
+    };
+    node.addEventListener('pointerup', end);
+    node.addEventListener('pointercancel', end);
+  }
+
+  
+  function bindAccEvents(node, accId){
+    node.addEventListener('pointerdown', (e)=>{
+      e.preventDefault(); e.stopPropagation();
+      selectAcc(accId);
+
+      node.setPointerCapture(e.pointerId);
+      // registra pointer per pinch su accessorio
+      accPointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+
+      const obj = accById(accId); if(!obj) return;
+
+      // se 2 dita sullo stesso accessorio -> pinch per ridimensionare
+      if(accPointers.size === 2 && selectedAccId === accId){
+        const pts=[...accPointers.values()];
+        accPinch = { id: accId, d: dist(pts[0], pts[1]), size: obj.size };
+        return;
+      }
+
+      // altrimenti: drag a 1 dito
+      const p = clientToWorld(e.clientX, e.clientY);
+      drag.kind='acc'; drag.id=accId;
+      drag.dx = obj.x - p.x;
+      drag.dy = obj.y - p.y;
+    }, {passive:false});
+
+    node.addEventListener('pointermove', (e)=>{
+      if(!accPointers.has(e.pointerId)) return;
+
+      // aggiorna posizione puntatore per pinch/drag
+      accPointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+
+      // pinch resize (2 dita) sull'accessorio selezionato
+      if(accPinch && accPinch.id===accId && accPointers.size === 2){
+        e.preventDefault();
+        const obj = accById(accId); if(!obj) return;
+        const pts=[...accPointers.values()];
+        const d = dist(pts[0], pts[1]);
+        const factor = d / accPinch.d;
+        obj.size = clamp(accPinch.size * factor, 40, 320);
+        accScale.value = String(Math.round(obj.size));
+        selInfo.textContent = `Selezionato: ${niceType(obj.type)} • ${colorName(obj.color)} • size ${Math.round(obj.size)}`;
+        // aggiorna solo il nodo durante pinch
+        const inner = node.querySelector(':scope > g');
+        if(inner) inner.setAttribute('transform', `scale(${(obj.size||90)/100})`);
+        return;
+      }
+
+      // drag a 1 dito
+      if(drag.kind!=='acc' || drag.id!==accId) return;
+      e.preventDefault();
+      const p = clientToWorld(e.clientX, e.clientY);
+      const obj = accById(accId); if(!obj) return;
+      obj.x = p.x + drag.dx;
+      obj.y = p.y + drag.dy;
+      // aggiorna solo il nodo durante il drag
+      node.setAttribute('transform', `translate(${obj.x} ${obj.y}) rotate(${obj.rot||0})`);
+    }, {passive:false});
+
+    function end(e){
+      accPointers.delete(e.pointerId);
+      if(accPointers.size < 2) accPinch = null;
+      if(drag.kind==='acc' && drag.id===accId){ drag.kind=null; drag.id=null; }
+      // sync finale (ricrea halo selezione ecc)
+      renderAcc();
+    }
+    node.addEventListener('pointerup', end);
+    node.addEventListener('pointercancel', end);
+  }
+
+
+  // pinch zoom on stage background only
+  stageWrap.addEventListener('pointerdown', (e)=>{
+    // background interactions
+    pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    stageWrap.setPointerCapture(e.pointerId);
+
+    if(pointers.size === 2){
+      const pts=[...pointers.values()];
+      pinch = { d: dist(pts[0], pts[1]), scale: worldScale };
+    }
+  }, {passive:false});
+
+  stageWrap.addEventListener('pointermove', (e)=>{
+    if(!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    if(pointers.size === 2 && pinch){
+      e.preventDefault();
+      const pts=[...pointers.values()];
+      const d = dist(pts[0], pts[1]);
+      worldScale = clamp(pinch.scale * (d / pinch.d), 0.6, 3.2);
+      worldZoom.value = String(Math.round(worldScale*100));
+      applyWorld();
+    }
+  }, {passive:false});
+
+  function endPointer(e){
+    pointers.delete(e.pointerId);
+    if(pointers.size < 2) pinch = null;
+  }
+  stageWrap.addEventListener('pointerup', endPointer);
+  stageWrap.addEventListener('pointercancel', endPointer);
+
+  // Manual drawing: tap on background (stageWrap) in draw mode (one finger)
+  stageWrap.addEventListener('pointerup', (e)=>{
+    if(!drawMode) return;
+    // ignore if it was pinch (two fingers)
+    if(pointers.size > 0) return;
+
+    const rg = ringById(selectedRingId); if(!rg) return;
+    const p = clientToWorld(e.clientX, e.clientY);
+
+    // ring-local coords (reverse rotation)
+    const ang = -(rg.rot||0) * Math.PI/180;
+    const dx = p.x - rg.x;
+    const dy = p.y - rg.y;
+    const lx = dx*Math.cos(ang) - dy*Math.sin(ang);
+    const ly = dx*Math.sin(ang) + dy*Math.cos(ang);
+
+    const r = rg.d/2 * 0.92;
+    if(Math.hypot(lx,ly) > r) return;
+
+    const snap = (v)=> Math.round(v*10)/10;
+    const pt = {x:snap(lx), y:snap(ly)};
+
+    if(!drawLastPoint){
+      drawLastPoint = pt;
+      selInfo.textContent = 'Disegna: primo punto impostato';
+      return;
+    }
+
+    rg.manualLines = rg.manualLines || [];
+    rg.manualLines.push({x1: drawLastPoint.x, y1: drawLastPoint.y, x2: pt.x, y2: pt.y});
+    drawLastPoint = pt;
+    renderRings();
+    selInfo.textContent = `Disegna: linea aggiunta • linee manuali: ${rg.manualLines.length}`;
+  });
+
+  // ===== EXPORT + WHATSAPP =====
+  function buildSummary(){
+    const ringLines = rings.map((r,i)=>`- Cerchio ${i+1}: Ø ${Math.round(r.d)} • colore ${colorName(r.color)} • tessitura ${niceWeave(r.weave)} • manuale ${((r.manualLines||[]).length)} linee`);
+    const accLines = acc.map((a)=>`- ${niceType(a.type)} • colore ${colorName(a.color)} • dimensione ${Math.round(a.size)}`);
+    return [
+      '🧿 *Richiesta Acchiappasogni Personalizzato*',
+      '',
+      '*Cerchi:*',
+      ...(ringLines.length? ringLines : ['- nessuno']),
+      '',
+      '*Accessori:*',
+      ...(accLines.length? accLines : ['- nessuno']),
+      '',
+      `Sfondo: ${colorName(bgColor.value)}`,
+      '',
+      '📌 Ho allegato l’anteprima (immagine scaricata automaticamente).'
+    ].join('\n');
+  }
+
+  function downloadPreviewPng(){
+    const xml = new XMLSerializer().serializeToString(svg);
+    const svgBlob = new Blob([xml], {type:'image/svg+xml;charset=utf-8'});
+    const url = URL.createObjectURL(svgBlob);
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = VB.w;
+      canvas.height = VB.h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      const pngUrl = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = pngUrl;
+      a.download = 'anteprima-acchiappasogni.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      alert('Impossibile generare l’anteprima immagine.');
+    };
+    img.src = url;
+  }
+
+  btnSend.addEventListener('click', ()=>{
+    downloadPreviewPng();
+    const text = buildSummary();
+    const number = WHATSAPP_NUMBER.replace('+','');
+    const wa = `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+    window.open(wa, '_blank', 'noopener,noreferrer');
+  });
+
+  // ===== INIT =====
+  bgRect.setAttribute('fill', bgColor.value);
+  worldScale = 1;
+  applyWorld();
+  render();
+  selectRing('ring1');
+
+})();
+</script>
+</body>
+</html>
