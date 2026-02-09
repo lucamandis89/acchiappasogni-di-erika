@@ -2,7 +2,7 @@
   "name": "Acchiappasogni di Erika",
   "short_name": "Acchiappasogni",
   "description": "Catalogo online per Acchiappasogni di Erika con ordini diretti su WhatsApp.",
-  "start_url": "/acchiappasogni-di-erika/?source=pwa",
+  "start_url": "/acchiappasogni-di-erika/pwa.html?source=pwa",
   "scope": "/acchiappasogni-di-erika/",
   "display": "standalone",
   "background_color": "#ffffff",
