@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/icon-192-1.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./assets/icon-512-1.png">
+  <title>Acchiappasogni di Erika</title>
+</head>
+<body>
+  <p>Caricamento…</p>
+  <script>
+  // entry leggero per installazione PWA → registra SW e poi vai all’app vera
+  (async ()=>{
+    try{
+      if('serviceWorker' in navigator){
+        await navigator.serviceWorker.register('./sw.js', { scope: './' });
+      }
+    }catch(e){
+      console.warn('SW non registrato:', e);
+    }finally{
+      location.replace("./index.html");
+    }
+  })();
+</script>
+</body>
+</html>
