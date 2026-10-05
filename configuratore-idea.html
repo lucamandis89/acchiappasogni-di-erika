@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="it">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Crea dalla tua idea — Acchiappasogni di Erika</title><link rel="stylesheet" href="assets/configurator.css"></head>
+<body><header><a href="index.html">← Catalogo</a><h1>Crea dalla tua idea</h1><a href="configuratore.html">Configuratore manuale originale</a></header>
+<main class="studio"><section class="controls">
+<label for="idea">Descrivi il tuo acchiappasogni</label><textarea id="idea" rows="5" maxlength="4000" placeholder="Un cerchio da 30 cm, due cerchi da 10 cm sotto, quattro piume rosa. Scrivi Sofia al centro."></textarea>
+<button id="apply" disabled>Applica alla composizione</button><button id="new">Nuovo progetto</button><p id="messages" role="status" aria-live="polite"></p>
+<details><summary>Personalizzati: raccontaci i dettagli</summary><div id="details"></div></details>
+<label for="catalog">Elementi disponibili</label><select id="catalog"></select><button id="add" disabled>Aggiungi selezione</button>
+<p>Seleziona un elemento nell’anteprima per spostarlo, ruotarlo o eliminarlo.</p>
+<div class="actions"><button id="left" aria-label="Sposta a sinistra">←</button><button id="up" aria-label="Sposta in alto">↑</button><button id="down" aria-label="Sposta in basso">↓</button><button id="right" aria-label="Sposta a destra">→</button><button id="delete">Elimina selezione</button></div>
+<label for="size">Dimensione visiva</label><input id="size" type="range" min="0.3" max="2" step="0.1" value="1"><label for="rotation">Rotazione</label><input id="rotation" type="range" min="-180" max="180" value="0">
+<label for="personalText">Nome, frase o dedica</label><input id="personalText" maxlength="250"><label for="background">Sfondo</label><input id="background" type="color" value="#ffffff">
+<div class="actions"><button id="save">Salva progetto</button><button id="whatsapp">Invia su WhatsApp</button><button id="download">Scarica progetto JSON</button></div>
+<label for="saved">Progetti salvati</label><select id="saved"></select><button id="restore">Riprendi progetto</button>
+<p>I progetti vengono salvati su questo browser. Il totale riguarda i componenti disponibili; richieste non disponibili e dettagli da concordare sono esclusi.</p>
+<pre id="summary"></pre></section>
+<section class="preview"><h2>Anteprima</h2><svg id="composition" viewBox="0 0 1000 1200" role="img" aria-label="Composizione del progetto"><rect id="bg" width="1000" height="1200" fill="#fff"/><g id="elements"></g><text id="dedication" x="500" y="300" text-anchor="middle" font-size="38"></text></svg></section></main>
+<script src="js/configurator-engine.js"></script><script src="js/configurator-store.js"></script><script src="js/configurator-ui.js"></script></body></html>
