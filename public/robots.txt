@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin
+Disallow: /checkout
+Disallow: /carrello
+Disallow: /account
+Disallow: /login
+Disallow: /recupera-password
+
+Sitemap: https://acchiappasogni-ery.netlify.app/sitemap.xml
