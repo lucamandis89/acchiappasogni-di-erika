@@ -49,7 +49,7 @@
   function allColors(s) {const text=normalize(s);return Object.entries(colors).map(([c,ws])=>({c,index:Math.min(...ws.map(w=>{const m=new RegExp('(^|[^a-z0-9])'+escapeRE(w)+'(?=$|[^a-z0-9])').exec(text);return m?m.index:Infinity;}))})).filter(x=>Number.isFinite(x.index)).sort((a,b)=>a.index-b.index).map(x=>x.c);}
   function position(s) {return positions.find(([w])=>contains(normalize(s),w))?.[1] || '';}
   function quantity(s) {
-    const tokens=normalize(s).split(' ');
+    const tokens=normalize(s).split(' ').reverse();
     for(const t of tokens) {if(/^\d+$/.test(t)) return Math.max(1,Number(t)); if(numberWords[t]) return numberWords[t];}
     return 1;
   }

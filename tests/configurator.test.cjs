@@ -41,3 +41,5 @@ test('Bundle components across clauses are billed only once',()=>{const bundle={
 
 test('Singular named variant replacement respects explicit quantity',()=>{const s=apply('quattro piume rosa').state;const r=apply('cambia una piuma rosa in bianca',s);assert.equal(count(r.state,'pink'),3);assert.equal(count(r.state,'white'),1);assert.deepEqual(r.warnings,[]);});
 test('Explicit RECOLOR intent uses a real variant',()=>{const s=apply('quattro piume rosa').state;const r=apply('colora le piume di bianco',s);assert.equal(r.parsed.requests[0].intent,'RECOLOR');assert.equal(count(r.state,'white'),4);});
+
+test('Quantities bind to the closest noun after introductory un',()=>{const r=apply('crea un acchiappasogni con 4 piume rosa');assert.equal(count(r.state,'pink'),4);const r2=apply('vorrei un acchiappasogni con due cerchi da 10 cm');assert.equal(count(r2.state,'r10'),2);});

@@ -1034,7 +1034,7 @@
     if(!rg) return;
     rg.weave = ringWeave.value;
     drawRings();
-
+  });
 
   // Spostamento cerchio selezionato (metodo affidabile in APK)
   const NUDGE = 10; // px per click
@@ -1069,7 +1069,6 @@
     if(!rg) return;
     rg.y = Number(ringPosY.value);
     drawRings();
-  });
   });
 
   palette.addEventListener('click', (e)=>{

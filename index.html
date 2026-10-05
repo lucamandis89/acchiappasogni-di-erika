@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5, user-scalable=yes" name="viewport">
   <title>Acchiappasogni di Erika</title>
-  <link href="/acchiappasogni-di-erika/manifest.webmanifest" rel="manifest">
+  <link href="manifest.webmanifest" rel="manifest">
   <meta content="#ffffff" name="theme-color">
   <meta content="Catalogo online per Acchiappasogni di Erika con ordini diretti su WhatsApp." name="description">
   <link href="/acchiappasogni-di-erika/icons/icon-192.png" rel="apple-touch-icon">
@@ -206,6 +206,9 @@
       box-shadow: 0 20px 60px rgba(0,0,0,.5);
       overflow:hidden;
     }
+    .modal{max-height:calc(100dvh - 28px);display:flex;flex-direction:column;}
+    .modal-head{flex-shrink:0;}
+    .modal-body{min-height:0;overflow:auto;}
     .modal-head{
       display:flex; align-items:center; gap:10px;
       padding:12px 12px;
@@ -1302,6 +1305,7 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
     </div>
     <!-- onclick diretto: assicura il tap anche su WebView/Android con caching o overlay -->
     <button class="btn primary" id="btnCustomizer" onclick="window.__openCustomizer && window.__openCustomizer(); return false;">🪄 CREA IL TUO ACCHIAPPASOGNI</button>
+    <a class="btn" href="configuratore-idea.html">💡 Crea dalla tua idea</a>
     <button class="btn" id="btnGifts" onclick="window.__openGifts && window.__openGifts(); return false;">🎁 BOMBONIERE &amp; REGALI</button>
     <div class="spacer"></div>
     <button class="btn" id="btnSettings">⚙️ Impostazioni</button>
@@ -1373,6 +1377,7 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
      </div>
      <!-- panel -->
      <div id="adminPanel" style="display:none">
+      <p><a class="btn" href="admin-configuratore.html">Gestisci elementi e metadati del configuratore</a></p>
       <div class="form">
        <div>
         <label>Password Admin (cambia)</label> <input id="newAdminPass" placeholder="Nuova password" type="password">
@@ -1732,6 +1737,7 @@ html, body{ background: var(--ui-bg) !important; color: var(--ui-text) !importan
     const DEFAULT_WA = "+393440260906";
     const ADMIN_PASS_DEFAULT = "1234";
     const PRODUCTS_URL = "data/products.json";
+    let configuredCategories = [];
 
     const IMAGE_BASE_PATH = "assets/assets/images/assets/images/acchiappasogni_hd/";
     const IMAGE_BASE_CANDIDATES = [
@@ -1853,6 +1859,13 @@ function getAdminPass(){ return localStorage.getItem(K.adminPass) || ADMIN_PASS_
     function saveDeleted(arr){ localStorage.setItem(K.deleted, JSON.stringify(arr)); }
 
     async function fetchBaseProducts(){
+      try {
+        const response = await fetch("data/categories.json", {cache:"no-store"});
+        if (response.ok) {
+          const value = await response.json();
+          if (Array.isArray(value)) configuredCategories = value.filter(c => typeof c === "string" && c.trim());
+        }
+      } catch {}
       const r = await fetch(PRODUCTS_URL, { cache: "no-store" });
       if(!r.ok) throw new Error("Impossibile caricare " + PRODUCTS_URL);
       const data = await r.json();
@@ -1892,7 +1905,7 @@ function getAdminPass(){ return localStorage.getItem(K.adminPass) || ADMIN_PASS_
     const adminModalBack = document.getElementById("adminModalBack");
 
     function rebuildCategories(){
-      const set = new Set(allProducts.map(p => p.category || "Altro"));
+      const set = new Set([...configuredCategories, ...allProducts.map(p => p.category || "Altro")]);
       // categorie salvate (anche vuote)
       let saved = [];
       try{ saved = JSON.parse(localStorage.getItem(K.categories) || "[]"); }catch{}
