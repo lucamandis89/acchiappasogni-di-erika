@@ -473,7 +473,7 @@ function ProductDetail({ onAddToCart }) {
             <p>
               {product.description ||
                 product.short_description ||
-                'Una creazione artigianale realizzata a mano da Erika.'}
+                'Una creazione fatta a mano da Erika.'}
             </p>
 
             <div className="product-details-list">

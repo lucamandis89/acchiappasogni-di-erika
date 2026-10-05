@@ -26,7 +26,7 @@ function Footer() {
           <h2>Gli Acchiappasogni di Ery</h2>
 
           <p>
-            Creazioni artigianali realizzate a mano,
+            Creazioni fatte a mano,
             intrecciate con cura, passione e un pizzico
             di magia.
           </p>
@@ -124,9 +124,8 @@ function Footer() {
         </p>
 
         <p className="footer-made">
-          Fatto con
+          Fatto a mano con
           <span className="footer-heart">♥</span>
-          artigianalmente
         </p>
 
         <div className="footer-legal">

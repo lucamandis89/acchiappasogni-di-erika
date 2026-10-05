@@ -66,7 +66,7 @@ function Home({ onAddToCart }) {
             </h1>
 
             <p>
-              Acchiappasogni artigianali, pezzi unici e creazioni
+              Acchiappasogni fatti a mano, pezzi unici e creazioni
               personalizzate realizzate a mano da Erika.
             </p>
 

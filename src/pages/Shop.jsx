@@ -7,6 +7,8 @@ import ProductCard from '../components/ProductCard'
 function Shop({ onAddToCart }) {
   const [searchParams, setSearchParams] = useSearchParams()
 
+  const [databaseCategories,setDatabaseCategories]=useState([])
+  useEffect(()=>{supabase.from('categories').select('name').eq('active',true).order('order',{ascending:true}).then(({data,error})=>{if(!error)setDatabaseCategories(data||[])})},[])
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -65,14 +67,14 @@ function Shop({ onAddToCart }) {
   ])
 
   const categories = useMemo(() => {
-    const values = products
+    const values = [...databaseCategories.map(c=>c.name),...products
       .map((product) => product.category_name)
-      .filter(Boolean)
+      .filter(Boolean)]
 
     return [...new Set(values)].sort((a, b) =>
       a.localeCompare(b, 'it')
     )
-  }, [products])
+  }, [products,databaseCategories])
 
   const filteredProducts = useMemo(() => {
     let result = [...products]
@@ -229,7 +231,7 @@ function Shop({ onAddToCart }) {
       <section className="shop-hero">
         <div className="container-ery">
           <span className="shop-kicker">
-            Creazioni artigianali ERY
+            Creazioni fatte a mano ERY
           </span>
 
           <h1>Shop</h1>

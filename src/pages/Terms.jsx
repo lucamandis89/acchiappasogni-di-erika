@@ -34,15 +34,15 @@ function Terms() {
           </section>
 
           <section>
-            <h2>2. Prodotti artigianali</h2>
+            <h2>2. Prodotti fatti a mano</h2>
 
             <p>
               Gli acchiappasogni e gli altri articoli proposti
-              sono prodotti artigianali realizzati a mano.
+              sono prodotti fatti a mano.
             </p>
 
             <p>
-              Proprio per la natura artigianale delle creazioni,
+              Proprio per la natura delle creazioni fatte a mano,
               possono esistere piccole differenze di colore,
               forma, disposizione degli elementi, materiali o
               finiture rispetto alle fotografie mostrate sul sito.
@@ -51,7 +51,7 @@ function Terms() {
             <p>
               Tali differenze, quando non compromettono le
               caratteristiche essenziali del prodotto, sono
-              proprie della lavorazione artigianale e rendono
+              proprie della lavorazione a mano e rendono
               ogni creazione unica.
             </p>
           </section>
@@ -245,7 +245,7 @@ function Terms() {
             <p>
               Colori e tonalità possono tuttavia apparire
               leggermente differenti in base allo schermo
-              utilizzato e, nel caso dei prodotti artigianali,
+              utilizzato e, nel caso dei prodotti fatti a mano,
               alle naturali variazioni dei materiali.
             </p>
           </section>

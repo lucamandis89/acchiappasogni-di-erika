@@ -12,6 +12,7 @@ import {
   X,
 } from 'lucide-react'
 import { supabase } from '../supabaseClient'
+import { meta } from '../configurator/engine'
 
 const EMPTY_FORM = {
   name: '',
@@ -43,6 +44,7 @@ function AdminConfigurator() {
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState('all')
   const [editingId, setEditingId] = useState(null)
+  const typeOptions=[...TYPE_OPTIONS,...[...new Set(assets.map(a=>a.type))].filter(t=>!TYPE_OPTIONS.some(o=>o.value===t)).map(t=>({value:t,label:t}))]
   const [form, setForm] = useState(EMPTY_FORM)
 
   useEffect(() => {
@@ -83,8 +85,8 @@ function AdminConfigurator() {
     setForm({
       name: asset.name || '',
       type: asset.type || 'frame',
-      metadata: asset.metadata || {},
-      image: asset.image || '',
+      metadata: meta(asset),
+      image: asset.image || meta(asset).photo_url || '',
       price_modifier: String(asset.price_modifier ?? 0),
       active: asset.active !== false,
       order: String(asset.order ?? 0),
@@ -417,18 +419,9 @@ function AdminConfigurator() {
 
               <div className="field">
                 <label htmlFor="type">Tipo *</label>
-                <select
-                  id="type"
-                  name="type"
-                  value={form.type}
-                  onChange={handleChange}
-                >
-                  {TYPE_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                <input id="type" name="type" list="asset-types" value={form.type} onChange={handleChange} required />
+                <datalist id="asset-types">{typeOptions.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}</datalist>
+                <small>Scegli un tipo esistente oppure scrivi un nuovo tipo.</small>
               </div>
 
               <div className="field">
@@ -459,6 +452,7 @@ function AdminConfigurator() {
               </div>
             </div>
 
+<details><summary>Metadati opzionali per riconoscere la tua idea</summary><p>Gli elenchi possono essere separati da virgole. Bastano nome e parole chiave; gli altri campi sono opzionali.</p><div className="form-grid"><div className="field"><label htmlFor="meta-keywords">Parole chiave</label><input id="meta-keywords" value={Array.isArray(form.metadata.keywords)?form.metadata.keywords.join(', '):form.metadata.keywords||''} onChange={e=>setForm(f=>({...f,metadata:{...f.metadata,keywords:e.target.value}}))} /></div><div className="field"><label htmlFor="meta-synonyms">Sinonimi</label><input id="meta-synonyms" value={Array.isArray(form.metadata.synonyms)?form.metadata.synonyms.join(', '):form.metadata.synonyms||''} onChange={e=>setForm(f=>({...f,metadata:{...f.metadata,synonyms:e.target.value}}))} /></div><div className="field"><label htmlFor="meta-color">Colore</label><input id="meta-color" value={Array.isArray(form.metadata.color)?form.metadata.color.join(', '):form.metadata.color||''} onChange={e=>setForm(f=>({...f,metadata:{...f.metadata,color:e.target.value}}))} /></div><div className="field"><label htmlFor="meta-secondary_colors">Colori secondari</label><input id="meta-secondary_colors" value={Array.isArray(form.metadata.secondary_colors)?form.metadata.secondary_colors.join(', '):form.metadata.secondary_colors||''} onChange={e=>setForm(f=>({...f,metadata:{...f.metadata,secondary_colors:e.target.value}}))} /></div><div className="field"><label htmlFor="meta-material">Materiale</label><input id="meta-material" value={Array.isArray(form.metadata.material)?form.metadata.material.join(', '):form.metadata.material||''} onChange={e=>setForm(f=>({...f,metadata:{...f.metadata,material:e.target.value}}))} /></div><div className="field"><label htmlFor="meta-size">Misura</label><input id="meta-size" value={Array.isArray(form.metadata.size)?form.metadata.size.join(', '):form.metadata.size||''} onChange={e=>setForm(f=>({...f,metadata:{...f.metadata,size:e.target.value}}))} /></div><div className="field"><label htmlFor="meta-diameter_cm">Diametro (cm)</label><input id="meta-diameter_cm" value={Array.isArray(form.metadata.diameter_cm)?form.metadata.diameter_cm.join(', '):form.metadata.diameter_cm||''} onChange={e=>setForm(f=>({...f,metadata:{...f.metadata,diameter_cm:e.target.value}}))} /></div><div className="field"><label htmlFor="meta-relative_size">Dimensione relativa</label><input id="meta-relative_size" value={Array.isArray(form.metadata.relative_size)?form.metadata.relative_size.join(', '):form.metadata.relative_size||''} onChange={e=>setForm(f=>({...f,metadata:{...f.metadata,relative_size:e.target.value}}))} /></div><div className="field"><label htmlFor="meta-semantic_role">Ruolo (frame, weave, feather, bead, decoration…)</label><input id="meta-semantic_role" value={Array.isArray(form.metadata.semantic_role)?form.metadata.semantic_role.join(', '):form.metadata.semantic_role||''} onChange={e=>setForm(f=>({...f,metadata:{...f.metadata,semantic_role:e.target.value}}))} /></div><div className="field"><label htmlFor="meta-recommended_position">Posizione (sotto, sopra, lati, centro…)</label><input id="meta-recommended_position" value={Array.isArray(form.metadata.recommended_position)?form.metadata.recommended_position.join(', '):form.metadata.recommended_position||''} onChange={e=>setForm(f=>({...f,metadata:{...f.metadata,recommended_position:e.target.value}}))} /></div><div className="field"><label htmlFor="meta-compatible">Compatibilità</label><input id="meta-compatible" value={Array.isArray(form.metadata.compatible)?form.metadata.compatible.join(', '):form.metadata.compatible||''} onChange={e=>setForm(f=>({...f,metadata:{...f.metadata,compatible:e.target.value}}))} /></div><div className="field"><label htmlFor="meta-incompatible">Incompatibilità</label><input id="meta-incompatible" value={Array.isArray(form.metadata.incompatible)?form.metadata.incompatible.join(', '):form.metadata.incompatible||''} onChange={e=>setForm(f=>({...f,metadata:{...f.metadata,incompatible:e.target.value}}))} /></div><div className="field"><label htmlFor="meta-themes">Temi</label><input id="meta-themes" value={Array.isArray(form.metadata.themes)?form.metadata.themes.join(', '):form.metadata.themes||''} onChange={e=>setForm(f=>({...f,metadata:{...f.metadata,themes:e.target.value}}))} /></div><div className="field"><label htmlFor="meta-tags">Tag / significati</label><input id="meta-tags" value={Array.isArray(form.metadata.tags)?form.metadata.tags.join(', '):form.metadata.tags||''} onChange={e=>setForm(f=>({...f,metadata:{...f.metadata,tags:e.target.value}}))} /></div></div></details>
             <div className="image-section">
               <div className="field image-field">
                 <label>Immagine</label>
@@ -581,7 +575,7 @@ function AdminConfigurator() {
             >
               <option value="all">Tutti i tipi</option>
 
-              {TYPE_OPTIONS.map((option) => (
+              {typeOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>

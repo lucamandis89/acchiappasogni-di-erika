@@ -45,7 +45,7 @@ function PaymentSuccess() {
 
           <p className="success-small">
             Grazie per aver scelto una creazione
-            artigianale fatta con cura e passione.
+            fatta a mano con cura e passione.
           </p>
         </div>
       </div>

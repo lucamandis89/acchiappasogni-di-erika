@@ -77,7 +77,7 @@ function About() {
 
               <p>
                 Ogni acchiappasogni viene realizzato
-                artigianalmente, con cura e attenzione.
+                a mano, con cura e attenzione.
                 Dal primo intreccio fino all'ultimo
                 dettaglio, ogni pezzo prende forma uno
                 alla volta.
@@ -150,7 +150,7 @@ function About() {
               <h3>Ogni pezzo è speciale</h3>
 
               <p>
-                La lavorazione artigianale rende ogni
+                La lavorazione a mano rende ogni
                 creazione unica, con quelle piccole
                 differenze che raccontano il fatto a
                 mano.

@@ -19,6 +19,8 @@ function Personalizzati() {
     budget: '',
   })
 
+  const [details,setDetails]=useState({})
+  const detailLabels=['Dimensione','Forma e numero cerchi','Colori principali e secondari','Colore cerchio','Colore intreccio','Colore piume','Intreccio e fili','Piume e decorazioni','Perline, cristalli, legno, conchiglie, sonagli','Nome, frase o dedica','Simboli e soggetti','Tema','Significato']
   const [sending, setSending] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
@@ -113,7 +115,7 @@ function Personalizzati() {
             customer_phone:
               customerPhone || null,
             title,
-            description,
+            description: [description,...detailLabels.filter(k=>details[k]?.trim()).map(k=>`${k}: ${details[k].trim()}`)].join('\n'),
             budget,
             images: [],
             status: 'new',
@@ -133,7 +135,7 @@ function Personalizzati() {
         budget: '',
       })
 
-      setSuccess(true)
+      setDetails({});setSuccess(true)
 
       window.scrollTo({
         top: 0,
@@ -250,7 +252,7 @@ function Personalizzati() {
                   <h3>Fatto a mano</h3>
                   <p>
                     Il progetto viene trasformato in
-                    una creazione artigianale.
+                    una creazione fatta a mano.
                   </p>
                 </div>
               </article>
@@ -351,6 +353,7 @@ function Personalizzati() {
                   </label>
                 </div>
 
+                <div className="custom-field" style={{gridColumn:'1 / -1'}}><details><summary>Dettagli del progetto (facoltativi)</summary>{detailLabels.map(label=><label key={label} style={{display:'block',marginTop:12}}>{label}<input value={details[label]||''} onChange={e=>setDetails(d=>({...d,[label]:e.target.value}))}/></label>)}</details></div>
                 <div className="custom-two-columns">
                   <label className="custom-field">
                     <span>Telefono</span>
